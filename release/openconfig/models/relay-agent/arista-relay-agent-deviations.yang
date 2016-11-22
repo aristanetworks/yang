@@ -1,0 +1,68 @@
+module arista-bgp-deviations {
+
+  namespace "http://arista.com/yang/openconfig/relay-agent/deviations";
+  prefix "arista-relay-agent-deviations";
+
+  import openconfig-relay-agent { prefix oc-relay; }
+
+  organization "Arista Networks <http://arista.com/>";
+
+  description
+    "This module contains OpenConfig relay-agent deviations in Arista EOS.";
+
+  revision "2016-11-21" {
+    description
+      "Initial deviations file.";
+  }
+
+  // DHCP relay cannot be configured at the global level. The feature is simply controlled by
+  // configuring or removing helper addresses.
+  deviation /oc-relay:relay-agent/oc-relay:dhcp/oc-relay:config/oc-relay:enable-relay-agent {
+    deviate not-supported;
+  } 
+  
+  // DHCP relay cannot be configured at the interface level. The feature is simply controlled by
+  // configuring or removing helper addresses.
+  deviation /oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:config/oc-relay:enable {
+    deviate not-supported;
+  }
+
+  // DHCPv6 relay cannot be configured at the global level. The feature is simply controlled by
+  // configuring or removing helper addresses.
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:config/oc-relay:enable-relay-agent {
+    deviate not-supported;
+  }
+
+  // Configuring the interface-id for DHCPv6 relay is not supported in EOS
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:options/oc-relay:config/oc-relay:enable-interface-id {
+    deviate not-supported;
+  }
+
+  // Configuring the remote-id for DHCPv6 relay is not supported in EOS
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:options/oc-relay:config/oc-relay:enable-remote-id {
+    deviate not-supported;
+  }
+
+  // DHCPv6 relay cannot be configured at the interface level. The feature is simply controlled by
+  // configuring or removing helper addresses.
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:config/oc-relay:enable {
+    deviate not-supported;
+  }
+
+  // Configuring the interface-id for DHCPv6 relay is not supported in EOS
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:enable-interface-id {
+    deviate not-supported;
+  }
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:interface-id {
+    deviate not-supported;
+  }
+
+  // Configuring the remote-id for DHCPv6 relay is not supported in EOS
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:enable-remote-id {
+    deviate not-supported;
+  }
+  deviation /oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:remote-id {
+    deviate not-supported;
+  }
+
+}
