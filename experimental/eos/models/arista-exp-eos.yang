@@ -1,0 +1,23 @@
+module arista-eos {
+  yang-version 1;
+  
+  namespace "http://arista.com/yang/experimental/eos";
+  prefix "eos-exp";
+  
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+  import arista-eos-types { prefix eos-types; }
+  
+  organization "Arista Networks <http://arista.com/>";
+  
+  description "arista/eos containers";
+
+  revision "2016-11-09" {
+    description "Initial release";
+  }
+  
+  container arista {
+    container eos {
+    }
+  }
+}
