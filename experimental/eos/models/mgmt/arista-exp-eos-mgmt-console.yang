@@ -4,9 +4,6 @@ module arista-eos-mgmt-console {
   namespace "http://arista.com/yang/experimental/eos/mgmt/console";
   prefix "console-exp";
   
-  import ietf-yang-types { prefix yang; }
-  import ietf-inet-types { prefix inet; }
-  import arista-eos-types { prefix eos-types; }
   import arista-exp-eos { prefix eos-exp; }
   import arista-exp-eos-mgmt { prefix mgmt-exp; }
   

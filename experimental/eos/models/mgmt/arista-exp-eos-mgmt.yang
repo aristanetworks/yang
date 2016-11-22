@@ -4,8 +4,6 @@ module arista-eos-mgmt {
   namespace "http://arista.com/yang/experimental/eos/mgmt";
   prefix "mgmt-exp";
   
-  import ietf-yang-types { prefix yang; }
-  import ietf-inet-types { prefix inet; }
   import arista-eos-types { prefix eos-types; }
   import arista-exp-eos { prefix eos-exp; }
 

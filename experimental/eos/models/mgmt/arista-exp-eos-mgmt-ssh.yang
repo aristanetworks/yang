@@ -4,9 +4,6 @@ module arista-eos-mgmt-ssh {
   namespace "http://arista.com/yang/experimental/eos/mgmt/ssh";
   prefix "ssh";
   
-  import ietf-yang-types { prefix yang; }
-  import ietf-inet-types { prefix inet; }
-  import arista-eos-types { prefix eos-types; }
   import arista-exp-eos { prefix eos-exp; }
   import arista-exp-eos-mgmt { prefix mgmt-exp; }
 
