@@ -1,0 +1,55 @@
+module arista-eos-mgmt {
+  yang-version 1;
+  
+  namespace "http://arista.com/yang/experimental/eos/mgmt";
+  prefix "mgmt-exp";
+  
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+  import arista-eos-types { prefix eos-types; }
+  import arista-exp-eos { prefix eos-exp; }
+
+  organization "Arista Networks <http://arista.com/>";
+  
+  description "Container for system management features.";
+
+  revision "2016-11-08" {
+    description "Initial revision";
+  }
+
+  augment "/eos-exp:arista/eos-exp:eos" {
+    container mgmt {
+    }
+  }
+
+  grouping Mgmt-SessionTimeout-IdleSessionTimeout {
+    description "Management service session timeout.";
+    
+    leaf timeout {
+      type eos-types:double;
+      
+      description
+        "Session timeout, in seconds.
+
+	0 represents that session timeouts are disabled.";
+    }
+  }
+  
+  typedef System-ServerState {
+    description "Configured state of a management service.";
+
+    type enumeration {
+      enum globalDefault {
+        description "Use the global system default for the service.";
+      }
+      
+      enum disabled {
+        description "Service is disabled.";
+      }
+      
+      enum enabled {
+        description "Service is enabled.";
+      }
+    }    
+  }
+}

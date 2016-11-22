@@ -1,0 +1,56 @@
+module arista-eos-mgmt-ssh {
+  yang-version 1;
+  
+  namespace "http://arista.com/yang/experimental/eos/mgmt/ssh";
+  prefix "ssh";
+  
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+  import arista-eos-types { prefix eos-types; }
+  import arista-exp-eos { prefix eos-exp; }
+  import arista-exp-eos-mgmt { prefix mgmt-exp; }
+
+  organization "Arista Networks <http://arista.com/>";
+  
+  description "Models for the ssh management subsystem of Arista EOS";
+
+  revision "2016-11-08" {
+    description "Initial revision";
+  }
+  
+  augment "/eos-exp:arista/eos-exp:eos/mgmt-exp:mgmt" {
+    container ssh {
+      description "SSH management subsystem config and state.";
+      
+      container config {
+        description "Configuration for the SSH management subsystem.";
+        
+        uses Mgmt-Ssh-Config;
+      }
+    }
+  }
+
+  grouping Mgmt-Ssh-Config {
+    description "Type: Mgmt::Ssh::Config";
+    
+    container idleTimeout {
+      description
+        "SSH session timeout.
+	
+      	Equivalent to the 'idle-timeout TIMEOUT' CLI command in
+	the 'management ssh' config mode.";
+
+      uses mgmt:Mgmt-SessionTimeout-IdleSessionTimeout;
+    }
+    
+    leaf serverState {
+      type mgmt:System-ServerState;
+      
+      description
+        "Configured enable state of the SSH management service.
+	
+	Equivalent to the '[ no | default ] shutdown' CLI command
+	in the 'management ssh' config mode.";
+    }
+  }
+}

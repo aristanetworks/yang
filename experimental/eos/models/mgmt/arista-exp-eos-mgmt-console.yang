@@ -1,0 +1,46 @@
+module arista-eos-mgmt-console {
+  yang-version 1;
+  
+  namespace "http://arista.com/yang/experimental/eos/mgmt/console";
+  prefix "console-exp";
+  
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+  import arista-eos-types { prefix eos-types; }
+  import arista-exp-eos { prefix eos-exp; }
+  import arista-exp-eos-mgmt { prefix mgmt-exp; }
+  
+  organization "Arista Networks <http://arista.com/>";
+  
+  description "Models for the console management subsystem of Arista EOS";
+
+  revision "2016-11-08" {
+    description "Initial revision";
+  }
+
+  augment "/eos-exp:arista/eos-exp:eos/mgmt-exp:mgmt" {
+    container console {
+      description "Console management subsystem config and state.";
+
+      container config {
+        description "Configuration for the console management subsystem.";
+      
+        uses Mgmt-Console-Config;
+      }
+    }
+  }
+  
+  grouping Mgmt-Console-Config {
+    description "Configuration for the console management subsystem.";
+    
+    container idleTimeout {
+      description
+        "Console session timeout.
+      
+	Equivalent to the 'idle-timeout TIMEOUT' CLI command in
+	the 'management console' config mode.";
+      
+      uses mgmt:Mgmt-SessionTimeout-IdleSessionTimeout;
+    }
+  }
+}
