@@ -19,8 +19,8 @@ module arista-bgp-deviations {
   // configuring or removing helper addresses.
   deviation /oc-relay:relay-agent/oc-relay:dhcp/oc-relay:config/oc-relay:enable-relay-agent {
     deviate not-supported;
-  } 
-  
+  }
+
   // DHCP relay cannot be configured at the interface level. The feature is simply controlled by
   // configuring or removing helper addresses.
   deviation /oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:config/oc-relay:enable {

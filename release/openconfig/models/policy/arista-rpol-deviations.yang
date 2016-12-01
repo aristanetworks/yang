@@ -18,11 +18,11 @@ module arista-rpol-deviations {
     description
       "Initial deviations file.";
   }
-  
+
   // Neighbor sets are not supported by our routing-policy implementation
   deviation /oc-rpol:routing-policy/oc-rpol:defined-sets/oc-rpol:neighbor-sets {
     deviate not-supported;
   }
-  
+
 }
 
