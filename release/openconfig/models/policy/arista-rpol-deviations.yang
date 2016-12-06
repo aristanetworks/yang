@@ -1,28 +1,26 @@
 module arista-rpol-deviations {
-
   namespace "http://arista.com/yang/openconfig/policy/deviations";
-  prefix "arista-rpol-deviations";
+  prefix arista-rpol-deviations;
 
-  import openconfig-routing-policy { prefix oc-rpol; }
+  import openconfig-routing-policy {
+    prefix oc-rpol;
+  }
 
   organization "Arista Networks, Inc.";
-
   contact
     "Arista Networks, Inc.
      Product Support";
-
   description
     "This module contains OpenConfig routing policy deviations in Arista EOS.";
 
-  revision "2016-02-01" {
+  revision 2016-02-01 {
     description
       "Initial deviations file.";
   }
 
-  // Neighbor sets are not supported by our routing-policy implementation
-  deviation /oc-rpol:routing-policy/oc-rpol:defined-sets/oc-rpol:neighbor-sets {
+  deviation "/oc-rpol:routing-policy/oc-rpol:defined-sets/oc-rpol:neighbor-sets" {
+    description
+      "Neighbor sets are not supported by our routing-policy implementation";
     deviate not-supported;
   }
-
 }
-

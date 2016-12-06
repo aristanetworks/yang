@@ -1,124 +1,97 @@
 module arista-bgp-deviations {
-
   namespace "http://arista.com/yang/openconfig/bgp/deviations";
-  prefix "arista-bgp-deviations";
+  prefix arista-bgp-deviations;
 
-  import openconfig-bgp { prefix oc-bgp; }
+  import openconfig-bgp {
+    prefix oc-bgp;
+  }
 
   organization "Arista Networks, Inc.";
-
   contact
     "Arista Networks, Inc.
      Product Support";
-
   description
     "This module contains OpenConfig BGP deviations in Arista EOS.";
 
-  revision "2016-02-01" {
+  revision 2016-02-01 {
     description
       "Initial deviations file.";
   }
 
-  // connect-retry is reported but not configurable in EOS
-  deviation /oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:timers/oc-bgp:config/oc-bgp:connect-retry {
+  deviation "/oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:timers/oc-bgp:config/oc-bgp:connect-retry" {
+    description
+      "connect-retry is reported but not configurable in EOS";
     deviate replace {
       config false;
     }
   }
-
-  // MTU discovery is implicitly always true in EOS
-  deviation /oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:transport/oc-bgp:config/oc-bgp:mtu-discovery {
+  deviation "/oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:transport/oc-bgp:config/oc-bgp:mtu-discovery" {
+    description
+      "MTU discovery is implicitly always true in EOS";
     deviate replace {
       config false;
-      default true;
+      default "true";
     }
   }
-
-  deviation /oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:transport/oc-bgp:config/oc-bgp:mtu-discovery {
+  deviation "/oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:transport/oc-bgp:config/oc-bgp:mtu-discovery" {
     deviate replace {
       config false;
-      default true;
+      default "true";
     }
   }
-
-  // Neighbor state change logging cannot be configured on a per
-  // peer-group basis in EOS
-  deviation /oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:logging-options/oc-bgp:config/oc-bgp:log-neighbor-state-changes {
+  deviation "/oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:logging-options/oc-bgp:config/oc-bgp:log-neighbor-state-changes" {
+    description
+      "Neighbor state change logging cannot be configured on a per
+       peer-group basis in EOS";
     deviate not-supported;
   }
-
-  // Policies may only be applied on a per-neighbor/peer-group basis, not globally
-  deviation /oc-bgp:bgp/oc-bgp:global/oc-bgp:afi-safis/oc-bgp:afi-safi/oc-bgp:apply-policy {
+  deviation "/oc-bgp:bgp/oc-bgp:global/oc-bgp:afi-safis/oc-bgp:afi-safi/oc-bgp:apply-policy" {
+    description
+      "Policies may only be applied on a per-neighbor/peer-group basis, not globally";
     deviate not-supported;
   }
-
-  // In the YANG schema, a type-stmt ("type") can not be used with
-  // deviate "add" (because type always already exists), so we use
-  // deviate "replace"
-  // See: https://github.com/mbj4668/pyang/issues/76 (point 5.)
-
-  // neighbor timer deviations
-
-  // hold-time
-  deviation /oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:timers/oc-bgp:config/oc-bgp:hold-time {
+  deviation "/oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:timers/oc-bgp:config/oc-bgp:hold-time" {
+    description
+      "EOS range restriction and default";
     deviate replace {
       type decimal64 {
         fraction-digits 2;
-
-        // EOS range restriction
         range "3..7200";
       }
-
-      // EOS default hold time
-      default 180;
+      default "180";
     }
   }
-
-  // keepalive interval
-  deviation /oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:timers/oc-bgp:config/oc-bgp:keepalive-interval {
+  deviation "/oc-bgp:bgp/oc-bgp:neighbors/oc-bgp:neighbor/oc-bgp:timers/oc-bgp:config/oc-bgp:keepalive-interval" {
+    description
+      "keepalive interval EOS range restriction and default";
     deviate replace {
       type decimal64 {
         fraction-digits 2;
-
-        // EOS range restriction
         range "0..3600";
       }
-
-      // EOS default keepalive interval
-      default 60;
+      default "60";
     }
   }
-
-  // peer-group timer deviations
-
-  // hold-time
-  deviation /oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:timers/oc-bgp:config/oc-bgp:hold-time {
+  deviation "/oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:timers/oc-bgp:config/oc-bgp:hold-time" {
+    description
+      "hold-time EOS range restriction and default";
     deviate replace {
       type decimal64 {
         fraction-digits 2;
-
-        // EOS range restriction
         range "3..7200";
       }
-
-      // EOS default hold time
-      default 180;
+      default "180";
     }
   }
-
-  // keepalive interval
-  deviation /oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:timers/oc-bgp:config/oc-bgp:keepalive-interval {
+  deviation "/oc-bgp:bgp/oc-bgp:peer-groups/oc-bgp:peer-group/oc-bgp:timers/oc-bgp:config/oc-bgp:keepalive-interval" {
+    description
+      "keepalive interval EOS range restriction and default";
     deviate replace {
       type decimal64 {
         fraction-digits 2;
-
-        // EOS range restriction
         range "0..3600";
       }
-
-      // EOS default keepalive interval
-      default 60;
+      default "60";
     }
   }
-
 }
