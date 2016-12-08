@@ -12,7 +12,9 @@ module arista-exp-eos-mgmt-console {
 
   organization "Arista Networks <http://arista.com/>";
   description
-    "Models for the console management subsystem of Arista EOS";
+    "Models for the console management subsystem of Arista EOS
+
+    Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
 
   revision 2016-11-08 {
     description

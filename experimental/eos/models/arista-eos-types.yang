@@ -5,7 +5,9 @@ module arista-eos-types {
 
   organization "Arista Networks <http://arista.com/>";
   description
-    "Common type definitions for Arista YANG models";
+    "Common type definitions for Arista YANG models
+
+    Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
 
   revision 2016-10-14 {
     description

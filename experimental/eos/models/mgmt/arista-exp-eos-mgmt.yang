@@ -12,7 +12,9 @@ module arista-exp-eos-mgmt {
 
   organization "Arista Networks <http://arista.com/>";
   description
-    "Container for system management features.";
+    "Container for system management features.
+
+    Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
 
   revision 2016-11-08 {
     description

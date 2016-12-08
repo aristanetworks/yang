@@ -11,7 +11,9 @@ module arista-rpol-deviations {
     "Arista Networks, Inc.
      Product Support";
   description
-    "This module contains OpenConfig routing policy deviations in Arista EOS.";
+    "This module contains OpenConfig routing policy deviations in Arista EOS.
+
+    Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
 
   revision 2016-02-01 {
     description
