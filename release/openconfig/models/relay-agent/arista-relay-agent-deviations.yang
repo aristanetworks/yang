@@ -1,4 +1,4 @@
-module arista-bgp-deviations {
+module arista-relay-agent-deviations {
   namespace "http://arista.com/yang/openconfig/relay-agent/deviations";
   prefix arista-relay-agent-deviations;
 
