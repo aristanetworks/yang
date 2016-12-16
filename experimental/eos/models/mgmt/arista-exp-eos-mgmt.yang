@@ -3,9 +3,6 @@ module arista-exp-eos-mgmt {
   namespace "http://arista.com/yang/experimental/eos/mgmt";
   prefix mgmt-exp;
 
-  import arista-eos-types {
-    prefix eos-types;
-  }
   import arista-exp-eos {
     prefix eos-exp;
   }
@@ -13,8 +10,8 @@ module arista-exp-eos-mgmt {
   organization "Arista Networks <http://arista.com/>";
   description
     "Container for system management features.
-
-    Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
+     
+     Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
 
   revision 2016-11-08 {
     description
@@ -23,18 +20,6 @@ module arista-exp-eos-mgmt {
 
   augment "/eos-exp:arista/eos-exp:eos" {
     container mgmt;
-  }
-
-  grouping Mgmt-SessionTimeout-IdleSessionTimeout {
-    description
-      "Management service session timeout.";
-    leaf timeout {
-      type eos-types:double;
-      description
-        "Session timeout, in seconds.
-         
-         0 represents that session timeouts are disabled.";
-    }
   }
 
   typedef System-ServerState {
