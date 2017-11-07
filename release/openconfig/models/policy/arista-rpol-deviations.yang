@@ -6,7 +6,8 @@ module arista-rpol-deviations {
     prefix oc-rpol;
   }
 
-  organization "Arista Networks, Inc.";
+  organization
+    "Arista Networks, Inc.";
   contact
     "Arista Networks, Inc.
      Product Support";

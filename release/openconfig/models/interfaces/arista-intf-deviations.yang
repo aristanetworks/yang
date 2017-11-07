@@ -1,0 +1,56 @@
+module arista-intf-deviations {
+  namespace "http://arista.com/yang/openconfig/interfaces/deviations";
+  prefix arista-intf-deviations;
+
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-ethernet {
+    prefix oc-eth;
+  }
+  import openconfig-if-aggregate {
+    prefix oc-lag;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig Interface deviations in Arista EOS.
+     
+     Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
+
+  revision 2016-12-28 {
+    description
+      "Initial deviations file.";
+    reference "1.0.0";
+  }
+
+  deviation "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:config/oc-eth:duplex-mode" {
+    description
+      "EOS only supports full-duplex mode";
+    deviate add {
+      default "FULL";
+    }
+    deviate add {
+      must "../duplex-mode = FULL";
+    }
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:config/oc-lag:lag-type" {
+    description
+      "lag-type cannot be configured at the aggregate interface level.
+       The type is controlled by configuring it on the aggregate member interfaces";
+    deviate replace {
+      config false;
+    }
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:config/oc-lag:min-links" {
+    description
+      "EOS default value for min-links is 0";
+    deviate add {
+      default "0";
+    }
+  }
+}

@@ -3,7 +3,8 @@ module arista-exp-eos {
   namespace "http://arista.com/yang/experimental/eos";
   prefix eos-exp;
 
-  organization "Arista Networks <http://arista.com/>";
+  organization
+    "Arista Networks <http://arista.com/>";
   description
     "arista/eos containers
      

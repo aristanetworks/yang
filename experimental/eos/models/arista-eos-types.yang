@@ -3,7 +3,8 @@ module arista-eos-types {
   namespace "http://arista.com/yang/experimental/eos/eos-types";
   prefix eos-types;
 
-  organization "Arista Networks <http://arista.com/>";
+  organization
+    "Arista Networks <http://arista.com/>";
   description
     "Common type definitions for Arista YANG models
      
@@ -31,7 +32,7 @@ module arista-eos-types {
   }
 
   typedef Arnet-IntfId {
-    type uint64;
+    type string;
     description
       "Arista Interface ID";
   }

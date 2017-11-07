@@ -1,0 +1,95 @@
+module vlan-translation {
+  yang-version 1;
+  namespace "http://arista.com/yang/vlan-translation";
+  prefix ar-vlan-translation;
+
+  import openconfig-vlan-types {
+    prefix oc-vlan-types;
+  }
+  import openconfig-vlan {
+    prefix oc-vlan;
+  }
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-ethernet {
+    prefix oc-eth;
+  }
+  import openconfig-if-aggregate {
+    prefix oc-lag;
+  }
+  import iana-if-type {
+    prefix ift;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks";
+  contact
+    "openconfig-dev@googlegroups.com";
+  description
+    "This module defines VLAN translation configuration,
+     associated with interfaces
+     
+     Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.0.0";
+
+  grouping vlan-tpid {
+    leaf tpid {
+      type identityref {
+        base oc-vlan-types:TPID_TYPES;
+      }
+      default "oc-vlan-types:TPID_0X8100";
+      description
+        "Optionally set the tag protocol identifier field (TPID) that
+         is accepted on the port/interface";
+    }
+  }
+
+  grouping vlan-translation {
+    description
+      "VLAN translation grouping.";
+    list vlan-translation {
+      key "vlan-translation-key";
+      leaf vlan-translation-key {
+        description
+          "VLAN ID or QinQ VLAN tag pair used to identify a
+           bridging endpoint";
+        type union {
+          type oc-vlan-types:vlan-id;
+          type oc-vlan-types:qinq-id;
+        }
+      }
+      leaf bridging-vlan {
+        description
+          "The VLAN in which packets matching the VLAN
+           translation key are bridged";
+        type oc-vlan-types:vlan-id;
+      }
+    }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-vlan:switched-vlan/oc-vlan:config" {
+    when "oc-if:type = 'ift:ethernetCsmacd'" {
+      description
+        "Active when the interface is Ethernet";
+    }
+    description
+      "Adds VLAN translation settings to individual Ethernet
+       interfaces";
+    uses vlan-tpid;
+    uses vlan-translation;
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-vlan:switched-vlan/oc-vlan:config" {
+    when "oc-if:type = 'ift:ieee8023adLag'" {
+      description
+        "Active when the interface is a LAG";
+    }
+    description
+      "Adds VLAN translation settings to a LAG interface";
+    uses vlan-tpid;
+    uses vlan-translation;
+  }
+}
