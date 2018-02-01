@@ -27,8 +27,6 @@ module vlan-translation {
 
   organization
     "Arista Networks";
-  contact
-    "openconfig-dev@googlegroups.com";
   description
     "This module defines VLAN translation configuration,
      associated with interfaces
