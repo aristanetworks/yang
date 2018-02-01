@@ -2,6 +2,10 @@ module arista-system-deviations {
   namespace "http://arista.com/yang/openconfig/system/deviations";
   prefix arista-system-deviations;
 
+  import openconfig-system {
+    prefix oc-sys;
+  }
+
   organization
     "Arista Networks, Inc.";
   contact
@@ -14,5 +18,30 @@ module arista-system-deviations {
   revision 2017-09-24 {
     description
       "Initial deviations file.";
+  }
+
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:config/oc-sys:search" {
+    description
+      "search limited to 6 domain-names";
+    deviate add {
+      max-elements "6";
+    }
+  }
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:servers/oc-sys:server" {
+    description
+      "name servers limited to 3";
+    deviate add {
+      max-elements "3";
+    }
+  }
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:servers/oc-sys:server/oc-sys:config/oc-sys:port" {
+    description
+      "port of name servers is not configurable";
+    deviate not-supported;
+  }
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:host-entries/oc-sys:host-entry/oc-sys:config/oc-sys:alias" {
+    description
+      "alias of host-entries is not configurable";
+    deviate not-supported;
   }
 }

@@ -1,0 +1,91 @@
+module arista-intf-augments {
+  namespace "http://arista.com/yang/openconfig/interfaces/augments";
+  prefix arista-intf-augments;
+
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-aggregate {
+    prefix oc-lag;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  description
+    "This module contains OpenConfig interface augments in Arista EOS.
+     
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+
+  revision 2017-10-01 {
+    description
+      "Initial augment file.";
+  }
+
+  typedef fallback-enum {
+    type enumeration {
+      enum "none" {
+        description
+          "Fallback not enabled on this interface";
+      }
+      enum "static" {
+        description
+          "Static fallback enabled on this interface";
+      }
+      enum "individual" {
+        description
+          "Individual fallback enabled on this interface";
+      }
+    }
+  }
+
+  typedef fallback-state-enum {
+    type enumeration {
+      enum "fallbackStateUnconfigured" {
+        description
+          "Fallback not enabled on this interface";
+      }
+      enum "fallbackStateConfigured" {
+        description
+          "Static fallback enabled on this interface";
+      }
+      enum "fallbackStateInitialized" {
+        description
+          "Individual fallback enabled on this interface";
+      }
+      enum "fallbackStateMonitoring" {
+        description
+          "Individual fallback enabled on this interface";
+      }
+      enum "fallbackStateEnabled" {
+        description
+          "Individual fallback enabled on this interface";
+      }
+    }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:config" {
+    leaf fallback {
+      type fallback-enum;
+      description
+        "Configure fallback type on this interface.";
+    }
+    leaf fallback-timeout {
+      type uint16 {
+        range "0..300";
+      }
+      default "90";
+    }
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:state" {
+    leaf fallback {
+      type fallback-enum;
+      description
+        "Fallback status on this interface.";
+    }
+    leaf fallback-state {
+      type fallback-state-enum;
+      description
+        "Fallback status on this interface.";
+    }
+  }
+}

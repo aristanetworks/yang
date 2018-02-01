@@ -21,6 +21,22 @@ module arista-isis-deviations {
       "Initial deviation file.";
   }
 
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:config/oc-netinst:authentication-check" {
+    description
+      "Configuration of authentication-check is not supported in EOS, it is always enabled.";
+    deviate add {
+      must "../authentication-check = true" {
+        error-message "Configuration of authentication-check is not supported in EOS, it is always enabled";
+      }
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:config/oc-netinst:net" {
+    description
+      "Configuration of multiple NET is not supported in EOS";
+    deviate add {
+      max-elements "1";
+    }
+  }
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:config/oc-netinst:maximum-area-addresses" {
     description
       "Configuration of multiple area addresses are not supported in EOS";
@@ -28,10 +44,76 @@ module arista-isis-deviations {
   }
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:afi-safi/oc-netinst:af/oc-netinst:config/oc-netinst:safi-name" {
     description
-      "EOS only supports UNICAST for safi-name";
+      "UNICAST is the only SAFI type supported in EOS";
     deviate add {
       must "../safi-name = UNICAST" {
-        error-message "EOS only supports UNICAST as SAFI type";
+        error-message "UNICAST is the only SAFI type supported in EOS";
+      }
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:config/oc-netinst:poi-tlv" {
+    description
+      "Configuration of poi-tlv is not supported in EOS";
+    deviate add {
+      must "../poi-tlv = false" {
+        error-message "Configuration of poi-tlv is not supported in EOS";
+      }
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:config/oc-netinst:iid-tlv" {
+    description
+      "Configuration of iid-tlv is not supported in EOS";
+    deviate add {
+      must "../iid-tlv = false" {
+        error-message "Configuration of iid-tlv is not supported in EOS";
+      }
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:config/oc-netinst:fast-flooding" {
+    description
+      "fast-flooding is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:reference-bandwidth/oc-netinst:config/oc-netinst:reference-bandwidth" {
+    description
+      "reference-bandwith is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:nsr" {
+    description
+      "NSR is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:timers/oc-netinst:config/oc-netinst:lsp-refresh-interval" {
+    description
+      "Configuration of lsp-refresh-interval is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:transport/oc-netinst:config/oc-netinst:lsp-mtu-size" {
+    description
+      "Configuration of lsp-mtu-size is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:igp-shortcuts" {
+    description
+      "igp-shortcuts is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:levels/oc-netinst:level/oc-netinst:config/oc-netinst:metric-style" {
+    description
+      "Configuration of metric-style is not supported in EOS, it is always WIDE_METRIC";
+    deviate add {
+      must "../metric-style = WIDE_METRIC" {
+        error-message "Configuration of metric-style is not supported in EOS, it is always WIDE_METRIC";
+      }
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:levels/oc-netinst:level/oc-netinst:config/oc-netinst:authentication-check" {
+    description
+      "Configuration of authentication-check is not supported in EOS, it is always enabled.";
+    deviate add {
+      must "../authentication-check = true" {
+        error-message "Configuration of authentication-check is not supported in EOS, it is always enabled";
       }
     }
   }
@@ -39,6 +121,7 @@ module arista-isis-deviations {
     description
       "Enum LOOSE and DISABLED of type oc-isis-types:hello-padding-type are not supported in EOS";
     deviate add {
+      default "STRICT";
       must "../hello-padding = STRICT or ../hello-padding = ADAPTIVE" {
         error-message "Hello Padding must be either STRICT or ADAPTIVE";
       }

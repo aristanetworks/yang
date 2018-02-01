@@ -5,9 +5,6 @@ module arista-bgp-deviations {
   import openconfig-network-instance {
     prefix oc-netinst;
   }
-  import openconfig-bgp {
-    prefix oc-bgp;
-  }
 
   organization
     "Arista Networks, Inc.";
@@ -108,16 +105,5 @@ module arista-bgp-deviations {
     deviate add {
       default "true";
     }
-  }
-  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:use-multiple-paths" {
-    description
-      "Neighbor state change logging cannot be configured on a per
-       afi-safi basis in EOS";
-    deviate not-supported;
-  }
-  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global" {
-    description
-      "Add multiple-paths configuration at bgp/global level";
-    uses oc-bgp:bgp-common-global-group-use-multiple-paths;
   }
 }

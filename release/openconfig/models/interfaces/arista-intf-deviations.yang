@@ -33,9 +33,7 @@ module arista-intf-deviations {
       "EOS only supports full-duplex mode";
     deviate add {
       default "FULL";
-    }
-    deviate add {
-      must "../duplex-mode = FULL";
+      must "../duplex-mode = 'FULL'";
     }
   }
   deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:config/oc-lag:lag-type" {
@@ -52,5 +50,10 @@ module arista-intf-deviations {
     deviate add {
       default "0";
     }
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:state/oc-lag:lag-type" {
+    description
+      "lag-type not supported at the aggregate state level.";
+    deviate not-supported;
   }
 }
