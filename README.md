@@ -17,7 +17,9 @@ reviewed, commented, and tested, and will continue to be supported
 by EOS releases going forward.
 
 The `release/openconfig/` directory contains the Arista augmentations
-and deviations for OpenConfig models supported by EOS.
+and deviations for OpenConfig models supported by EOS. Full OpenConfig
+models can be found at
+[github.com/openconfig/public](https://github.com/openconfig/public).
 
 The `experimental/` directory contains the Arista YANG models that do
 not meet the criteria for being under `release/`, but which we want
