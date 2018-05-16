@@ -24,21 +24,27 @@ module arista-bgp-deviations {
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:timers/oc-netinst:config/oc-netinst:connect-retry" {
     description
       "connect-retry is reported but not configurable in EOS";
-    deviate replace {
+    deviate add {
       config false;
     }
   }
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:transport/oc-netinst:config/oc-netinst:mtu-discovery" {
     description
       "MTU discovery is implicitly always true in EOS";
-    deviate replace {
+    deviate add {
       config false;
+    }  
+    deviate replace {
       default "true";
     }
   }
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:transport/oc-netinst:config/oc-netinst:mtu-discovery" {
-    deviate replace {
+    description
+      "MTU discovery is implicitly always true in EOS";
+    deviate add {
       config false;
+    }
+    deviate replace {
       default "true";
     }
   }
@@ -94,8 +100,43 @@ module arista-bgp-deviations {
   }
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:route-selection-options/oc-netinst:config/oc-netinst:external-compare-router-id" {
     description
-      "EOS default value for external-compare-router-id is false";
-    deviate replace {
+      "EOS value is a triStateBool which is represented by the absence of the leaf so this leaf can not have a default value";
+    deviate delete {
+      default "true";
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:route-selection-options/oc-netinst:state/oc-netinst:external-compare-router-id" {
+    description
+      "EOS value is a triStateBool which is represented by the absence of the leaf so this leaf can not have a default value";
+    deviate delete {
+      default "true";
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:route-selection-options/oc-netinst:config/oc-netinst:advertise-inactive-routes" {
+    description
+      "EOS value is a triStateBool which is represented by the absence of the leaf so this leaf can not have a default value";
+    deviate delete {
+      default "false";
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:route-selection-options/oc-netinst:state/oc-netinst:advertise-inactive-routes" {
+    description
+      "EOS value is a triStateBool which is represented by the absence of the leaf so this leaf can not have a default value";
+    deviate delete {
+      default "false";
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:route-selection-options/oc-netinst:config/oc-netinst:always-compare-med" {
+    description
+      "EOS value is a triStateBool which is represented by the absence of the leaf so this leaf can not have a default value";
+    deviate delete {
+      default "false";
+    }
+  }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:route-selection-options/oc-netinst:state/oc-netinst:always-compare-med" {
+    description
+      "EOS value is a triStateBool which is represented by the absence of the leaf so this leaf can not have a default value";
+    deviate delete {
       default "false";
     }
   }

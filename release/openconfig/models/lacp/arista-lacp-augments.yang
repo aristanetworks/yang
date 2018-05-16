@@ -36,9 +36,9 @@ module arista-lacp-augments {
   }
 
   augment "/oc-lacp:lacp/oc-lacp:interfaces/oc-lacp:interface/oc-lacp:members/oc-lacp:member/oc-lacp:state" {
-    description
-      "A member interface's selected state, can be one of the following: selected, standby and unselected";
     leaf selected {
+      description
+        "A member interface's selected state, can be one of the following: selected, standby and unselected";
       type selected-enum;
       default "unselected";
     }

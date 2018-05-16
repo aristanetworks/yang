@@ -5,11 +5,25 @@ module arista-vlan-augments {
   import openconfig-network-instance {
     prefix oc-netinst;
   }
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-ethernet {
+    prefix oc-eth;
+  }
+  import openconfig-if-aggregate {
+    prefix oc-lag;
+  }
+  import openconfig-vlan {
+    prefix oc-vlan;
+  }
+  import iana-if-type {
+    prefix ift;
+  }
 
-  organization
-    "Arista Networks <http://arista.com/>";
+  organization "Arista Networks <http://arista.com/>";
   description
-    "This module contains OpenConfig LACP augments in Arista EOS.
+    "This module contains OpenConfig vlan augments in Arista EOS.
      
      Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
 
@@ -37,5 +51,32 @@ module arista-vlan-augments {
   }
   augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:vlans/oc-netinst:vlan/oc-netinst:state" {
     uses vlanAddionalEOSConfig;
+  }
+
+  grouping trunkGroupsEOSConfig {
+    leaf-list trunk-groups {
+      type string;
+      description
+        "Set of trunk groups the interface is a member of";
+    }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-vlan:switched-vlan/oc-vlan:config" {
+    description
+      "Adds trunk group settings to a LAG interface";
+    when "oc-if:type = 'ift:ieee8023adLag'" {
+      description
+        "Active when the interface is a LAG";
+    }
+    uses trunkGroupsEOSConfig;
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-vlan:switched-vlan/oc-vlan:config" {
+    description
+      "Adds trunk group settings to an Ethernet interface";
+    when "oc-if:type = 'ift:ethernetCsmacd'" {
+      description
+        "Active when the interface is Ethernet";
+    }
+    uses trunkGroupsEOSConfig;
   }
 }

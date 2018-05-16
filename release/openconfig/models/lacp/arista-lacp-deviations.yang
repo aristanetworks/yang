@@ -28,11 +28,6 @@ module arista-lacp-deviations {
       default "32768";
     }
   }
-  deviation "/oc-lacp:lacp/oc-lacp:interfaces/oc-lacp:interface/oc-lacp:config/oc-lacp:interval" {
-    description
-      "EOS does not support port channel level interval";
-    deviate not-supported;
-  }
   deviation "/oc-lacp:lacp/oc-lacp:interfaces/oc-lacp:interface/oc-lacp:config/oc-lacp:lacp-mode" {
     description
       "EOS does not support port channel level lacp-mode";
@@ -41,11 +36,6 @@ module arista-lacp-deviations {
   deviation "/oc-lacp:lacp/oc-lacp:interfaces/oc-lacp:interface/oc-lacp:config/oc-lacp:system-priority" {
     description
       "EOS does not support port channel level system priority";
-    deviate not-supported;
-  }
-  deviation "/oc-lacp:lacp/oc-lacp:interfaces/oc-lacp:interface/oc-lacp:state/oc-lacp:interval" {
-    description
-      "EOS does not support port channel level interval";
     deviate not-supported;
   }
   deviation "/oc-lacp:lacp/oc-lacp:interfaces/oc-lacp:interface/oc-lacp:state/oc-lacp:lacp-mode" {

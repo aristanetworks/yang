@@ -25,7 +25,7 @@ module arista-netinst-deviations {
     description
       "default-import-policy is REJECT_ROUTE in EOS";
     deviate add {
-      must "../default-import-policy = REJECT_ROUTE" {
+      must "../default-import-policy = 'REJECT_ROUTE'" {
         error-message "default-import-policy can only be set to REJECT_ROUTE in EOS";
       }
     }
@@ -43,4 +43,12 @@ module arista-netinst-deviations {
       "a global enabled command for VRFs is not fully supported in EOS";
     deviate not-supported;
   }
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:config" {
+    description
+      "only default and L3 instances are supported in EOS";
+    deviate add {
+      must "type='DEFAULT_INSTANCE' or type='L3VRF'";
+    }
+  }
+
 }

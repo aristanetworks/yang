@@ -1,0 +1,27 @@
+module arista-mpls-augments {
+  namespace "http://arista.com/yang/openconfig/mpls/augments";
+  prefix arista-mpls-augments;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+
+  organization "Arista Networks <http://arista.com/>";
+  description
+    "This module contains OpenConfig MPLS augments in Arista EOS.
+
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+
+  revision 2017-12-21 {
+    description
+      "Initial augment file.";
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:global/oc-netinst:reserved-label-blocks/oc-netinst:reserved-label-block/oc-netinst:config" {
+	leaf local-id {
+	  type string;
+	  description
+		"Local-id labels supported in EOS: dynamic, bgp-sr, isis-sr, l2evpn, srlb, static";
+	}
+  }
+}

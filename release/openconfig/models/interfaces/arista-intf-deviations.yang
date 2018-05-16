@@ -11,6 +11,12 @@ module arista-intf-deviations {
   import openconfig-if-aggregate {
     prefix oc-lag;
   }
+  import openconfig-vlan {
+    prefix oc-vlan;
+  }
+  import openconfig-if-ip {
+    prefix oc-ip;
+  }
 
   organization
     "Arista Networks, Inc.";
@@ -28,21 +34,35 @@ module arista-intf-deviations {
     reference "1.0.0";
   }
 
-  deviation "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:config/oc-eth:duplex-mode" {
+  deviation "/oc-if:interfaces/oc-if:interface/oc-if:state/oc-if:counters/oc-if:in-unknown-protos" {
     description
-      "EOS only supports full-duplex mode";
-    deviate add {
-      default "FULL";
-      must "../duplex-mode = 'FULL'";
-    }
+      "EOS does not support in-unknown-protos counter";
+    deviate not-supported;
   }
-  deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:config/oc-lag:lag-type" {
+  deviation "/oc-if:interfaces/oc-if:interface/oc-if:state/oc-if:counters/oc-if:in-fcs-errors" {
     description
-      "lag-type cannot be configured at the aggregate interface level.
-       The type is controlled by configuring it on the aggregate member interfaces";
-    deviate replace {
-      config false;
-    }
+      "EOS does not support in-fcs-errors counter";
+    deviate not-supported;
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-if:state/oc-if:counters/oc-if:carrier-transitions" {
+    description
+      "EOS does not support carrier-transitions counter";
+    deviate not-supported;
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-if:state/oc-if:counters/oc-if:last-clear" {
+    description
+      "EOS does not support last-clear counter";
+    deviate not-supported;
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:state/oc-eth:counters/oc-eth:in-8021q-frames" {
+    description
+      "EOS does not support in-8021q-frames counter";
+    deviate not-supported;
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:state/oc-eth:counters/oc-eth:out-8021q-frames" {
+    description
+      "EOS does not support out-8021q-frames counter";
+    deviate not-supported;
   }
   deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:config/oc-lag:min-links" {
     description
@@ -51,9 +71,71 @@ module arista-intf-deviations {
       default "0";
     }
   }
-  deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:state/oc-lag:lag-type" {
+  deviation "/oc-if:interfaces/oc-if:interface/oc-if:subinterfaces/oc-if:subinterface/oc-ip:ipv4/oc-ip:config/oc-ip:mtu" {
     description
-      "lag-type not supported at the aggregate state level.";
-    deviate not-supported;
+      "EOS default value for IP MTU is 1500";
+    deviate add {
+      default "1500";
+    }
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-if:subinterfaces/oc-if:subinterface/oc-ip:ipv6/oc-ip:config/oc-ip:mtu" {
+    description
+      "EOS default value for IP MTU is 1500";
+    deviate add {
+      default "1500";
+    }
+  }
+  typedef vlan-mode-type-eos {
+    type enumeration {
+      enum "ACCESS" {
+        description
+          "Access mode VLAN interface (No 802.1q header)";
+      }
+      enum "TRUNK" {
+        description
+          "Trunk mode VLAN interface";
+      }
+      enum "DOT1Q-TUNNEL" {
+        description
+          "Q-in-Q VLAN interface";
+      }
+    }
+    description
+      "Set the interface to access, trunk or dot1q-tunnel mode";
+  }
+
+  deviation "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-vlan:switched-vlan/oc-vlan:config/oc-vlan:interface-mode" {
+    description
+      "switchport mode in EOS can be set to values other than in oc-vlan-types:vlan-mode-type";
+    deviate replace {
+      type string;
+    }
+    deviate add {
+      must "../interface-mode = 'ACCESS' or ../interface-mode = 'TRUNK' or ../interface-mode = 'DOT1Q-TUNNEL'";
+    }
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-vlan:switched-vlan/oc-vlan:config/oc-vlan:interface-mode" {
+    description
+      "switchport mode in EOS can be set to values other than in oc-vlan-types:vlan-mode-type";
+    deviate replace {
+      type string;
+    }
+    deviate add {
+      must "../interface-mode = 'ACCESS' or ../interface-mode = 'TRUNK' or ../interface-mode = 'DOT1Q-TUNNEL'";
+    }
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:config/oc-eth:auto-negotiate" {
+    description
+      "In EOS different interface may have different default value";
+    deviate delete {
+      default "true";
+    }
+  }
+  deviation "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:config/oc-eth:enable-flow-control" {
+    description
+      "In EOS different interface may have different default value";
+    deviate delete {
+      default "false";
+    }
   }
 }

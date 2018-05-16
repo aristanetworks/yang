@@ -19,6 +19,10 @@ module arista-exp-eos-igmpsnooping {
     "Models for the IGMP Snooping subsystem of Arista EOS
         
      Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+  revision 2017-10-23 {
+    description
+      "Initial revision";
+  }
 
   augment "/eos-exp:arista/eos-exp:eos" {
     container bridging {
