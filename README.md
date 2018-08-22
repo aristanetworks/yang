@@ -11,6 +11,9 @@ streaming telemetry over
 encoded as JSON in Google Protocol Buffers by gRPC, XML by NETCONF,
 and JSON by RESTCONF.
 
+The top-level directories distinguish the EOS release. Inside each are
+`release` and `experimental` directories.
+
 The `release/` directory contains the fully supported Arista
 YANG models. Fully supported means that the models are fully
 reviewed, commented, and tested, and will continue to be supported
