@@ -1,0 +1,164 @@
+module arista-of-actions {
+  namespace "http://arista.com/yang/experimental/openflow-actions";
+  prefix ar-of-actions;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import arista-of-types {
+    prefix of-types;
+  }
+
+  description
+    "This module defines actions for OpenFlow";
+  organization
+    "Arista Networks";
+
+  grouping set-eth-fields {
+    leaf eth-src {
+      description
+        "Set Ethernet source mac address";
+      type yang:mac-address;
+    }
+    leaf eth-dst {
+      description
+        "Set Ethernet destination mac address";
+      type yang:mac-address;
+    }
+  }
+
+  grouping set-ip-fields {
+    leaf ip-src {
+      description
+        "Set IPv4/IPv6 source address";
+      type inet:ip-address;
+    }
+    leaf ip-dst {
+      description
+        "Set IPv4/IPv6 destination address";
+      type inet:ip-address;
+    }
+    leaf ip-tos {
+      description
+        "Set IP Type of Service";
+      type of-types:ip-tos;
+    }
+  }
+
+  grouping set-l4-fields {
+    leaf l4-src {
+      description
+        "Set Layer4 TCP/UDP source port number";
+      type inet:port-number;
+    }
+    leaf l4-dst {
+      description
+        "Set Layer4 TCP/UDP destination port number";
+      type inet:port-number;
+    }
+  }
+
+  grouping set-vlan-fields {
+    leaf vlan-id {
+      description
+        "Set VLAN id";
+      type of-types:vlan-id;
+    }
+    leaf vlan-pri {
+      description
+        "Set VLAN priority";
+      type uint8;
+    }
+    leaf group-vlan-id {
+      description
+        "Set Group VLAN priority";
+      type uint8;
+    }
+  }
+
+  grouping output-fields {
+    leaf-list intf {
+      description
+        "Forward to a specified interfaces";
+      type oc-if:interface-id;
+    }
+    leaf in-intf {
+      description
+        "Forward to packet's ingress interfaces";
+      type boolean;
+    }
+    leaf normal {
+      description
+        "Forward normally (in monitor bind mode)";
+      type boolean;
+    }
+    leaf flood {
+      description
+        "Forward to non-blocked interfaces except ingress";
+      type boolean;
+    }
+    leaf all {
+      description
+        "Forward to all interfaces except ingress";
+      type boolean;
+    }
+    leaf-list next-hop {
+      description
+        "List of next hop addresses to forward";
+      type inet:ip-address-no-zone;
+    }
+    leaf controller {
+      description
+        "Forward to controller";
+      type boolean;
+    }
+    leaf local {
+      description
+        "Forward to switch CPU interface";
+      type boolean;
+    }
+    leaf queue {
+      description
+        "Forward via a specific queue";
+      type uint32;
+    }
+  }
+
+  grouping actions {
+    container set {
+      uses set-eth-fields;
+      uses set-ip-fields;
+      uses set-l4-fields;
+      uses set-vlan-fields;
+      leaf group {
+        description
+          "Set group";
+        type uint32;
+      }
+    }
+    container output {
+      uses output-fields;
+    }
+    leaf dec-nw-ttl {
+      description
+        "Decrement network TTL";
+      type boolean;
+    }
+    leaf-list ingr-mirror-intf {
+      description
+        "Copy ingress packet to mirror destination interfaces";
+      type oc-if:interface-id;
+    }
+    leaf-list egr-mirror-intf {
+      description
+        "Copy egress packet to mirror destination interfaces";
+      type oc-if:interface-id;
+    }
+  }
+}

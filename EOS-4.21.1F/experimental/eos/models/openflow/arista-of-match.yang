@@ -1,0 +1,266 @@
+module arista-of-match {
+  namespace "http://arista.com/yang/experimental/openflow-match";
+  prefix ar-of-match;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import arista-of-types {
+    prefix of-types;
+  }
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+
+  description
+    "This module defines match fields of OpenFlow";
+  organization
+    "Arista Networks";
+
+  grouping mac-address {
+    leaf address {
+      type yang:mac-address;
+    }
+    leaf mask {
+      type yang:mac-address;
+    }
+  }
+
+  grouping eth-type {
+    leaf type {
+      type of-types:ether-type;
+    }
+    leaf mask {
+      type of-types:ether-type;
+    }
+  }
+
+  grouping eth-match-fields {
+    container eth-src {
+      description
+        "Ethernet source mac address";
+      uses mac-address;
+    }
+    container eth-dst {
+      description
+        "Ethernet destination mac address";
+      uses mac-address;
+    }
+    container eth-type {
+      description
+        "Ethernet frame type";
+      uses eth-type;
+    }
+  }
+
+  grouping ipv4-match-fields {
+    leaf ipv4-src {
+      description
+        "IPv4 source address";
+      type inet:ipv4-prefix;
+    }
+    leaf ipv4-dst {
+      description
+        "IPv4 destination address";
+      type inet:ipv4-prefix;
+    }
+  }
+
+  grouping ipv6-match-fields {
+    leaf ipv6-src {
+      description
+        "IPv6 source address";
+      type inet:ipv6-prefix;
+    }
+    leaf ipv6-dst {
+      description
+        "IPv4 destination address";
+      type inet:ipv6-prefix;
+    }
+  }
+
+  grouping ip-match-fields {
+    uses ipv4-match-fields;
+    uses ipv6-match-fields;
+    leaf ip-tos {
+      description
+        "IP Type of Service";
+      type of-types:ip-tos;
+    }
+    leaf ip-proto {
+      description
+        "IP Protocol";
+      type uint8;
+    }
+  }
+
+  grouping vlan-match-fields {
+    container vlan-id {
+      description
+        "VLAN id";
+      leaf id {
+        type of-types:vlan-id;
+      }
+      leaf mask {
+        type of-types:vlan-id;
+      }
+    }
+    leaf vlan-pri {
+      description
+        "VLAN priority";
+      type uint8;
+    }
+  }
+
+  grouping tcp-match-fields {
+    leaf tcp-ack {
+      description
+        "TCP ACK flag";
+      type boolean;
+    }
+    leaf tcp-fin {
+      description
+        "TCP FIN flag";
+      type boolean;
+    }
+    leaf tcp-psh {
+      description
+        "TCP PSH flag";
+      type boolean;
+    }
+    leaf tcp-rst {
+      description
+        "TCP RST flag";
+      type boolean;
+    }
+    leaf tcp-syn {
+      description
+        "TCP SYN flag";
+      type boolean;
+    }
+    leaf tcp-urg {
+      description
+        "TCP URG flag";
+      type boolean;
+    }
+  }
+
+  grouping l4-match-fields {
+    leaf l4-src {
+      description
+        "Layer4 TCP/UDP source port number or ICMP code";
+      type inet:port-number;
+    }
+    leaf l4-dst {
+      description
+        "Layer4 TCP/UDP destination port number or ICMP code";
+      type inet:port-number;
+    }
+  }
+
+  grouping mpls-match-fields {
+    leaf mpls-label {
+      description
+        "MPLS Label";
+      type uint32;
+    }
+    leaf mpls-bos {
+      description
+        "MPLS Bottom of Stack flag";
+      type boolean;
+    }
+    leaf mpls-tc {
+      description
+        "MPLS TC";
+      type uint8;
+    }
+  }
+
+  grouping pattern {
+    leaf value {
+      type of-types:netu32;
+    }
+    leaf mask {
+      type of-types:netu32;
+    }
+  }
+
+  grouping payload-match-fields {
+    container payload {
+      container bytes-0-3 {
+        description
+          "Match payload after L4 from byte-0 to byte-3";
+        uses pattern;
+      }
+      container bytes-4-7 {
+        description
+          "Match payload after L4 from byte-4 to byte-7";
+        uses pattern;
+      }
+    }
+  }
+
+  grouping vxlan-match-fields {
+    container header {
+      description
+        "Match VXLAN Header";
+      container flags {
+        uses pattern;
+      }
+      container vni {
+        uses pattern;
+      }
+      container reserved1 {
+        uses pattern;
+      }
+      container reserved2 {
+        uses pattern;
+      }
+    }
+    container inner-packet {
+      description
+        "Match VXLAN Inner Packet";
+      leaf ip-proto {
+        description
+          "IP Protocol";
+        type uint8;
+      }
+      uses ipv4-match-fields;
+      uses l4-match-fields;
+      uses payload-match-fields;
+    }
+  }
+
+  grouping match {
+    container ttl {
+      description
+        "Packet TTL";
+      leaf value {
+        type uint8;
+      }
+      leaf mask {
+        type uint8;
+      }
+    }
+    leaf-list in-intf {
+      description
+        "List of ingress interfaces";
+      type oc-if:interface-id;
+    }
+    uses mpls-match-fields;
+    uses tcp-match-fields;
+    uses l4-match-fields;
+    uses vlan-match-fields;
+    uses ip-match-fields;
+    uses eth-match-fields;
+    uses payload-match-fields;
+    container vxlan {
+      description
+        "Match VXLAN Packet";
+      uses vxlan-match-fields;
+    }
+  }
+}
