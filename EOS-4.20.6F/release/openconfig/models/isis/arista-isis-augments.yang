@@ -1,0 +1,30 @@
+module arista-isis-augments {
+  namespace "http://arista.com/yang/openconfig/isis/augments";
+  prefix arista-isis-deviations;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-isis {
+    prefix oc-isis;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig ISIS augments in Arista EOS.
+     
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+
+  revision 2018-01-12 {
+    description
+      "Initial augment file.";
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:afi-safi/oc-netinst:af/oc-netinst:multi-topology/oc-netinst:config" {
+    uses oc-isis:rt-admin-config;
+  }
+}

@@ -1,0 +1,77 @@
+module arista-of {
+  yang-version 1;
+  namespace "http://arista.com/yang/experimental/of";
+  prefix ar-of;
+
+  import arista-of-match {
+    prefix of-match;
+  }
+  import arista-of-actions {
+    prefix of-actions;
+  }
+  import arista-eos-types {
+    prefix eos-types;
+  }
+  import arista-exp-eos {
+    prefix eos-exp;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  description
+    "This module defines configuration and state variables for OpenFlow";
+
+  revision 2016-07-26 {
+    description
+      "Intitial revision";
+  }
+
+  grouping flow {
+    container config {
+      leaf idle-timeout {
+        description
+          "Expire if nothing matches flow for idle-timeout seconds";
+        type eos-types:float;
+      }
+      leaf hard-timeout {
+        description
+          "Expire hard-timeout seconds after flow was created";
+        type eos-types:float;
+      }
+      leaf cookie {
+        description
+          "Opaque user-set metadata, does not affect match behavior";
+        type uint64;
+      }
+      leaf priority {
+        description
+          "Higher priority entries match before lower";
+        type uint32;
+      }
+    }
+    container match {
+      uses of-match:match;
+    }
+    container actions {
+      uses of-actions:actions;
+    }
+  }
+
+  augment "/eos-exp:arista/eos-exp:eos" {
+    container openflow {
+      description
+        "Container for OpenFlow flow configurations and state variables";
+      list flow-table {
+        key "name";
+        description
+          "Configured flow rules keyed by name";
+        leaf name {
+          description
+            "Flow name";
+          type string;
+        }
+        uses flow;
+      }
+    }
+  }
+}
