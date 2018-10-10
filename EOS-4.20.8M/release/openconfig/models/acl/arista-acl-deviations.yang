@@ -1,0 +1,210 @@
+module arista-acl-deviations {
+  namespace "http://arista.com/yang/openconfig/acl/deviations";
+
+  prefix arista-acl-deviations;
+
+  import openconfig-inet-types { prefix oc-inet; }
+  import openconfig-acl { prefix oc-acl; }
+
+  organization
+    "Arista Networks, Inc.";
+
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+
+  description
+    "This module contains OpenConfig ACL deviations in Arista EOS.
+
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+
+  revision 2017-11-01 {
+    description
+      "Initial deviations file";
+    reference "1.0.0";
+  }
+
+  typedef ipv4-address-mask {
+    type string {
+      pattern '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'  +
+              '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'         +
+              '/'                                                          +
+              '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'  +
+              '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])';
+    }
+    description
+      "An IPv4 address represented in dotted quad notation followed by
+      a slash and a mask represented in dotted quad notation.";
+  }
+
+  typedef ipv4-prefix-or-mask {
+    type union {
+      type oc-inet:ipv4-prefix;
+      type ipv4-address-mask;
+    }
+    description
+      "An IPv4 address represented as a prefix and mask length, or
+      an address and 32-bit mask.";
+  }
+
+  typedef ipv6-address-mask {
+    type string {
+      pattern
+        '(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'          +
+        '([0-9a-fA-F]{1,4}:){1,7}:|'                        +
+        '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}'         +
+        '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|' +
+        '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|' +
+        '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|' +
+        '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|' +
+        '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'      +
+        ':((:[0-9a-fA-F]{1,4}){1,7}|:))'                    +
+        '/'                                                 +
+        '(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'          +
+        '([0-9a-fA-F]{1,4}:){1,7}:|'                        +
+        '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}'         +
+        '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|' +
+        '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|' +
+        '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|' +
+        '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|' +
+        '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'      +
+        ':((:[0-9a-fA-F]{1,4}){1,7}|:))';
+    }
+    description
+      "An IPv6 address represented in full, shortened, or mixed
+      shortened format followed by a slash and mask represented in full,
+      shortened, or mixed shortened format.";
+  }
+
+  typedef ipv6-prefix-or-mask {
+    type union {
+      type oc-inet:ipv6-prefix;
+      type ipv6-address-mask;
+    }
+    description
+      "An IPv6 address represented as a prefix and mask length, or
+      an address and 128-bit mask.";
+  }
+
+  deviation "/oc-acl:acl/oc-acl:acl-sets/oc-acl:acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:ipv4/oc-acl:config/oc-acl:source-address" {
+    description
+      "Source IPv4 address and mask represented as a prefix and mask length, or
+        an address and 32-bit mask.";
+    deviate replace {
+      type string {
+        pattern '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'  +
+                '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'         +
+                '/'                                                          +
+                '((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}' +
+                '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))'        +
+                '|(([0-9])|([1-2][0-9])|(3[0-2]))';
+      }
+    }
+  }
+
+  deviation "/oc-acl:acl/oc-acl:acl-sets/oc-acl:acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:ipv4/oc-acl:config/oc-acl:destination-address" {
+    description
+      "Destination IPv4 address and mask represented as a prefix and mask length, or
+        an address and 32-bit mask.";
+    deviate replace {
+      type string {
+        pattern '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'  +
+                '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'         +
+                '/'                                                          +
+                '((([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}' +
+                '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))'        +
+                '|(([0-9])|([1-2][0-9])|(3[0-2]))';
+      }
+    }
+  }
+
+  deviation "/oc-acl:acl/oc-acl:acl-sets/oc-acl:acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:ipv6/oc-acl:config/oc-acl:source-address" {
+    description
+      "Source IPv6 address represented as a prefix and mask length, or
+      an address and 128-bit mask.";
+    deviate replace {
+      type string {
+        pattern '(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'          +
+                '([0-9a-fA-F]{1,4}:){1,7}:|'                        +
+                '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}'         +
+                '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|' +
+                '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|' +
+                '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|' +
+                '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|' +
+                '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'      +
+                ':((:[0-9a-fA-F]{1,4}){1,7}|:))'                    +
+                '/'                                                 +
+                '(12[0-8]|1[0-1][0-9]|[1-9][0-9]|[0-9])|'           +
+                '(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'          +
+                '([0-9a-fA-F]{1,4}:){1,7}:|'                        +
+                '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}'         +
+                '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|' +
+                '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|' +
+                '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|' +
+                '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|' +
+                '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'      +
+                ':((:[0-9a-fA-F]{1,4}){1,7}|:))';
+        }
+      }
+    }
+
+  deviation "/oc-acl:acl/oc-acl:acl-sets/oc-acl:acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:ipv6/oc-acl:config/oc-acl:destination-address" {
+    description
+      "Destination IPv6 address represented as a prefix and mask length, or
+      an address and 128-bit mask.";
+    deviate replace {
+      type string {
+        pattern '(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'          +
+                '([0-9a-fA-F]{1,4}:){1,7}:|'                        +
+                '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}'         +
+                '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|' +
+                '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|' +
+                '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|' +
+                '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|' +
+                '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'      +
+                ':((:[0-9a-fA-F]{1,4}){1,7}|:))'                    +
+                '/'                                                 +
+                '(12[0-8]|1[0-1][0-9]|[1-9][0-9]|[0-9])|'           +
+                '(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'          +
+                '([0-9a-fA-F]{1,4}:){1,7}:|'                        +
+                '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}'         +
+                '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|' +
+                '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|' +
+                '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|' +
+                '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|' +
+                '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'      +
+                ':((:[0-9a-fA-F]{1,4}){1,7}|:))';
+      }
+    }
+  }
+
+  deviation "/oc-acl:acl/oc-acl:acl-sets/oc-acl:acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:state/oc-acl:matched-octets" {
+    description
+      "Byte counter is not supported";
+    deviate not-supported;
+  }
+
+  deviation "/oc-acl:acl/oc-acl:interfaces/oc-acl:interface/oc-acl:ingress-acl-sets/oc-acl:ingress-acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:state/oc-acl:matched-packets" {
+    description
+      "Per-interface ACL counters are not supported";
+    deviate not-supported;
+  }
+
+  deviation "/oc-acl:acl/oc-acl:interfaces/oc-acl:interface/oc-acl:ingress-acl-sets/oc-acl:ingress-acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:state/oc-acl:matched-octets" {
+    description
+      "Per-interface ACL counters are not supported";
+    deviate not-supported;
+  }
+
+  deviation "/oc-acl:acl/oc-acl:interfaces/oc-acl:interface/oc-acl:egress-acl-sets/oc-acl:egress-acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:state/oc-acl:matched-packets" {
+    description
+      "Per-interface ACL counters are not supported";
+    deviate not-supported;
+  }
+
+  deviation "/oc-acl:acl/oc-acl:interfaces/oc-acl:interface/oc-acl:egress-acl-sets/oc-acl:egress-acl-set/oc-acl:acl-entries/oc-acl:acl-entry/oc-acl:state/oc-acl:matched-octets" {
+    description
+      "Per-interface ACL counters are not supported";
+    deviate not-supported;
+  }
+}
