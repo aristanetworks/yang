@@ -1,0 +1,220 @@
+module arista-relay-agent-deviations {
+  namespace "http://arista.com/yang/openconfig/relay-agent/deviations";
+  prefix arista-relay-agent-deviations;
+
+  import openconfig-relay-agent {
+    prefix oc-relay;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  description
+    "This module contains OpenConfig relay-agent deviations in Arista EOS.
+
+     Copyright (c) 2016 Arista Networks, Inc. All rights reserved.";
+
+  revision 2016-11-21 {
+    description
+      "Initial deviations file.";
+  }
+
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:config/oc-relay:enable-relay-agent" {
+    description
+      "DHCP relay cannot be configured at the global level. The feature is simply controlled by
+       configuring or removing helper addresses.";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:config/oc-relay:enable" {
+    description
+      "DHCP relay cannot be configured at the interface level. The feature is simply controlled by
+       configuring or removing helper addresses.";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:config/oc-relay:enable-relay-agent" {
+    description
+      "DHCPv6 relay cannot be configured at the global level. The feature is simply controlled by
+       configuring or removing helper addresses.";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:options/oc-relay:config/oc-relay:enable-interface-id" {
+    description
+      "Configuring the interface-id for DHCPv6 relay is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:options/oc-relay:config/oc-relay:enable-remote-id" {
+    description
+      "Configuring the remote-id for DHCPv6 relay is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:config/oc-relay:enable" {
+    description
+      "DHCPv6 relay cannot be configured at the interface level. The feature is simply controlled by
+       configuring or removing helper addresses.";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:enable-interface-id" {
+    description
+      "Configuring the interface-id for DHCPv6 relay is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:interface-id" {
+    description
+      "Configuring the interface-id for DHCPv6 relay is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:enable-remote-id" {
+    description
+      "Configuring the remote-id for DHCPv6 relay is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:options/oc-relay:config/oc-relay:remote-id" {
+    description
+      "Configuring the remote-id for DHCPv6 relay is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:total-dropped" {
+    description
+      "Total number of DHCP packets dropped by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:invalid-opcode" {
+    description
+      "Number of DHCP packets dropped due to an invalid opcode is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:invalid-options" {
+    description
+      "Number of DHCP packets dropped due to an invalid options is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:bootrequest-received" {
+    description
+      "BOOTREQUEST messages received by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-decline-received" {
+    description
+      "DHCP DECLINE messages received by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-discover-received" {
+    description
+      "DHCP DISCOVER messages received by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-inform-received" {
+    description
+      "DHCP INFORM messages received by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-release-received" {
+    description
+      "DHCP RELEASE messages received by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-request-received" {
+    description
+      "DHCP REQUEST messages received by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:bootrequest-sent" {
+    description
+      "BOOTREQUEST messages forwarded by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:bootreply-sent" {
+    description
+      "BOOTREPLY messages forwarded by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-offer-sent" {
+    description
+      "DHCP OFFER messages sent by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-ack-sent" {
+    description
+      "DHCP ACK messages sent by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcp/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcp-nack-sent" {
+    description
+      "DHCP NACK messages sent by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:total-dropped" {
+    description
+      "Total number of DHCP packets dropped by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:invalid-opcode" {
+    description
+      "Number of DHCP packets dropped due to an invalid opcode is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:invalid-options" {
+    description
+      "Number of DHCP packets dropped due to an invalid options is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-solicit-received" {
+    description
+      "Number of DHCPv6 SOLICIT messages received from clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-decline-received" {
+    description
+      "Number of DHCPv6 DECLINE messages received from clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-request-received" {
+    description
+      "Number of DHCPv6 request messages received from clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-release-received" {
+    description
+      "Number of DHCP release messages received from clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-confirm-received" {
+    description
+      "Number of DHCPv6 confirm messages received from clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-rebind-received" {
+    description
+      "Number of DHCPv6 rebind messages received from clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-info-request-received" {
+    description
+      "Number of DHCPv6 information requests messages received from clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-relay-reply-received" {
+    description
+      "Number of DHCPv6 relay reply messages received from servers by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-adverstise-sent" {
+    description
+      "Number of DHCPv6 adverstise messages sent to clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-reply-sent" {
+    description
+      "Number of DHCPv6 reply messages sent to clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-reconfigure-sent" {
+    description
+      "Number of DHCPv6 reconfigure messages sent to clients by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+  deviation "/oc-relay:relay-agent/oc-relay:dhcpv6/oc-relay:interfaces/oc-relay:interface/oc-relay:state/oc-relay:counters/oc-relay:dhcpv6-relay-forw-sent" {
+    description
+      "Number of DHCPv6 relay-forward messages sent to servers by the relay agent is not supported in EOS";
+    deviate not-supported;
+  }
+}
