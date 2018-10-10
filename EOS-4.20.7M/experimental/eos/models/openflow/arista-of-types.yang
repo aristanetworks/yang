@@ -1,0 +1,43 @@
+module arista-of-types {
+  namespace "http://arista.com/yang/experimental/openflow-types";
+  prefix ar-of-types;
+
+  description
+    "This module defines types used in OpenFlow";
+  organization
+    "Arista Networks";
+
+  typedef ether-type {
+    description
+      "Ethernet frame type";
+    type uint16;
+  }
+
+  typedef qos-traffic-class {
+    description
+      "QoS Traffic class";
+    type uint8 {
+      range "0..15";
+    }
+  }
+
+  typedef ip-tos {
+    description
+      "IP Type of Service";
+    type uint8;
+  }
+
+  typedef vlan-id {
+    type uint16 {
+      range "0..4095";
+    }
+    description
+      "VLAN ID";
+  }
+
+  typedef netu32 {
+    type uint32;
+    description
+      "Unsigned 32bit integer in network byte order";
+  }
+}

@@ -1,0 +1,83 @@
+module arista-lldp-deviations {
+  namespace "http://arista.com/yang/openconfig/lldp/deviations";
+  prefix arista-lldp-deviations;
+
+  import openconfig-lldp {
+    prefix oc-lldp;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig lldp deviations in Arista EOS.
+     
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+
+  revision 2017-09-07 {
+    description
+      "Initial deviations file.";
+  }
+
+  deviation "/oc-lldp:lldp/oc-lldp:config/oc-lldp:system-name" {
+    description
+      "system-name is reported but not configurable in EOS";
+    deviate add {
+      config false;
+    }
+  }
+  deviation "/oc-lldp:lldp/oc-lldp:config/oc-lldp:system-description" {
+    description
+      "system-description is reported but not configurable in EOS";
+    deviate add {
+      config false;
+    }
+  }
+  deviation "/oc-lldp:lldp/oc-lldp:config/oc-lldp:chassis-id" {
+    description
+      "chassis-id is reported but not configurable in EOS";
+    deviate add {
+      config false;
+    }
+  }
+  deviation "/oc-lldp:lldp/oc-lldp:config/oc-lldp:chassis-id-type" {
+    description
+      "chassis-id-type is reported but not configurable in EOS";
+    deviate add {
+      config false;
+    }
+  }
+  deviation "/oc-lldp:lldp/oc-lldp:interfaces/oc-lldp:interface/oc-lldp:config/oc-lldp:name" {
+    description
+      "name is reported but not configurable in EOS";
+    deviate add {
+      config false;
+    }
+  }
+  deviation "/oc-lldp:lldp/oc-lldp:interfaces/oc-lldp:interface/oc-lldp:neighbors/oc-lldp:neighbor/oc-lldp:state/oc-lldp:last-update" {
+    description
+      "last-update is not supported. Please see last-update-time instead";
+    deviate not-supported;
+  }
+  deviation "/oc-lldp:lldp/oc-lldp:interfaces/oc-lldp:interface/oc-lldp:neighbors/oc-lldp:neighbor/oc-lldp:state/oc-lldp:age" {
+    description
+      "age is not supported. Please see registration-time instead";
+    deviate not-supported;
+  }
+  augment "/oc-lldp:lldp/oc-lldp:interfaces/oc-lldp:interface/oc-lldp:neighbors/oc-lldp:neighbor/oc-lldp:state" {
+    leaf last-update-time {
+      description
+        "UNIX timestamp of the last update (number of seconds since the Epoch)";
+      type uint64;
+      units "seconds";
+    }
+    leaf registration-time {
+      description
+        "UNIX timestamp of the neighbor registration event (number of seconds since the Epoch)";
+      type uint64;
+      units "seconds";
+    }
+  }
+}
