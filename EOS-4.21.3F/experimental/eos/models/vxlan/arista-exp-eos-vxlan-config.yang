@@ -1,0 +1,416 @@
+module arista-exp-eos-vxlan-config {
+  yang-version 1;
+  namespace "http://arista.com/yang/experimental/eos/vxlan/config";
+  prefix vxlan-config-exp;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import arista-eos-types {
+    prefix eos-types;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains VXLAN configuration models in Arista EOS.
+
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+
+  revision 2018-08-01 {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  typedef allow-learn-mode {
+    type enumeration {
+      enum LEARN_FROM_DEFAULT {
+        description
+          "Type: Vxlan::AllowLearnMode, Name: learnFromDefault, Value: 0";
+      }
+      enum LEARN_FROM_ANY {
+        description
+          "Type: Vxlan::AllowLearnMode, Name: learnFromAny, Value: 1";
+      }
+      enum LEARN_FROM_FLOOD_LIST {
+        description
+          "Type: Vxlan::AllowLearnMode, Name: learnFromFloodList, Value: 2";
+      }
+      enum LEARN_FROM_LIST {
+        description
+          "Type: Vxlan::AllowLearnMode, Name: learnFromList, Value: 3";
+      }
+    }
+    description
+      "Type: Vxlan::AllowLearnMode";
+  }
+
+  grouping learn-from-mode-list {
+    description
+      "MAC learning configuration model";
+    leaf learn-from {
+      type allow-learn-mode;
+      description
+        "Path: <Vxlan::VxlanConfig>/learnFrom, Type: enum Vxlan::AllowLearnMode";
+    }
+    list learn-prefix-list {
+      when "../learn-from = 'LEARN_FROM_LIST'";
+      key "prefix";
+      description
+        "Path: <Vxlan::VxlanConfig>/learnPrefixList, Type: [value Vxlan::VtepPrefix]bool";
+      leaf prefix {
+        type inet:ip-prefix;
+        description
+          "Path: <Vxlan::VxlanConfig>/learnPrefixList/<!External index>, Type: value Vxlan::VtepPrefix";
+      }
+    }
+  }
+
+  grouping learn-restrict {
+    description
+      "Type: Vxlan::LearnRestrict";
+    leaf vlan-id {
+      type uint16;
+      description
+        "Path: <Vxlan::LearnRestrict>/vlanId, Type: value Bridging::VlanId";
+    }
+    uses learn-from-mode-list;
+  }
+
+  grouping vtep-list {
+    description
+      "Type: Vxlan::VtepList";
+    list remote-vtep-addr {
+      key "vtep-ip";
+      description
+        "Path: <Vxlan::VtepList>/remoteVtepAddr, Type: [value Arnet::IpAddr]bool";
+      leaf vtep-ip {
+        type inet:ipv4-address;
+        description
+          "Path: <Vxlan::VtepList>/remoteVtepAddr/<!External index>, Type: value Arnet::IpAddr";
+      }
+    }
+    leaf vlan-id {
+      type uint16;
+      description
+        "Path: <Vxlan::VtepList>/vlanId, Type: value Bridging::VlanId";
+    }
+  }
+
+  grouping vxlan-config {
+    description
+      "Type: Vxlan::VxlanConfig";
+    list flood-vtep-list {
+      key "vtep-ip";
+      description
+        "Path: <Vxlan::VxlanConfig>/floodVtepList, Type: [value Arnet::IpAddr]bool";
+      leaf vtep-ip {
+        type inet:ipv4-address;
+        description
+          "Path: <Vxlan::VxlanConfig>/floodVtepList/<!External index>, Type: value Arnet::IpAddr";
+      }
+    }
+    uses learn-from-mode-list;
+    list vlan-to-learn-restrict {
+      key "vlan-id";
+      description
+        "Path: <Vxlan::VxlanConfig>/vlanToLearnRestrict, Type: ['vlanId' value Bridging::VlanId]entity Vxlan::LearnRestrict";
+      uses learn-restrict;
+    }
+    list vlan-to-vtep-list {
+      key "vlan-id";
+      description
+        "Path: <Vxlan::VxlanConfig>/vlanToVtepList, Type: ['vlanId' value Bridging::VlanId]entity Vxlan::VtepList";
+      uses vtep-list;
+    }
+    list vni-ip-access-group {
+      key "vni";
+      description
+        "Path: <Vxlan::VxlanConfig>/vniIpAccessGroup, Type: [value Vxlan::Vni]Tac::String";
+      leaf vni {
+        type uint32;
+        description
+          "Path: <Vxlan::VxlanConfig>/vniIpAccessGroup/<!External index>, Type: value Vxlan::Vni";
+      }
+      leaf value {
+        type string;
+        description
+          "Path: <Vxlan::VxlanConfig>/vniIpAccessGroup/<index>, Type: Tac::String";
+      }
+    }
+  }
+
+  typedef intf-enabled-state {
+    type enumeration {
+      enum ENABLED {
+        description
+          "Type: Interface::IntfEnabledState, Name: enabled, Value: 1";
+      }
+      enum SHUTDOWN {
+        description
+          "Type: Interface::IntfEnabledState, Name: shutdown, Value: 2";
+      }
+      enum UNKNOWN_ENABLED_STATE {
+        description
+          "Type: Interface::IntfEnabledState, Name: unknownEnabledState, Value: 0";
+      }
+    }
+    description
+      "Type: Interface::IntfEnabledState";
+  }
+
+  typedef intf-logging-mode {
+    type enumeration {
+      enum OFF {
+        description
+          "Type: Interface::IntfLoggingMode, Name: off, Value: 1";
+      }
+      enum ON {
+        description
+          "Type: Interface::IntfLoggingMode, Name: on, Value: 0";
+      }
+      enum USE_GLOBAL {
+        description
+          "Type: Interface::IntfLoggingMode, Name: useGlobal, Value: 2";
+      }
+    }
+    description
+      "Type: Interface::IntfLoggingMode";
+  }
+
+  grouping load-interval {
+    description
+      "Type: Interface::LoadInterval";
+    leaf use-default {
+      type boolean;
+      description
+        "Path: <Interface::LoadInterval>/useDefault, Type: bool";
+    }
+    leaf val {
+      type eos-types:double;
+      description
+        "Path: <Interface::LoadInterval>/val, Type: double";
+    }
+  }
+
+  typedef mlag-shared-router-mac-config-mode {
+    type enumeration {
+      enum AUTO_GENERATED {
+        description
+          "Type: Vxlan::MlagSharedRouterMacConfigMode, Name: autoGenerated, Value: 1";
+      }
+      enum DISABLED {
+        description
+          "Type: Vxlan::MlagSharedRouterMacConfigMode, Name: disabled, Value: 0";
+      }
+      enum EXPLICIT_CONFIG {
+        description
+          "Type: Vxlan::MlagSharedRouterMacConfigMode, Name: explicitConfig, Value: 2";
+      }
+    }
+    description
+      "Type: Vxlan::MlagSharedRouterMacConfigMode";
+  }
+
+  grouping vti-config {
+    description
+      "Type: Vxlan::VtiConfig";
+    leaf addr {
+      type yang:mac-address;
+      description
+        "Path: <Vxlan::VtiConfig>/addr, Type: value Arnet::EthAddr";
+    }
+    leaf admin-enabled-state-local {
+      type intf-enabled-state;
+      description
+        "Path: <Vxlan::VtiConfig>/adminEnabledStateLocal, Type: enum Interface::IntfEnabledState";
+    }
+    leaf arp-local-address {
+      type boolean;
+      description
+        "Path: <Vxlan::VtiConfig>/arpLocalAddress, Type: bool";
+    }
+    leaf arp-publish-remote-mac {
+      type boolean;
+      description
+        "Path: <Vxlan::VtiConfig>/arpPublishRemoteMac, Type: bool";
+    }
+    leaf arp-reply-relay {
+      type boolean;
+      description
+        "Path: <Vxlan::VtiConfig>/arpReplyRelay, Type: bool";
+    }
+    leaf controller-client-mode {
+      type boolean;
+      description
+        "Path: <Vxlan::VtiConfig>/controllerClientMode, Type: bool";
+    }
+    leaf description {
+      type string;
+      description
+        "Path: <Vxlan::VtiConfig>/description, Type: Tac::String";
+    }
+    leaf enabled-state-local {
+      type intf-enabled-state;
+      description
+        "Path: <Vxlan::VtiConfig>/enabledStateLocal, Type: enum Interface::IntfEnabledState";
+    }
+    leaf enabled-state-reason {
+      type string;
+      description
+        "Path: <Vxlan::VtiConfig>/enabledStateReason, Type: Tac::String";
+    }
+    leaf flood-mcast-grp {
+      type inet:ipv4-address;
+      description
+        "Path: <Vxlan::VtiConfig>/floodMcastGrp, Type: value Arnet::IpAddr";
+    }
+    leaf l2-mtu {
+      type uint32;
+      description
+        "Path: <Vxlan::VtiConfig>/l2Mtu, Type: U32";
+    }
+    leaf link-down-debounce-period {
+      type uint32;
+      description
+        "Path: <Vxlan::VtiConfig>/linkDownDebouncePeriod, Type: U32";
+    }
+    leaf link-status-logging {
+      type intf-logging-mode;
+      description
+        "Path: <Vxlan::VtiConfig>/linkStatusLogging, Type: enum Interface::IntfLoggingMode";
+    }
+    leaf link-up-debounce-period {
+      type uint32;
+      description
+        "Path: <Vxlan::VtiConfig>/linkUpDebouncePeriod, Type: U32";
+    }
+    container load-interval {
+      description
+        "Path: <Vxlan::VtiConfig>/loadInterval, Type: value Interface::LoadInterval";
+      uses load-interval;
+    }
+    list mcast-grp-decap {
+      key "mcast-grp";
+      description
+        "Path: <Vxlan::VtiConfig>/mcastGrpDecap, Type: [value Arnet::IpAddr]bool";
+      leaf mcast-grp {
+        type inet:ipv4-address;
+        description
+          "Path: <Vxlan::VtiConfig>/mcastGrpDecap/<!External index>, Type: value Arnet::IpAddr";
+      }
+    }
+    leaf mlag-shared-router-mac-addr {
+      type yang:mac-address;
+      description
+        "Path: <Vxlan::VtiConfig>/mlagSharedRouterMacAddr, Type: value Arnet::EthAddr";
+    }
+    leaf mlag-shared-router-mac-config {
+      type mlag-shared-router-mac-config-mode;
+      description
+        "Path: <Vxlan::VtiConfig>/mlagSharedRouterMacConfig, Type: enum Vxlan::MlagSharedRouterMacConfigMode";
+    }
+    leaf mtu {
+      type uint32;
+      description
+        "Path: <Vxlan::VtiConfig>/mtu, Type: U32";
+    }
+    list requestor {
+      key "requestor";
+      description
+        "Path: <Vxlan::VtiConfig>/requestor, Type: [Tac::String]bool";
+      leaf requestor {
+        type string;
+        description
+          "Path: <Vxlan::VtiConfig>/requestor/<!External index>, Type: Tac::String";
+      }
+    }
+    leaf src-ip-intf {
+      type eos-types:Arnet-IntfId;
+      description
+        "Path: <Vxlan::VtiConfig>/srcIpIntf, Type: value Arnet::IntfId";
+    }
+    leaf ttl {
+      type uint8;
+      description
+        "Path: <Vxlan::VtiConfig>/ttl, Type: U8";
+    }
+    leaf udp-port {
+      type uint16;
+      description
+        "Path: <Vxlan::VtiConfig>/udpPort, Type: U16";
+    }
+    leaf vcc-data-path-learning {
+      type boolean;
+      description
+        "Path: <Vxlan::VtiConfig>/vccDataPathLearning, Type: bool";
+    }
+    list vlan-to-group {
+      key "vlan";
+      description
+        "Path: <Vxlan::VtiConfig>/vlanToGroup, Type: [value Bridging::VlanId]value Arnet::IpAddr";
+      leaf vlan {
+        type uint16;
+        description
+          "Path: <Vxlan::VtiConfig>/vlanToGroup/<!External index>, Type: value Bridging::VlanId";
+      }
+      leaf flood-mcast-grp {
+        type inet:ipv4-address;
+        description
+          "Path: <Vxlan::VtiConfig>/vlanToGroup/<index>, Type: value Arnet::IpAddr";
+      }
+    }
+    list vlan-to-vni-map {
+      key "vlan";
+      description
+        "Path: <Vxlan::VtiConfig>/vlanToVniMap, Type: [value Bridging::VlanId]value Vxlan::VniOrNone";
+      leaf vlan {
+        type uint16;
+        description
+          "Path: <Vxlan::VtiConfig>/vlanToVniMap/<!External index>, Type: value Bridging::VlanId";
+      }
+      leaf vni {
+        type uint32;
+        description
+          "Path: <Vxlan::VtiConfig>/vlanToVniMap/<index>, Type: value Vxlan::VniOrNone";
+      }
+    }
+    leaf vlan-vni-range-syntax {
+      type boolean;
+      description
+        "Path: <Vxlan::VtiConfig>/vlanVniRangeSyntax, Type: bool";
+    }
+    list vrf-to-vni-map {
+      key "vrf";
+      description
+        "Path: <Vxlan::VtiConfig>/vrfToVniMap, Type: [value L3::VrfName]value Vxlan::VniOrNone";
+      leaf vrf {
+        type string;
+        description
+          "Path: <Vxlan::VtiConfig>/vrfToVniMap/<!External index>, Type: value L3::VrfName";
+      }
+      leaf vni {
+        type uint32;
+        description
+          "Path: <Vxlan::VtiConfig>/vrfToVniMap/<index>, Type: value Vxlan::VniOrNone";
+      }
+    }
+    leaf vtep-addr-mask {
+      type inet:ipv4-address;
+      description
+        "Path: <Vxlan::VtiConfig>/vtepAddrMask, Type: value Arnet::IpAddr";
+    }
+    leaf mlag-src-ip-intf {
+      type eos-types:Arnet-IntfId;
+      description
+        "Path: <Vxlan::VtiConfig>/mlagSrcIpIntf, Type: value Arnet::IntfId";
+    }
+  }
+}

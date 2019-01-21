@@ -1,0 +1,242 @@
+module arista-intf-augments {
+  namespace "http://arista.com/yang/openconfig/interfaces/augments";
+  prefix arista-intf-augments;
+
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-ethernet {
+    prefix oc-eth;
+  }
+  import openconfig-if-aggregate {
+    prefix oc-lag;
+  }
+  import openconfig-vlan {
+    prefix oc-vlan;
+  }
+  import openconfig-vlan-types {
+    prefix oc-vlan-types;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  description
+    "This module contains OpenConfig interface augments in Arista EOS.
+
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+
+  revision 2017-10-01 {
+    description
+      "Initial augment file.";
+  }
+
+  typedef fallback-enum {
+    type enumeration {
+      enum none {
+        description
+          "Fallback not enabled on this interface";
+      }
+      enum static {
+        description
+          "Static fallback enabled on this interface";
+      }
+      enum individual {
+        description
+          "Individual fallback enabled on this interface";
+      }
+    }
+  }
+
+  typedef fallback-state-enum {
+    type enumeration {
+      enum fallbackStateUnconfigured {
+        description
+          "Fallback not enabled on this interface";
+      }
+      enum fallbackStateConfigured {
+        description
+          "Static fallback enabled on this interface";
+      }
+      enum fallbackStateInitialized {
+        description
+          "Individual fallback enabled on this interface";
+      }
+      enum fallbackStateMonitoring {
+        description
+          "Individual fallback enabled on this interface";
+      }
+      enum fallbackStateEnabled {
+        description
+          "Individual fallback enabled on this interface";
+      }
+    }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:config" {
+    leaf fallback {
+      type fallback-enum;
+      description
+        "Configure fallback type on this interface.";
+    }
+    leaf fallback-timeout {
+      type uint16 {
+        range "0..300";
+      }
+      default "90";
+    }
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-lag:state" {
+    leaf fallback {
+      type fallback-enum;
+      description
+        "Fallback status on this interface.";
+    }
+    leaf fallback-state {
+      type fallback-state-enum;
+      description
+        "Fallback status on this interface.";
+    }
+  }
+  grouping trunkGroupsEOSConfig {
+    leaf-list trunk-groups {
+      type string;
+      description
+        "Set of trunk groups the interface is a member of";
+    }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-vlan:switched-vlan/oc-vlan:config" {
+    description
+      "Adds trunk group settings to a LAG interface";
+    when "oc-if:type = 'ift:ieee8023adLag'" {
+      description
+        "Active when the interface is a LAG";
+    }
+    uses trunkGroupsEOSConfig;
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-vlan:switched-vlan/oc-vlan:config" {
+    description
+      "Adds trunk group settings to an Ethernet interface";
+    when "oc-if:type = 'ift:ethernetCsmacd'" {
+      description
+        "Active when the interface is Ethernet";
+    }
+    uses trunkGroupsEOSConfig;
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-if:state" {
+    description
+      "Add leaf for tracking inactive interfaces.";
+    leaf inactive {
+      type boolean;
+      description
+        "Interface may be inactive due to configuration.";
+    }
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-if:config" {
+    description
+      "Add leaf for configuring load interval on this interface.";
+    leaf load-interval {
+      type uint16 {
+        range "0..600";
+      }
+      default "300";
+      description
+        "Configure load-interval on this interface.";
+    }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-if:config" {
+    description
+      "EOS allows additional TPID values in the range 0x600-0xFFFF";
+    leaf arista-tpid {
+      type union {
+        type identityref {
+          base oc-vlan-types:TPID_TYPES;
+        }
+        type uint16 {
+          range 1536..65535;
+        }
+      }
+      default "oc-vlan-types:TPID_0X8100";
+    }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:config" {
+    description
+      "Add container for configuring FEC encodings on this interface.";
+    container fec-encoding {
+      leaf disabled {
+        type boolean;
+      }
+      leaf reed-solomon544 {
+        type boolean;
+      }
+      leaf reed-solomon {
+        type boolean;
+      }
+      leaf fire-code {
+        type boolean;
+      }
+      leaf coherent-fec-encoding {
+        type enumeration {
+          enum "COHERENT_DEFAULT";
+          enum "COHERENT_SD25";
+          enum "COHERENT_SD25_BCH";
+          enum "COHERENT_SD20";
+          enum "COHERENT_SD15";
+          enum "COHERENT_HD7";
+          enum "COHERENT_G709";
+        }
+      }
+    }
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:config" {
+    leaf sfp-1000base-t {
+      type boolean;
+      description
+        "Leaf for tracking whether the advertised modes were configured specifically for a 1000BASE-T interface.";
+    }
+  }
+
+  grouping arista-interface-mode {
+      leaf arista-interface-mode {
+        type string;
+        must "../arista-interface-mode = 'ACCESS' or ../arista-interface-mode = 'TRUNK' or ../arista-interface-mode = 'DOT1Q-TUNNEL'";
+      }
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-vlan:switched-vlan/oc-vlan:config" {
+    description
+      "switchport mode in EOS can be set to values other than in oc-vlan-types:vlan-mode-type";
+      uses arista-interface-mode;
+  }
+  augment "/oc-if:interfaces/oc-if:interface/oc-lag:aggregation/oc-vlan:switched-vlan/oc-vlan:config" {
+      description
+        "switchport mode in EOS can be set to values other than in oc-vlan-types:vlan-mode-type";
+      uses arista-interface-mode;
+  }
+
+  identity SPEED_50GB_1LANE {
+    base oc-eth:ETHERNET_SPEED;
+  }
+
+  identity SPEED_100GB_2LANE {
+    base oc-eth:ETHERNET_SPEED;
+  }
+
+  identity SPEED_200GB {
+    base oc-eth:ETHERNET_SPEED;
+  }
+
+  identity SPEED_200GB_4LANE {
+    base oc-eth:ETHERNET_SPEED;
+  }
+
+  identity SPEED_200GB_8LANE {
+    base oc-eth:ETHERNET_SPEED;
+  }
+
+  identity SPEED_400GB {
+    base oc-eth:ETHERNET_SPEED;
+  }
+}
