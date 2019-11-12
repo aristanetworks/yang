@@ -1,0 +1,56 @@
+module arista-vlan-augments {
+  namespace "http://arista.com/yang/openconfig/network-instance/vlan/augments";
+  prefix arista-vlan-augments;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-ethernet {
+    prefix oc-eth;
+  }
+  import openconfig-if-aggregate {
+    prefix oc-lag;
+  }
+  import openconfig-vlan {
+    prefix oc-vlan;
+  }
+  import iana-if-type {
+    prefix ift;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  description
+    "This module contains OpenConfig vlan augments in Arista EOS.
+
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+
+  revision 2017-10-01 {
+    description
+      "Initial augment file.";
+  }
+
+  grouping vlanAddionalEOSConfig {
+    leaf mac-learning {
+      type boolean;
+      description
+        "Turn on/off mac learning on this VLAN.";
+      default "true";
+    }
+    leaf-list trunk-groups {
+      type string;
+      description
+        "Set of trunk groups for this vlan. A vlan that is a member of a trunk group is only allowed out ports that are also members of that trunk group.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:vlans/oc-netinst:vlan/oc-netinst:config" {
+    uses vlanAddionalEOSConfig;
+  }
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:vlans/oc-netinst:vlan/oc-netinst:state" {
+    uses vlanAddionalEOSConfig;
+  }
+}

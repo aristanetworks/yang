@@ -1,0 +1,97 @@
+module arista-exp-eos-varp {
+  yang-version 1;
+  namespace "http://arista.com/yang/experimental/eos/varp";
+  prefix varp-exp;
+
+  import openconfig-yang-types {
+    prefix oc-yang;
+  }
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-ip {
+    prefix oc-ip;
+  }
+  import iana-if-type {
+    prefix ift;
+  }
+  import openconfig-network-instance {
+    prefix oc-ni;
+  }
+  import openconfig-network-instance-types {
+    prefix oc-ni-types;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig VARP augments in Arista EOS.
+
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+
+  revision 2018-10-01 {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  augment "/oc-if:interfaces/oc-if:interface" {
+    when "oc-if:config/oc-if:type = 'ift:l3ipvlan'";
+    description
+      "VARP configuration for VLAN interfaces";
+    container arista-varp {
+      description
+        "Top-level container for interface VARP configuration and state";
+      container virtual-address {
+        description
+          "Virtual IP address for the VLAN interface";
+        container config {
+          description
+            "Configuration data for virtual IP address";
+          uses oc-ip:ipv4-address-config;
+        }
+        container state {
+          config false;
+          description
+            "Operational state for virtual IP address";
+          uses oc-ip:ipv4-address-config;
+        }
+      }
+    }
+  }
+
+  grouping varp-config {
+    description
+      "System configuration data for VARP";
+    leaf virtual-mac-address {
+      type oc-yang:mac-address;
+      description
+        "Virtual MAC address for the switch. All virtual router IP addresses are
+         mapped to this MAC address.";
+    }
+  }
+
+  augment "/oc-ni:network-instances/oc-ni:network-instance" {
+    when "oc-ni:config/oc-ni:type = 'oc-ni-types:DEFAULT_INSTANCE'";
+    description
+      "System VARP configuration";
+    container arista-varp {
+      description
+        "Top-level container for system VARP configuration and state";
+      container config {
+        description
+          "VARP configuration";
+        uses varp-config;
+      }
+      container state {
+        config false;
+        description
+          "VARP state";
+        uses varp-config;
+      }
+    }
+  }
+}
