@@ -1,0 +1,42 @@
+module arista-bgp-augments {
+  namespace "http://arista.com/yang/openconfig/bgp/augments";
+  prefix arista-bgp-augments;
+
+  import openconfig-bgp-evpn {
+    prefix oc-bgp-evpn;
+  }
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig BGP deviations in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+
+  revision 2019-03-15 {
+    description
+      "Initial Augments file.";
+  }
+
+  grouping evpn-instance {
+     leaf evpn-instance {
+      type oc-bgp-evpn:evpn-instance-ref;
+    }
+  }
+
+  augment
+    "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"+
+    "/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:config" {
+      description "Augment for an EVPN instance and BGP association";
+      /* TODO: when oc-netinst:afi-safi-name='L2VPN_EVPN' */
+      uses evpn-instance;
+  }
+
+}

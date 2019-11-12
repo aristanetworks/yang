@@ -1,0 +1,407 @@
+module openconfig-bgp-evpn {
+  yang-version 1;
+  namespace "http://openconfig.net/yang/bgp-evpn";
+  prefix "oc-bgp-evpn";
+
+  /* Imports */
+  
+  import openconfig-yang-types { prefix oc-yang; }
+  import openconfig-inet-types { prefix oc-inet; }
+  import openconfig-mpls-types { prefix oc-mpls-types; }
+  import openconfig-network-instance { prefix oc-netinst; }
+  import openconfig-network-instance-types { prefix oc-ni-types; }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig BGP EVPN in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+
+  revision "2019-03-15" {
+    description " - First version closely based on IETF EVPN";
+    reference   "IETF-EVPN Yang Model";
+  }
+
+  /* Typedefs */
+
+  typedef evpn-instance-ref {
+    type leafref {
+      path "/evpn/evpn-instances/evpn-instance/name";
+    }
+    description "A leafref type to an EVPN instance";
+  }
+
+  typedef ethernet-segment-identifier-type {
+    type string {
+      pattern '^[0-9a-fA-F]{1,2}:[0-9a-fA-F]{1,2}:[0-9a-fA-F]{1,2}'+
+              ':[0-9a-fA-F]{1,2}:[0-9a-fA-F]{1,2}:[0-9a-fA-F]{1,2}'+
+              ':[0-9a-fA-F]{1,2}:[0-9a-fA-F]{1,2}:[0-9a-fA-F]{1,2}'+
+              ':[0-9a-fA-F]{1,2}$';
+    }
+    description "10-octet Ethernet segment identifier "+
+                "(esi), ex: 00:5a:5a:5a:5a:5a:5a:5a:5a:5a";
+  }
+
+  typedef route-target-type {
+    type enumeration {
+      enum IMPORT {
+        description "The Route Target applies to route import.";
+      }
+      enum EXPORT {
+        description "The Route Target applies to route export.";
+      }
+      enum BOTH {
+        description "The Route Target applies to both route import and route export.";
+      }
+    }
+    description "Indicates the role a Route Target takes in route filtering.";
+    reference "RFC 4364: BGP/MPLS IP Virtual Private Networks (VPNs).";
+  }
+
+  typedef route-target {
+    type union {
+      type string {
+        // route-target with Type 1
+        // route-target:(ASN):(local-part)
+        pattern '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'       +
+                '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9]):'      +
+                '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}'    +
+                '|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|' +
+                '429[0-3][0-9]{6}|4[0-1][0-9]{7}|[1-3][0-9]{9}|'             +
+                '[1-9][0-9]{1,8}|[0-9])$';
+      }
+      type string {
+        // route-target with Type 2
+        // route-target:(IPv4):(local-part)
+        pattern '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|'          +
+                '25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|'         +
+                '2[0-4][0-9]|25[0-5]):'                                +
+                '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}' +
+                '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])$';
+      }
+      type string {
+        // 4-byte AS Type 1 route-target
+        pattern '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}'    +
+                '|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|' +
+                '429[0-3][0-9]{6}|4[0-1][0-9]{7}|[1-3][0-9]{9}|'             +
+                '[1-9][0-9]{1,8}|[0-9]):'                                    +
+                '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'       +
+                '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])$';
+      }
+    }
+  }
+
+  /* Groupings */
+
+  grouping vpn-route-targets {
+     description
+       "A grouping that specifies Route Target import-export rules
+        used in BGP-enabled VPNs.";
+     reference
+       "RFC 4364: BGP/MPLS IP Virtual Private Networks (VPNs).
+        RFC 4664: Framework for Layer 2 Virtual Private Networks
+        (L2VPNs).";
+     list vpn-target {
+       key "route-target";
+       description
+         "List of Route Targets.";
+       leaf route-target {
+         type route-target;
+         description
+           "Route Target Value.";
+       }
+       leaf route-target-type {
+         type route-target-type;
+         mandatory true;
+         description
+           "Import/Export type of the Route Target.";
+       }
+     }
+  }
+
+  grouping route-rd-rt-grp {
+    description "A grouping for a route's route distinguishers " +
+                "and route targets";
+    list rd-rt {
+      key "route-distinguisher";
+      leaf route-distinguisher {
+        type oc-ni-types:route-distinguisher;
+        description "Route distinguisher";
+      }
+      list vpn-target {
+        key "route-target";
+        leaf route-target {
+          type route-target;
+          description "BGP route target";
+        }
+        description "A list of route targets";
+      }
+      description "A list of route distinguishers and " +
+                  "corresponding VPN route targets";
+    }
+  }
+
+  grouping next-hop-label-grp {
+    description "A grouping for next hop label";
+    leaf next-hop {
+      type oc-inet:ip-address;
+      description "next-hop";
+    }
+    leaf label {
+      type oc-mpls-types:mpls-label;
+      description "label";
+    }
+  }
+
+  grouping next-hop-label2-grp {
+    description "A grouping for next hop second label";
+    leaf label2 {
+      type oc-mpls-types:mpls-label;
+      description "label2";
+    }
+  }
+
+  grouping path-detail-grp {
+    description "A grouping for Path Details";
+    container detail {
+      config false;
+      description "Path Detail";
+      container attributes {
+        leaf-list extended-community {
+          type string;
+          description "Exended Community Attributes";
+        }
+        description "Attributes";
+      }
+      leaf bestpath {
+        type empty;
+        description "Indicate that this path is the best path.";
+      }
+    }
+  }
+
+  grouping evpn {
+    description "evpn";
+    container common {
+      description "Common EVPN Attributes";
+      choice replication-type {
+        description "A choice of replication type";
+        case ingress-replication {
+          leaf ingress-replication {
+            type boolean;
+            description "ingress-replication";
+          }
+        }
+        case p2mp-replication {
+          leaf p2mp-replication {
+            type boolean;
+            description "p2mp-replication";
+          }
+        }
+      }
+    }
+    container evpn-instances {
+      description "EVPN Instances";
+      list evpn-instance {
+        key "name";
+        description "An EVPN Instance";
+        leaf name {
+          type string;
+          description "Name of EVPN Instance";
+        }
+        leaf evi {
+          type uint32;
+          description "EVPN Instance Identifier";
+        }
+        /* No PBB Parameters */
+        container bgp-parameters {
+          description "BGP parameters";
+          container common {
+            description "BGP parameters Common to All.";
+            list rd-rt {
+              key "route-distinguisher";
+              leaf route-distinguisher {
+                type oc-ni-types:route-distinguisher;
+                description "Route distinguisher";
+              }
+              uses oc-bgp-evpn:vpn-route-targets;
+              description "A list of route distinguishers and " +
+                          "corresponding VPN route targets";
+            }
+          }
+        }
+        leaf arp-proxy {
+          type boolean;
+          default false;
+          description "Enable (TRUE) or disable (FALSE) ARP proxy";
+        }
+        leaf arp-suppression {
+          type boolean;
+          default false;
+          description "Enable (TRUE) or disable (FALSE) " +
+                      "ARP suppression";
+        }
+        leaf nd-proxy {
+          type boolean;
+          default false;
+          description "Enable (TRUE) or disable (FALSE) ND proxy";
+        }
+        leaf nd-suppression {
+          type boolean;
+          default false;
+          description "Enable (TRUE) or disable (FALSE) " +
+                      "ND suppression";
+        }
+        leaf underlay-multicast {
+          type boolean;
+          default false;
+          description "Enable (TRUE) or disable (FALSE) " +
+                      "underlay multicast";
+        }
+        leaf flood-unknown-unicast-supression {
+          type boolean;
+          default false;
+          description "Enable (TRUE) or disable (FALSE) " +
+                      "flood unknown unicast suppression";
+        }
+        leaf vpws-vlan-aware {
+          type boolean;
+          default false;
+          description "Enable (TRUE) or disable (FALSE) " +
+                      "VPWS VLAN aware";
+        }
+        container routes {
+          config false;
+          description "routes";
+          list ethernet-auto-discovery-route {
+            uses route-rd-rt-grp;
+            leaf ethernet-segment-identifier {
+              type oc-bgp-evpn:ethernet-segment-identifier-type;
+              description "Ethernet segment identifier (esi)";
+            }
+            leaf ethernet-tag {
+              type uint32;
+              description "An ethernet tag (etag) indentifying a " +
+                          "broadcast domain";
+            }
+            list path {
+              uses next-hop-label-grp;
+              uses path-detail-grp;
+              description "path";
+            }
+            description "ethernet-auto-discovery-route";
+          }
+          list mac-ip-advertisement-route {
+            uses route-rd-rt-grp;
+            leaf ethernet-segment-identifier {
+              type oc-bgp-evpn:ethernet-segment-identifier-type;
+              description "Ethernet segment identifier (esi)";
+            }
+            leaf ethernet-tag {
+              type uint32;
+              description "An ethernet tag (etag) indentifying a " +
+                          "broadcast domain";
+            }
+            leaf mac-address {
+              type oc-yang:mac-address;
+              description "Route mac address";
+            }
+            leaf mac-address-length {
+              type uint8 {
+                range "0..48";
+              }
+              description "mac address length";
+            }
+            leaf ip-prefix {
+              type oc-inet:ip-prefix;
+              description "ip-prefix";
+            }
+            list path {
+              uses next-hop-label-grp;
+              uses next-hop-label2-grp;
+              uses path-detail-grp;
+              description "path";
+            }
+            description "mac-ip-advertisement-route";
+          }
+          list inclusive-multicast-ethernet-tag-route {
+            uses route-rd-rt-grp;
+            leaf originator-ip-prefix {
+              type oc-inet:ip-prefix;
+              description "originator-ip-prefix";
+            }
+            list path {
+              uses next-hop-label-grp;
+              uses path-detail-grp;
+              description "path";
+            }
+            description "inclusive-multicast-ethernet-tag-route";
+          }
+          list ethernet-segment-route {
+            uses route-rd-rt-grp;
+            leaf ethernet-segment-identifier {
+              type oc-bgp-evpn:ethernet-segment-identifier-type;
+              description "Ethernet segment identifier (esi)";
+            }
+            leaf originator-ip-prefix {
+              type oc-inet:ip-prefix;
+              description "originator ip-prefix";
+            }
+            list path {
+              leaf next-hop {
+                type oc-inet:ip-address;
+                description "next-hop";
+              }
+              uses path-detail-grp;
+              description "path";
+            }
+            description "ethernet-segment-route";
+          }
+          list ip-prefix-route {
+            uses route-rd-rt-grp;
+            leaf ethernet-segment-identifier {
+              type oc-bgp-evpn:ethernet-segment-identifier-type;
+              description "Ethernet segment identifier (esi)";
+            }
+            leaf ip-prefix {
+              type oc-inet:ip-prefix;
+              description "ip-prefix";
+            }
+            list path {
+              uses next-hop-label-grp;
+              uses path-detail-grp;
+              description "path";
+            }
+            description "ip-prefix route";
+          }
+        }
+      }
+    }
+  }
+
+  /* Models */
+  container evpn
+  {
+    description "An EVPN instance";
+    uses evpn;
+  }
+
+  /* Augments: Partially Supported */
+
+  /* 2. L2VPN Instance Reference */
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:config" {
+    description "Augment for an L2VPN instance and EVPN association";
+    leaf evpn-instance {
+      type evpn-instance-ref;
+      description "Reference to an EVPN instance";
+    }
+  }
+
+  /* Statistics: Unsupported */
+
+  /* Notifications: Unsupported */
+}

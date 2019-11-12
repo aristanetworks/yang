@@ -1,0 +1,225 @@
+module arista-bfd-augments {
+  namespace "http://arista.com/yang/openconfig/bfd/augments";
+  prefix arista-bfd-augments;
+
+  import openconfig-bfd {
+    prefix oc-bfd;
+  }
+  import openconfig-inet-types {
+    prefix oc-inet;
+  }
+  import openconfig-interfaces {
+    prefix oc-if;
+  }
+  import openconfig-if-types {
+    prefix oc-ift;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig interface augments in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+
+  revision 2019-01-14 {
+    description
+      "Initial augment file.";
+    reference
+      "1.0.0";
+  }
+
+  grouping bfd-global-config {
+    description
+      "Top-level global configuration parameters for BFD.";
+    leaf enabled {
+      type boolean;
+      description
+        "When this leaf is set to true then the BFD feature is enabled
+         for the whole system, if it is set to false, it is administratively disabled.";
+    }
+    leaf-list local-address {
+      type oc-inet:ip-address;
+      max-elements 2;
+      description
+        "The list of source IP addresses to be used for BFD sessions over L2 port channels.
+         Required only if there are per-member-link enabled L2 port channel interfaces in the
+         system. local-address can be a list of one IPv4/IPv6 address or a list of both addresses.";
+    }
+    leaf desired-minimum-tx-interval {
+      type uint32 {
+        range "50..60000";
+      }
+      default "300";
+      units "microseconds";
+      description
+        "Same as desired-minimum-tx-interval under bfd-interface-config.";
+    }
+    leaf required-minimum-receive {
+      type uint32 {
+        range "50..60000";
+      }
+      default "300";
+      units "microseconds";
+      description
+        "Same as required-minimum-receive under bfd-interface-config";
+    }
+    leaf detection-multiplier {
+      type uint16 {
+        range "3..50";
+      }
+      default "3";
+      description
+        "Same as detection-multiplier under bfd-interface-config.";
+    }
+    leaf multihop-desired-minimum-tx-interval {
+      type uint32 {
+        range "50..60000";
+      }
+      default "300";
+      units "microseconds";
+      description
+        "Similar to desired-minimum-tx-interval but only used by multihop
+         BFD sessions. When there are single-hop and multihop BFD
+         sessions co-exist in a systems, it is recommended to configure
+         larger BFD timer for multihop BFD sessions.
+
+         This value is specified as an integer number of microseconds.";
+    }
+    leaf multihop-required-minimum-receive {
+      type uint32 {
+        range "50..60000";
+      }
+      default "300";
+      units "microseconds";
+      description
+        "Similar to required-minimum-receive but only used by multihop
+         BFD sessions. When there are single-hop and multihop BFD
+         sessions co-exist in a systems, it is recommended to configure
+         larger BFD timer for multihop BFD sessions.
+
+         This value is specified as an integer number of microseconds.";
+    }
+    leaf multihop-detection-multiplier {
+      type uint16 {
+        range "3..50";
+      }
+      default "3";
+      description
+        "Similar to detection-multiplier but only used by multihop
+         BFD sessions. When there are single-hop and multihop BFD
+         sessions co-exist in a systems, it is recommended to configure
+         larger BFD timer for multihop BFD sessions.";
+    }
+    leaf slow-timer {
+      type uint16 {
+        range "2000..60000";
+      }
+      default "2000";
+      units "microseconds";
+      description
+        "BFD slow timer rate in microseconds. Used to send BFD control packets at a
+         slower rate when echo session is active.";
+    }
+  }
+
+  augment "/oc-bfd:bfd" {
+    container config {
+      uses bfd-global-config;
+      description
+        "Top-level global configuration parameters for BFD.";
+    }
+  }
+
+  typedef per-member-link-mode-enum {
+    type enumeration {
+      enum NONE {
+        description
+          "There is no BFD per link configured";
+      }
+      enum LEGACY {
+        description
+          "BFD per link is in legacy mode";
+      }
+      enum RFC7130 {
+        description
+          "BFD per link is RFC 7130 compliant";
+      }
+      enum RFC7130INTEROP {
+        description
+          "BFD per link RFC 7130 is in interop mode with non Arista device.";
+      }
+    }
+    description
+      "Per member BFD link mode types";
+  }
+
+  augment "/oc-bfd:bfd/oc-bfd:interfaces/oc-bfd:interface/oc-bfd:config" {
+    uses bfd-intf-augments;
+  }
+
+  augment "/oc-bfd:bfd/oc-bfd:interfaces/oc-bfd:interface/oc-bfd:state" {
+    uses bfd-intf-augments;
+  }
+
+  grouping bfd-intf-augments {
+    leaf per-member-link-mode {
+      type per-member-link-mode-enum;
+      description
+        "This leaf shows the BFD link mode configured on each member interface of the
+         aggregated Ethernet bundle.";
+      when "/oc-if:interfaces/oc-if:interface"
+         + "[name=current()/../../interface-ref/config/interface]/"
+         + "oc-if:state/oc-if:type = 'oc-ift:ieee8023adLag'" {
+        description
+          "Include per-member link BFD only when the type of
+           interface is a link aggregate.";
+      }
+    }
+    leaf enable-per-member {
+      type boolean;
+      description
+        "When this leaf is set to true - BFD will be enabled on
+        each member interface of the aggregated Ethernet bundle.";
+
+      when "/oc-if:interfaces/oc-if:interface" +
+          "[name=current()/../../interface-ref/config/interface]/" +
+          "oc-if:state/oc-if:type = 'oc-ift:ieee8023adLag'" {
+        description
+          "Include per-member link BFD only when the type of
+          interface is a link aggregate.";
+      }
+    }
+    leaf enable-echo {
+      type boolean;
+      description
+        "If this leaf is true - BFD is enabled on
+        each member interface of the aggregated Ethernet bundle.";
+
+      when "/oc-if:interfaces/oc-if:interface" +
+          "[name=current()/../../interface-ref/config/interface]/" +
+          "oc-if:state/oc-if:type = 'oc-ift:ieee8023adLag'" {
+        description
+          "Include per-member link BFD only when the type of
+          interface is a link aggregate.";
+      }
+    }
+    leaf-list remote-address {
+      type oc-inet:ip-address;
+      description
+        "The remote IP destination that should be used by the member interfaces of
+       this port channel interface. Required only for per-member-link enabled interfaces.";
+
+       when "/oc-if:interfaces/oc-if:interface" +
+           "[name=current()/../../interface-ref/config/interface]/" +
+           "oc-if:state/oc-if:type = 'oc-ift:ieee8023adLag'" {
+       description
+         "Define remote-address only when the type of interface is a link aggregate.";
+      }
+      max-elements 2;
+    }
+  }
+}
