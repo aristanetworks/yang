@@ -1,0 +1,28 @@
+module arista-rpol-augments {
+  namespace "http://arista.com/yang/openconfig/policy/augments";
+  prefix arista-rpol-deviations;
+
+  import openconfig-routing-policy {
+    prefix oc-rpol;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  description
+    "This module contains OpenConfig routing-policy augments in Arista EOS.
+
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+
+  revision 2018-04-12 {
+    description
+      "Initial augment file.";
+  }
+
+  augment "/oc-rpol:routing-policy/oc-rpol:policy-definitions/oc-rpol:policy-definition/oc-rpol:statements/oc-rpol:statement/oc-rpol:state" {
+    leaf sequence-number {
+      type uint32;
+      description
+        "EOS stores policy entries in a collection keyed by an integer";
+    }
+  }
+}
