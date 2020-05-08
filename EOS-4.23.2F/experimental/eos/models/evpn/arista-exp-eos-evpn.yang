@@ -1,0 +1,231 @@
+module arista-exp-eos-evpn {
+  yang-version 1;
+  namespace "http://arista.com/yang/experimental/eos/evpn";
+  prefix "evpn-exp";
+
+  import arista-exp-eos { prefix eos-exp; }
+  import openconfig-inet-types { prefix oc-inet; }
+  import openconfig-network-instance { prefix oc-ni; }
+  import openconfig-network-instance-types { prefix oc-ni-types; }
+  import openconfig-vlan-types { prefix oc-vlan-types; }
+
+  organization
+    "Arista Networks, Inc.";
+  description
+    "This module contains OpenConfig EVPN models in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+
+  revision "2019-11-05" {
+    description "Initial version";
+  }
+
+  typedef redistribute-type {
+    type enumeration {
+      enum LEARNED {
+        description "Locally learned MACs.";
+      }
+      enum STATIC {
+        description "Static MACs.";
+      }
+      enum ROUTER_MAC {
+        description "Router MACs.";
+      }
+      enum HOST_ROUTE {
+        description "Host routes with symmetric IRB.";
+      }
+      enum DOT1X {
+        description "Dot1x macs.";
+      }
+      enum LINK_LOCAL {
+        description "IPv6 link local.";
+      }
+      enum IGMP {
+        description "IGMP (EVPN type 6,7,8 for IPv4).";
+      }
+      enum MLD {
+        description "MLD (EVPN type 6,7,8 for IPv6).";
+      }
+      enum BRIDGE_MAC {
+        description "Bridge MACs.";
+      }
+    }
+  }
+
+  typedef route-distinguisher-type {
+    type union {
+      type oc-ni-types:route-distinguisher;
+      type enumeration {
+        enum AUTO {
+          description "The route-distinguisher is auto-generated.";
+        }
+      }
+    }
+  }
+
+  typedef route-target-type {
+    description
+      "This is a subset of oc-bgp-types:bgp-ext-community-type for
+       route-targets:
+        - <2b AS>:<4b value> per RFC4360 section 4
+        - <4b IPv4>:<2b value> per RFC4360 section 4
+        - <4b AS>:<2b value> per RFC5668 section 4";
+    type union {
+      type string {
+        pattern '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'
+              + '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9]):'
+              + '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}'
+              + '|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+              + '429[0-3][0-9]{6}|4[0-1][0-9]{7}|[1-3][0-9]{9}|'
+              + '[1-9][0-9]{1,8}|[0-9])';
+      }
+      type string {
+        pattern '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|'
+              + '25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|'
+              + '2[0-4][0-9]|25[0-5]):'
+              + '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'
+              + '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+      }
+      type string {
+        pattern '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}'
+              + '|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+              + '429[0-3][0-9]{6}|4[0-1][0-9]{7}|[1-3][0-9]{9}|'
+              + '[1-9][0-9]{1,8}|[0-9]):'
+              + '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'
+              + '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+      }
+    }
+  }
+
+  typedef etid-type {
+    type uint32;
+    description "Ethernet tag identifier";
+  }
+
+  typedef instance-type {
+    type enumeration {
+      enum VLAN {
+        description "VLAN-based EVPN instance.";
+      }
+      enum VLAN_AWARE_BUNDLE {
+        description "VLAN-aware-bundle-based EVPN instance.";
+      }
+    }
+  }
+
+  grouping route-target-config {
+    container route-target {
+        description
+          "Route target import-export rules used in EVPN.";
+
+      container config {
+        description
+          "Route target import-export rule configuration.";
+
+        leaf-list import {
+           type route-target-type;
+           description "Import route-targets.";
+        }
+
+        leaf-list auto-import {
+           type oc-inet:as-number;
+           description "Automatic import route-targets.";
+        }
+
+        leaf-list export {
+           type route-target-type;
+           description "Export route-targets.";
+        }
+
+        leaf auto-export {
+           type boolean;
+           description "Automatic export.";
+        }
+      }
+    }
+  }
+
+  grouping vlan-config {
+    container vlans {
+      description
+        "EVPN instance VLAN configuration.";
+
+      list vlan {
+        key "vlan-id";
+        description
+          "VLANs used by this EVPN instance.";
+
+        leaf vlan-id {
+          type leafref {
+            path "../config/vlan-id";
+          }
+          description "The VLAN ID.";
+        }
+
+        container config {
+          leaf vlan-id {
+            type oc-vlan-types:vlan-id;
+            description "The VLAN ID.";
+          }
+
+          leaf etid {
+            type etid-type;
+            description "The ethernet tag identifier to associate with this VLAN.";
+          }
+        }
+      }
+    }
+  }
+
+  grouping evpn {
+    container evpn-instances {
+      description "EVPN instances.";
+
+      list evpn-instance {
+        key "name";
+        description "An EVPN instance.";
+
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description "Name of the EVPN instance.";
+        }
+
+        container config {
+          description "EVPN instance configuration.";
+
+          leaf name {
+            type string;
+            description "Name of the EVPN instance.";
+          }
+
+          leaf instance-type {
+            type instance-type;
+            default "VLAN";
+            description "The type of this EVPN instance.";
+          }
+
+          leaf route-distinguisher {
+            type route-distinguisher-type;
+            description "The configured route distinguisher.";
+          }
+
+          leaf-list redistribute {
+            type redistribute-type;
+            description "The redistribute setting for this instance.";
+          }
+        }
+
+        uses route-target-config;
+        uses vlan-config;
+      }
+    }
+  }
+
+  augment "/eos-exp:arista/eos-exp:eos" {
+    container evpn {
+      uses evpn;
+    }
+  }
+}

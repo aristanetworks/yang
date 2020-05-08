@@ -1,0 +1,133 @@
+module arista-system-deviations {
+  namespace "http://arista.com/yang/openconfig/system/deviations";
+  prefix arista-system-deviations;
+
+  import openconfig-system {
+    prefix oc-sys;
+  }
+  import openconfig-inet-types {
+    prefix oc-inet;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig system deviations in Arista EOS.
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+
+  revision 2017-09-24 {
+    description
+      "Initial deviations file.";
+    reference
+      "1.0.0";
+  }
+
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:config/oc-sys:search" {
+    description
+      "search limited to 6 domain-names";
+    deviate add {
+      max-elements 6;
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:servers/oc-sys:server" {
+    description
+      "name servers limited to 3";
+    deviate add {
+      max-elements 3;
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:servers/oc-sys:server/oc-sys:config" {
+    description
+      "port of name servers must be 53";
+    deviate add {
+      must "port='53'" {
+        error-message "port must be 53";
+      }
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:dns/oc-sys:host-entries/oc-sys:host-entry/oc-sys:config/oc-sys:alias" {
+    description
+      "alias of host-entries is not configurable";
+    deviate not-supported;
+  }
+
+  deviation "/oc-sys:system/oc-sys:memory/oc-sys:state/oc-sys:physical" {
+    description
+      "physical memory default value 0";
+    deviate add {
+      default "0";
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:aaa/oc-sys:server-groups/oc-sys:server-group/oc-sys:servers/oc-sys:server/oc-sys:config/oc-sys:address" {
+    deviate replace {
+     // In EOS, server address can be ip address or hostname. Hence change type to union{ip-address, string}
+      type union {
+        type oc-inet:ip-address;
+        type string;
+      }
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:aaa/oc-sys:server-groups/oc-sys:server-group/oc-sys:servers/oc-sys:server/oc-sys:state/oc-sys:address" {
+    deviate replace {
+     // In EOS, server address can be ip address or hostname. Hence change type to union{ip-address, string}
+      type union {
+        type oc-inet:ip-address;
+        type string;
+      }
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:aaa/oc-sys:server-groups/oc-sys:server-group/oc-sys:servers/oc-sys:server/oc-sys:config/oc-sys:timeout" {
+    deviate replace {
+      // In EOS, timeout value can be between 1 and 1000.
+      type uint16 {
+        range "1..1000";
+      }
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:aaa/oc-sys:server-groups/oc-sys:server-group/oc-sys:servers/oc-sys:server/oc-sys:radius/oc-sys:config/oc-sys:retransmit-attempts" {
+    deviate replace {
+      // In EOS, retransmit-attempts value can be between 0 and 100.
+      type uint8 {
+        range "0..100";
+      }
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:ssh-server/oc-sys:config/oc-sys:session-limit" {
+    deviate replace {
+      type uint8 {
+        range "0..100";
+      }
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:ssh-server/oc-sys:state/oc-sys:session-limit" {
+    deviate replace {
+      type uint8 {
+        range "0..100";
+      }
+    }
+  }
+
+  deviation "/oc-sys:system/oc-sys:ssh-server/oc-sys:config/oc-sys:rate-limit" {
+    description
+      "configuring the rate-limit is not configurable in EOS";
+    deviate not-supported;
+  }
+
+  deviation "/oc-sys:system/oc-sys:ssh-server/oc-sys:state/oc-sys:rate-limit" {
+    description
+      "configuring the rate-limit is not configurable in EOS";
+    deviate not-supported;
+  }
+}

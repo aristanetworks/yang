@@ -1,0 +1,164 @@
+module arista-system-augments {
+  namespace "http://arista.com/yang/openconfig/system/augments";
+  prefix arista-system-augments;
+
+  import openconfig-system {
+    prefix oc-sys;
+  }
+  import openconfig-types {
+    prefix oc-types;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig system augments in Arista EOS.
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+
+  revision 2018-06-03 {
+    description
+      "Initial augment file.";
+  }
+
+  augment "/oc-sys:system/oc-sys:dns/oc-sys:config" {
+    leaf network-instance {
+      type string;
+      description
+        "The network instance where the DNS servers are configured.";
+    }
+  }
+
+  augment "/oc-sys:system/oc-sys:dns/oc-sys:state" {
+    leaf network-instance {
+      type string;
+      description
+        "The network instance where the DNS servers are configured.";
+    }
+  }
+
+  grouping aaa-radius-server-global-config {
+    leaf retransmit-attempts {
+      type uint8 {
+        range "0..100";
+      }
+      description
+        "Number of times the device may resend a request to the
+         RADIUS server when it is unresponsive";
+    }
+    leaf secret-key {
+      type oc-types:routing-password;
+      description
+        "The unencrypted shared key used between the authentication
+         server and the device.";
+    }
+    leaf timeout {
+      type uint16 {
+        range "1..1000";
+      }
+      units "seconds";
+      description
+        "Set the timeout in seconds on responses from the RADIUS
+         server";
+    }
+  }
+
+  grouping aaa-radius-server-common-top {
+    container radius {
+      container config {
+        description
+          "Configuration data for RADIUS server";
+        uses aaa-radius-server-global-config;
+      }
+      container state {
+        config false;
+        description
+          "Operational state data for RADIUS servers";
+        uses aaa-radius-server-global-config;
+      }
+    }
+  }
+
+  grouping aaa-tacacs-server-global-config {
+    leaf secret-key {
+      type oc-types:routing-password;
+      description
+        "The unencrypted shared key used between the authentication
+         server and the device.";
+    }
+    leaf timeout {
+      type uint16 {
+        range "1..1000";
+      }
+      units "seconds";
+      description
+        "Set the timeout in seconds on responses from the TACACS+
+         server";
+    }
+  }
+
+  grouping aaa-tacacs-server-common-top {
+    container tacacs {
+      container config {
+        description
+          "Configuration data for TACACS+ server";
+        uses aaa-tacacs-server-global-config;
+      }
+      container state {
+        config false;
+        description
+          "Operational state data for TACACS+ server";
+        uses aaa-tacacs-server-global-config;
+      }
+    }
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa" {
+    container global {
+      description
+        "Top-level container for RADIUS/TACACS+ server global configuration";
+      uses aaa-radius-server-common-top;
+      uses aaa-tacacs-server-common-top;
+    }
+  }
+
+  typedef accept-mode-enum {
+    type enumeration {
+      enum DISABLED {
+        description
+          "Packets destined for virtual address are not accepted,
+           this is the default behavior";
+      }
+      enum ENABLED {
+        description
+          "Packets destined for virtual address are accepted";
+      }
+    }
+    description
+      "Configure whether packets destined for
+       virtual addresses are accepted even when the virtual
+       address is not owned by the router interface";
+  }
+
+  augment "/oc-sys:system" {
+    container fhrp {
+      description
+        "EOS First Hop Redundancy Protocol (FHRP)";
+      container config {
+        description
+          "Configuration for EOS FHRP";
+        leaf accept-mode {
+          type accept-mode-enum;
+          default "DISABLED";
+        }
+      }
+    }
+  }
+
+  augment "/oc-sys:system/oc-sys:ssh-server/oc-sys:config/oc-sys:timeout" {
+      description
+        "Set the idle timeout in minutes on terminal connections to the system for the protocol with result being displayed in seconds.";
+    }
+}
