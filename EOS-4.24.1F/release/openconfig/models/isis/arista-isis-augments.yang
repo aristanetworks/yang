@@ -1,0 +1,70 @@
+module arista-isis-augments {
+  namespace "http://arista.com/yang/openconfig/isis/augments";
+  prefix arista-isis-augments;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-isis {
+    prefix oc-isis;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig ISIS augments in Arista EOS.
+
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+
+  revision 2020-03-18 {
+    description
+      "Changed module prefix to arista-isis-augments.";
+  }
+
+  revision 2018-01-12 {
+    description
+      "Initial augment file.";
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:afi-safi/oc-netinst:af/oc-netinst:multi-topology/oc-netinst:config" {
+    uses oc-isis:rt-admin-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:lsp-bit/oc-netinst:attached-bit/oc-netinst:config" {
+    leaf ignore-bit {
+      type boolean;
+      description
+        "EOS is capabale of suporting this configuration per Address Family.
+         However, since the YANG model has no support per AF, this YANG leaf
+         is set to true only when it is true for both AFs on EOS,
+         else it remains false.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:afi-safi/oc-netinst:af/oc-netinst:config" {
+    leaf max-ecmp-paths {
+      type uint32;
+      description
+        "ISIS max-paths count.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:global/oc-netinst:afi-safi/oc-netinst:af/oc-netinst:state" {
+    leaf max-ecmp-paths {
+      type uint32;
+      description
+        "ISIS max-paths count.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:isis/oc-netinst:interfaces/oc-netinst:interface/oc-netinst:levels/oc-netinst:level/oc-netinst:adjacencies/oc-netinst:adjacency/oc-netinst:state" {
+    leaf advertised-hold-time {
+      type uint16;
+      description
+        "Holding time in seconds as advertised by the neighbor for adjacency";
+    }
+  }
+}

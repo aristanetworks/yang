@@ -1,0 +1,68 @@
+module arista-qos-augments {
+  namespace "http://arista.com/yang/openconfig/qos/augments";
+  prefix arista-qos-augments;
+
+  import openconfig-qos {
+    prefix oc-qos;
+  }
+  import openconfig-yang-types {
+    prefix oc-yang;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig QoS augments in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+
+  revision 2020-04-13 {
+    description
+      "Add ECN counter support.";
+  }
+
+  revision 2019-10-31 {
+    description
+      "Initial augment file.";
+  }
+
+  typedef packet-type {
+    type enumeration {
+      enum UC {
+        description
+          "This enum describes unicast packet type.";
+      }
+      enum MC {
+        description
+          "This enum describes multicast packet type.";
+      }
+      enum MIXEDUCMC {
+        description
+          "This enum describes either unicast or multicast packet type.";
+      }
+    }
+    description
+      "This type defines type of packets that flow through a queue within an interface.";
+  }
+
+  augment "/oc-qos:qos/oc-qos:interfaces/oc-qos:interface/oc-qos:output/oc-qos:queues/oc-qos:queue/oc-qos:state" {
+    leaf queue-type {
+      type packet-type;
+      description
+        "Indicates the type of packets that are currently flowing through the queue.";
+    }
+    leaf dropped-octets {
+      type oc-yang:counter64;
+      description
+        "Number of octets dropped by the queue due to overrun.";
+    }
+    leaf ecn-marked-pkts {
+      type oc-yang:counter64;
+      description
+        "The ECN packets count for this queue";
+    }
+  }
+}
