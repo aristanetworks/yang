@@ -1,0 +1,550 @@
+module arista-wifi-augments {
+  yang-version "1";
+  namespace "http://arista.com/yang/openconfig/wifi/augments";
+  prefix "arista-wifi-augments";
+
+  // imports
+  import openconfig-inet-types { prefix oc-inet; }
+  import openconfig-access-points { prefix oc-access-points; }
+  import openconfig-yang-types { prefix oc-yang; }
+  import openconfig-messages { prefix oc-messages; }
+  import openconfig-vlan-types { prefix oc-vlan-types; }
+
+  // meta
+  organization
+    "Arista Networks, Inc.";
+
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+
+  description
+    "This module contains OpenConfig augments for Arista WiFi Access Point.
+
+     Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
+
+  revision 2020-05-04 {
+    description
+      "Augment access-points wifi model to include tunnel configuration and state leafs";
+    reference "0.3.0";
+  }
+
+  revision 2019-11-25 {
+    description
+      "Augment system messages model to include Arista debug service for hostapd, sensord, and wl_evt_handler.";
+    reference "0.2.1";
+  }
+
+  revision 2019-06-28 {
+    description
+      "Augment wifi model to include Arista AP configuration.";
+    reference "0.1.1";
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid/oc-access-points:config" {
+    description "Adds SSID config augments to the WiFi mac model";
+
+    leaf remote-bridging {
+      type boolean;
+      default false;
+      description "Whether remote bridging is enabled or disabled, default is disabled";
+    }
+
+    leaf tunnel-id {
+      type uint8;
+      description "ID of the tunnel profile mapped to this SSID";
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid/oc-access-points:state" {
+    description "Adds SSID state augments to the WiFi mac model";
+
+    leaf remote-bridging {
+      type boolean;
+      default false;
+      description "Whether remote bridging is enabled or disabled, default is disabled";
+    }
+
+    leaf tunnel-id {
+      type uint8;
+      description "ID of the tunnel profile mapped to this SSID";
+    }
+  }
+
+
+  identity HOSTAPD {
+    base oc-messages:DEBUG_SERVICE;
+    description
+      "Hostapd debug service.";
+  }
+
+  identity SENSORD {
+    base oc-messages:DEBUG_SERVICE;
+    description
+      "Sensord debug service.";
+  }
+
+  identity WLEVTHANDLER {
+    base oc-messages:DEBUG_SERVICE;
+    description
+      "Wl_evt_handler debug service.";
+  }
+
+  identity ipsec_proto {
+    description "Base type for ESP or AH protocol";
+  }
+
+  identity IPSEC_PROTO_ESP {
+    base ipsec_proto;
+    description "ESP proto";
+  }
+
+  identity IPSEC_PROTO_AH {
+    base ipsec_proto;
+    description "AH proto";
+  }
+
+  identity tunnel_status {
+    description "Base type for tunnel status";
+  }
+
+  identity TUNNEL_STATUS_UNINITIALIZED {
+    base tunnel_status;
+    description "Tunnel is not yet uninitialized";
+  }
+
+  identity TUNNEL_STATUS_MISCONFIGURED {
+    base tunnel_status;
+    description "Tunnel is misconfigured";
+  }
+
+  identity TUNNEL_STATUS_NOT_ACTIVE {
+    base tunnel_status;
+    description "This tunnel endpoint (either primary or secondary) is not the active one";
+  }
+
+  identity TUNNEL_STATUS_DOWN {
+    base tunnel_status;
+    description "The active endpoint is currently down";
+  }
+
+  identity TUNNEL_STATUS_UP {
+    base tunnel_status;
+    description "The tunnel is current up";
+  }
+
+  identity ipsec_mode {
+    description
+      "Base type for ipsec tunnel/transport mode values";
+  }
+
+  identity IPSEC_MODE_TUNNEL {
+    base ipsec_mode;
+    description "IPSec tunnel mode";
+  }
+
+  identity IPSEC_MODE_TRANSPORT {
+    base ipsec_mode;
+    description "IPSec transport mode";
+  }
+
+  identity tunnel_type {
+    description "Whether tunnel is EoGRE, VxLAN or EoGRE over IPSec";
+  }
+
+  identity TUNNEL_TYPE_EOGRE {
+    base tunnel_type;
+    description "Plain EoGRE type";
+  }
+
+  identity TUNNEL_TYPE_VXLAN {
+    base tunnel_type;
+    description "VxLAN tunnel";
+  }
+
+  identity TUNNEL_TYPE_EOGRE_IPSEC {
+    base tunnel_type;
+    description "EoGRE over IPSec";
+  }
+
+  grouping arista-ap-system-config {
+    description
+      "Configuration for Arista AP System specific parameters";
+
+    leaf mac {
+      type oc-yang:mac-address;
+      description
+        "MAC address of the AP primary Ethernet interface. If AP
+        has multiple Ethernet interfaces, this would be the MAC printed
+        on the unit label and referenced within the management system.
+        Vendors MUST reject attempts to configure this leaf.";
+    }
+
+    leaf spectratalk-pmk {
+      type string;
+      default "";
+      description
+        "PMK used for AP and cloud server communication in Spectratalk protocol";
+    }
+  }
+
+  grouping arista-ap-tunnel-endpoint {
+    description
+      "Tunnel endpoint configuration";
+    leaf address {
+      type string;
+      description
+        "Hostname/IP address of the tunnel endpoint";
+    }
+
+    leaf local-vlan {
+      type oc-vlan-types:vlan-id;
+      description
+        "Local vlan used to route tunnel traffic. Default is 0 (untagged)";
+    }
+
+    leaf gre-key {
+      type uint32;
+      description "GRE Key";
+    }
+
+    leaf mss-clamping {
+      type boolean;
+      description "Enable/Disable MSS clamping";
+    }
+
+    leaf pmtu {
+      type uint16;
+      description "PMTU value. AP tries to discover the value automatically if set to 0";
+    }
+
+    container ipsec-config {
+      description "IPSec configuration";
+
+      uses arista-ap-ipsec-config;
+    }
+  }
+
+  grouping arista-ap-ipsec-config {
+    description
+      "IPSec configuration";
+    leaf mode {
+      type identityref {
+        base ipsec_mode;
+      }
+      description "IPSec mode tunnel or transport";
+    }
+
+    leaf tunnel-remote-endpoint {
+      type string;
+      description "IPSec remote endpoint address for tunnel mode";
+    }
+
+    leaf enable-virtual-ip {
+      type boolean;
+      description "Support for receiving the (EoGRE) local endpoint IP from the IPSec negotiation";
+    }
+
+    leaf ike-keepalive {
+      type uint32;
+      units hours;
+      description "Lifetime / IKE keepalive";
+    }
+
+    leaf ike-version {
+      type uint16;
+      description "IKE version v1 / v2";
+    }
+
+    leaf ikev1-aggressive-neg-mode {
+      type boolean;
+      description "IKEv1 aggressive negotiation mode enable / disable";
+    }
+
+    leaf ap-identifier {
+      type string;
+      description "AP (left) Identifier";
+    }
+
+    leaf ap-psk {
+      type string;
+      description "AP (left) PSK";
+    }
+
+    leaf remote-identifier {
+      type string;
+      description "Remote (right) Identifier";
+    }
+
+    leaf remote-psk {
+      type string;
+      description "Remote (right) PSK";
+    }
+
+    leaf-list phase1-ciphers {
+      type string;
+      description "Phase-1 cipher, hash and DH group. Format: enc-len-hash_len-dhgroup (E.g. aes-256-sha2_512-modp8192)";
+    }
+
+    leaf phase2-keepalive {
+      type uint32;
+      units hours;
+      description "IPSec phase-2 lifetime / keepalive timeout";
+    }
+
+    leaf protocol {
+      type identityref {
+        base ipsec_proto;
+      }
+      description "Specify ESP or AH protocol to use";
+    }
+
+    leaf-list phase2-ciphers {
+      type string;
+      description "Phase-2 cipher, hash and DH group. Format: enc-len-hash_len-dhgroup (E.g. aes-256-sha2_512-modp8192)";
+    }
+  }
+
+  grouping arista-ap-tunnel-config {
+    description "Tunnel configuration";
+
+    leaf id {
+      type uint8;
+      description "Unique ID used as reference for the tunnel config";
+    }
+
+    leaf tunnel-type {
+      type identityref {
+        base tunnel_type;
+      }
+      description "Whether the tunnel is a EoGRE, EoGRE over IPSec or VxLAN tunnel";
+    }
+
+    container primary-endpoint {
+      description "Primary tunnel endpoint address";
+
+      uses arista-ap-tunnel-endpoint;
+    }
+
+    container secondary-endpoint {
+      description "Secondary tunnel endpoint address";
+
+      uses arista-ap-tunnel-endpoint;
+    }
+
+    leaf prefer-primary {
+      type boolean;
+      description "Swtich to primary as soon as it is available";
+    }
+
+    leaf probe-interval {
+      type uint32;
+      units seconds;
+      description "Frequency of probe packets";
+    }
+
+    leaf probe-retries {
+      type uint16;
+      description "Number of retries for each probe";
+    }
+
+    leaf probe-timeout {
+      type uint32;
+      units seconds;
+      description "Probe timeout";
+    }
+
+    leaf kick-clients-on-failover {
+      type boolean;
+      description "Kick wireless clients when there is a failover from primary to secondary or vice-versa";
+    }
+  }
+
+  grouping tunnel-endpoint-status {
+    description
+      "Tunnel state leafs.";
+    leaf status {
+      type identityref {
+        base tunnel_status;
+      }
+      description "Status of the primary/secondary endpoint. Whether active, misconfigured, up or down";
+    }
+
+    leaf remote-ipaddr {
+      type oc-inet:ip-address;
+      description "IP (v4/v6) address of the remote endpoint";
+    }
+
+    leaf rx-packets{
+      type uint64;
+      description "Count of rx packets";
+    }
+
+    leaf rx-dropped {
+      type uint64;
+      description "Count of dropped rx packets";
+    }
+
+    leaf tx-packets {
+      type uint64;
+      description "Count of tx packets";
+    }
+
+    leaf tx-dropped {
+      type uint64;
+      description "Count of tx dropped packets";
+    }
+  }
+
+  grouping arista-ap-tunnel-top {
+    description "Arista AP tunnel configuration and state";
+    container tunnels {
+      description "Tunnel profiles";
+      list tunnel {
+        key "id";
+        description
+          "List of tunnels, key'd by ID";
+
+        leaf id {
+          type leafref {
+            path "../config/id";
+          }
+        description
+          "Each tunnel is key'd by a unique ID.";
+        }
+
+        container config {
+          description "Tunnel configuration";
+
+          uses arista-ap-tunnel-config;
+        }
+
+        container state {
+          config false;
+          description "Tunnel state";
+
+          container primary-status {
+            description "Primary endpoint status";
+            uses tunnel-endpoint-status;
+          }
+
+          container secondary-status {
+            description "Secondary endpoint status";
+            uses tunnel-endpoint-status;
+          }
+
+          leaf ipsec-status {
+            type string;
+            description "IPSec tunnel status information";
+          }
+
+          uses arista-ap-tunnel-config;
+        }
+      }
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point" {
+    description "AP specific tunnel profiles";
+
+    uses arista-ap-tunnel-top;
+  }
+
+  grouping arista-aps-top {
+    description
+      "Top-level grouping for configuring Arista specific parameters on AP";
+
+    container arista-aps {
+      description
+        "Top most container for configuring Arista specific parameters on AP";
+
+      list arista-ap {
+        key "mac";
+        description
+          "List of MAC addresses that will have Arista specific parameters configured.";
+
+        leaf mac {
+          type leafref {
+            path "../system/config/mac";
+          }
+          description
+            "Reference to the MAC address list key. This leaf is a reference
+            only and not to be configured.";
+        }
+
+        container system {
+          description
+            "Container for Arista system specific parameters";
+
+          container config {
+            description
+              "Config container for configuring Arista system specific parameters on APs.";
+
+            uses arista-ap-system-config;
+          }
+
+          container state {
+            config false;
+            description
+              "State container for configuring Arista system specific parameters on APs.";
+
+            uses arista-ap-system-config;
+          }
+        }
+      }
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:radios/oc-access-point:radio/oc-access-point:config" {
+    description "Add radio config parameters to AP";
+    leaf dl-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Downlink MU MIMO is enabled or disabled, default is disabled";
+    }
+
+    leaf ul-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Uplink MU MIMO is enabled or disabled, default is disabled";
+    }
+
+    leaf dl-ofdma-enabled {
+     type boolean;
+     default false;
+     description "Whether DL OFDMA is enabled or disabled, default is disabled";    }
+
+    leaf ul-ofdma-enabled {
+     type boolean;
+     default false;
+     description "Whether UL OFDMA is enabled or disabled, default is disabled";    }
+}
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:radios/oc-access-points:radio/oc-access-point:state" {
+    description "Add radio state parameters to AP";
+
+    leaf dl-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Downlink MU MIMO is enabled or disabled, default is disabled";
+    }
+
+    leaf ul-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Uplink MU MIMO isenabled or disabled, default is disabled";
+    }
+
+    leaf dl-ofdma-enabled {
+     type boolean;
+     default false;
+     description "Whether DL OFDMA is enabled or disabled, default is disabled";     }
+
+   leaf ul-ofdma-enabled {
+    type boolean;
+    default false;
+    description "Whether UL OFDMA is enabled or disabled, default is disabled";
+   }
+ }
+  uses arista-aps-top;
+}
