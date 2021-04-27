@@ -1,0 +1,54 @@
+module arista-srte-deviations {
+  namespace "http://arista.com/yang/openconfig/policy-forwarding/augments";
+  prefix arista-srte-deviations;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-pf-srte {
+    prefix oc-pf-srte;
+  }
+  import openconfig-segment-routing-types {
+    prefix oc-srt;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig SRTE deviations in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+
+  revision 2020-03-03 {
+    description
+      "Adding deviation for originator-addr type.";
+  }
+  revision 2019-01-03 {
+    description
+      "Initial deviation file.";
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:policy-forwarding/oc-netinst:policies/oc-netinst:policy/oc-netinst:rules/oc-netinst:rule/oc-netinst:action/oc-pf-srte:segment-lists/oc-pf-srte:segment-list/oc-pf-srte:config/oc-pf-srte:weight" {
+    description
+      "Weight of segment-list is range restricted in EOS, default is 1";
+    deviate replace {
+      type uint32 {
+        range "1..4294967295";
+      }
+    }
+    deviate add {
+      default "1";
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:segment-routing/oc-netinst:te-policies/oc-netinst:te-policy/oc-netinst:candidate-paths/oc-netinst:candidate-path/oc-netinst:state/oc-netinst:originator-addr" {
+    description
+      "originator-addr is of type srte-endpoint-type";
+    deviate replace {
+      type oc-srt:srte-endpoint-type;
+    }
+  }
+}
