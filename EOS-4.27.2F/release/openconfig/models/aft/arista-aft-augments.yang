@@ -1,0 +1,192 @@
+module arista-aft-augments {
+  namespace "http://arista.com/yang/openconfig/aft/augments";
+  prefix arista-aft-augments;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  import openconfig-policy-types {
+    prefix oc-pol-types;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig AFT augments in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.0.1";
+
+  revision 2021-11-16 {
+    description
+      "Add more INSTALL_PROTOCOL_TYPE.";
+    reference
+      "1.6.1";
+  }
+
+  revision 2020-11-30 {
+    description
+      "Fix errors reported by pyang.";
+    reference
+      "1.0.1";
+  }
+  revision 2019-10-01 {
+    description
+      "Initial augment file.";
+    reference
+      "1.0.0";
+  }
+
+  grouping nexthop-counter-summary {
+    description
+      "Statistics for ECMP nexthops";
+    leaf nexthop-ecmp-max-entries {
+      type uint32;
+      description
+        "The maximum supported number of ECMP nexthop entries.";
+    }
+    leaf nexthop-ecmp-max-sets {
+      type uint32;
+      description
+        "The maximum supported number of ECMP nexthop sets.";
+    }
+    leaf nexthop-ecmp-entries {
+      type uint32;
+      description
+        "The number of currently used ECMP nexthop entries.";
+    }
+    leaf nexthop-ecmp-sets {
+      type uint32;
+      description
+        "The number of currently used ECMP nexthop sets.";
+    }
+    leaf nexthop-ecmp-overlay-max-entries {
+      type uint32;
+      description
+        "The maximum supported number of ECMP (overlay) nexthop entries.";
+    }
+    leaf nexthop-ecmp-overlay-max-sets {
+      type uint32;
+      description
+        "The maximum supported number of ECMP (overlay) nexthop sets.";
+    }
+    leaf nexthop-ecmp-overlay-entries {
+      type uint32;
+      description
+        "The number of currently used ECMP (overlay) nexthop entries.";
+    }
+    leaf nexthop-ecmp-overlay-sets {
+      type uint32;
+      description
+        "The number of currently used ECMP (overlay) nexthop sets.";
+    }
+    leaf nexthop-ecmp-underlay-max-entries {
+      type uint32;
+      description
+        "The maximum supported number of ECMP (underlay) nexthop entries.";
+    }
+    leaf nexthop-ecmp-underlay-max-sets {
+      type uint32;
+      description
+        "The maximum supported number of ECMP (underlay) nexthop sets.";
+    }
+    leaf nexthop-ecmp-underlay-entries {
+      type uint32;
+      description
+        "The number of currently used ECMP (underlay) nexthop entries.";
+    }
+    leaf nexthop-ecmp-underlay-sets {
+      type uint32;
+      description
+        "The number of currently used ECMP (underlay) nexthop sets.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:afts" {
+    container nexthop-ecmp-counters {
+      description
+        "Statistics for ECMP nexthops";
+      container state {
+        config false;
+        description
+          "State parameters for ECMP nexthops";
+        uses nexthop-counter-summary;
+      }
+    }
+    description
+      "Add Statistics for ECMP nexthops.";
+  }
+
+  identity ATTACHED {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Attached route";
+  }
+
+  identity DHCP_DEFAULT_ROUTE {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "DHCP default route";
+  }
+
+  identity DYNAMIC_POLICY {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Dynamic Policy";
+  }
+
+  identity GRIBI {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "gRPC Routing Information Base Interface";
+  }
+
+  identity L2_NEXT_HOP_GROUP {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Layer2 Nexthop Group";
+  }
+
+  identity STATIC_NEXT_HOP_GROUP {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Static Nexthop Group";
+  }
+
+  identity POLICY {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Policy";
+  }
+
+  identity RIP {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "RIP";
+    reference "RFC 2453";
+  }
+
+  identity ROUTE_CACHE_CONNECTED {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Route Cache Connect";
+  }
+
+  identity ROUTE_CACHE_FORWARD {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Route Cache Forward";
+  }
+
+  identity UNKNOWN {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Unknown";
+  }
+
+  identity VCS {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Vxlan Control Service";
+  }
+
+  identity INTERNAL {
+    base oc-pol-types:INSTALL_PROTOCOL_TYPE;
+    description "Internal";
+  }
+}
