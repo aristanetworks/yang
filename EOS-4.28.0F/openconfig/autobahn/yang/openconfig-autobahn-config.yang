@@ -1,0 +1,264 @@
+module openconfig-autobahn-config {
+  yang-version "1";
+  namespace "http://openconfig.net/yang/autobahn-config";
+
+  prefix "oc-wbb";
+
+  import openconfig-extensions { prefix oc-ext; }
+  import openconfig-network-instance { prefix oc-ni; }
+  import openconfig-inet-types { prefix oc-inet; }
+  import openconfig-packet-match-types { prefix oc-pmt; }
+
+  organization
+    "OpenConfig working group";
+
+  contact "www.openconfig.net";
+
+  description
+    "This module describes configuration extensions that are
+    required for the Google WBB project, and is to be upstreamed
+    to the public OpenConfig repository after the initial
+    development project.";
+
+  oc-ext:openconfig-version "0.1.0";
+
+  revision 2020-08-05 {
+    description
+      "Initial revision.";
+    reference "0.1.0";
+  }
+  
+  // ----------------- Network Instance Mapping --------------------
+  //
+  // This configuration covers selection of a VRF based on an ingress policy. Given
+  // that this configuration uses a very similar approach to a PBR policy then it
+  // uses the same construct as PBR within OpenConfig. We not carry a type of policy.
+  // The changes to the current OC policy forwarding model are:
+  //  - support IP_IN_IP as an IP protocol.
+  //  - support multiple DSCPs within a single match rule
+  //
+  // Based on the current implementation expectations, a conforming implementation
+  // matches on IP protocol and DSCP only. Other match criteria can be unsupported when
+  // the policy action is "network-instance". 
+  //
+  // Policies of this type need only be supported within the DEFAULT_INSTANCE. The VRF
+  // (network-instance) target must be an L3VRF type.
+  //
+  // A single policy is expected to be used across all interfaces that are transit interfaces,
+  // and similarly this will be the case for DC-facing interfaces in the future.
+  //
+  // This configuration maps to:
+  //    "set-vrf" in a routing-policy in IOS
+  //    specifying a VRF in an ABF entry in IOS XR
+  //    next-table as a policy action in JUNOS
+  //    set nexthop <x> vrf <y> in EOS
+  //
+  // Example configuration for this configuration:
+  // {
+  //   "network-instances": {
+  //     "network-instance": [
+  //       "name": "DEFAULT",
+  //       "config": {
+  //         "name": "DEFAULT",
+  //         "type": "DEFAULT_INSTANCE"
+  //       },
+  //       "policy-forwarding": {
+  //         "policies": {
+  //           "policy": [
+  //             {
+  //               "policy-id": "SELECT_VRF",
+  //               "config": {
+  //                 "policy-id": "SELECT_VRF",
+  //                 // TODO(robjs): Indicate that this policy is a VRF selection policy only.
+  //                 "type": "VRF_SELECTION_POLICY"
+  //               },
+  //               "rules": {
+  //                 "rule": [
+  //                   {
+  //                     "sequence-id": 0,
+  //                     "config": { 
+  //                       "sequence-id": 0
+  //                     },
+  //                     "ipv4": {
+  //                       "config": {
+  //                         "protocol": "IP_IN_IP",
+  //                         // TODO(robjs): define multiple DSCPs into list
+  //                         "dscps": [26, 28, 34, 36, 38]
+  //                       }
+  //                     },
+  //                     "action": {
+  //                       "config": {
+  //                         "network-instance": "TRANSIT-HIPRI"
+  //                       }
+  //                     }
+  //                   },
+  //                   {
+  //                     "sequence-id": 1,
+  //                     "config": {
+  //                       "sequence-id": 1
+  //                     },
+  //                     "ipv4": {
+  //                       "config": {
+  //                         "protocol": "IP_IN_IP",
+  //                          // wildcard DSCP
+  //                       }
+  //                     },
+  //                     "action": {
+  //                       "config": {
+  //                         "network-instance": "TRANSIT-LOPRI"
+  //                       }
+  //                     }
+  //                   }
+  //                 ]
+  //               }
+  //             }
+  //           ]
+  //         },
+  //         "interfaces": {
+  //           "interface": [
+  //             {
+  //               "interface-id": "eth0",
+  //               "config": {
+  //                 "interface-id": "eth0",
+  //                 // TODO(robjs): Add a means to specifically indicate that this is a VRF
+  //                 // selection PBR policy.
+  //                 "apply-vrf-selection-policy": "SELECT_VRF"
+  //               },
+  //               "interface-ref": {
+  //                 "config": {
+  //                   "interface": "eth0",
+  //                   "subinterface": 0
+  //                 }
+  //               }
+  //             }
+  //           ]
+  //         }
+  //       }
+  //     ]
+  //   }
+  // }
+  //
+  // The TODOs above have the following YANG changes.
+  identity IP_IN_IP {
+    base "oc-pmt:IP_PROTOCOL";
+    description
+      "IP-in-IP tunneling, protocol 4.";
+    reference
+      "RFC2003: IP Encapsulation within IP";
+  }
+
+  grouping policy-type {
+    description
+      "Add support for specifying a type for a policy within the policy-forwarding
+      list. This can be used to indicate how the policy should be mapped to hardware
+      forwarding entries if there are specific optimisations that can be made.";
+
+    leaf type {
+      type enumeration {
+        enum PBR_POLICY {
+          description
+            "The policy reflects a policy-based routing policy that supports generic
+            PBR actions.";
+        }
+        enum VRF_SELECTION_POLICY {
+          description
+            "The policy is used only to classify incoming packets into corresponding
+            network instances.";
+        }
+      }
+      default PBR_POLICY;
+      description
+        "The type of the policy. By default policies are generally usable for policy-based
+        routing, and have no restrictions on their implementation. Where there are alternate
+        policy types, this leaf specifies that a policy is expected to conform with a subset
+        of the functionality as described in the specified type.";
+    }
+  }
+
+  grouping apply-policy-type {
+    description
+      "Add support for specifying a specific VRF-selection policy for an interface
+      which is not treated as a generic PBR policy.";
+
+    leaf apply-vrf-selection-policy {
+      type leafref {
+        path "/oc-ni:network-instances/oc-ni:network-instance/oc-ni:policy-forwarding/" +
+             "oc-ni:policies/oc-ni:policy/oc-ni:config/oc-ni:policy-id";
+      }
+      description
+        "Apply the specific VRF selection policy on the interface. The referenced policy
+        MUST be of type VRF_SELECTION_POLICY. The VRF selection policy may coexist with
+        a policy-forwarding policy.
+        
+        The policy specified in this leaf is used to specifically choose the L3VRF network
+        instance that is used for specific input criteria of packets.";
+    }
+  }
+
+  grouping packet-match-multiple-dscp {
+    description
+      "Add support for matching a list of DSCP values to the OpenConfig policy-forwarding
+      model. Discussion is needed in the OpenConfig community to determine whether we should
+      remove the current single-field matches, or let the two coexist.";
+    
+    leaf-list dscps {
+      type oc-inet:dscp;
+      description
+        "A list of DSCP values to be matched for incoming packets. An OR match should
+        be performed, such that a packet must match one of the values defined in this
+        list. If the field is left empty any DSCP value matches.";
+    }
+  }
+
+  augment "/oc-ni:network-instances/oc-ni:network-instance/oc-ni:policy-forwarding/oc-ni:policies" + 
+          "/oc-ni:policy/oc-ni:config" {
+    description
+      "Add the policy-type to the configuration hierarchy.";
+    
+    uses policy-type;
+  }
+
+  augment "/oc-ni:network-instances/oc-ni:network-instance/oc-ni:policy-forwarding/oc-ni:policies" + 
+          "/oc-ni:policy/oc-ni:state" {
+    description
+      "Add the policy-type to the state hierarchy.";
+    
+    uses policy-type;
+  }
+
+  augment "/oc-ni:network-instances/oc-ni:network-instance/oc-ni:policy-forwarding/oc-ni:interfaces" + 
+          "/oc-ni:interface/oc-ni:config" {
+    description
+      "Add the policy-type to the configuration hierarchy.";
+    
+    uses apply-policy-type;
+  }
+
+  augment "/oc-ni:network-instances/oc-ni:network-instance/oc-ni:policy-forwarding/oc-ni:interfaces" + 
+          "/oc-ni:interface/oc-ni:state" {
+    description
+      "Add the policy-type to the state hierarchy.";
+    
+    uses apply-policy-type;
+  }
+
+  augment "/oc-ni:network-instances/oc-ni:network-instance/oc-ni:policy-forwarding/oc-ni:policies" + 
+          "/oc-ni:policy/oc-ni:rules/oc-ni:rule/oc-ni:ipv4/oc-ni:config" {
+    description
+      "Add policy-based network-instance selection to the network-instance model for a particular
+      interface. Interfaces that require specific policy-based selection must be explicitly configured
+      within the default VRF.";
+    
+    uses packet-match-multiple-dscp;
+  }
+
+  augment "/oc-ni:network-instances/oc-ni:network-instance/oc-ni:policy-forwarding/oc-ni:policies" + 
+          "/oc-ni:policy/oc-ni:rules/oc-ni:rule/oc-ni:ipv4/oc-ni:state" {
+    description
+      "Add policy-based network-instance selection to the network-instance model for a particular
+      interface. Interfaces that require specific policy-based selection must be explicitly configured
+      within the default VRF.";
+    
+    uses packet-match-multiple-dscp;
+  }
+}
