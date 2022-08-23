@@ -1,0 +1,95 @@
+module arista-sflow-augments {
+   namespace "http://arista.com/yang/openconfig/sflow/augments";
+   prefix arista-sflow-augments;
+
+   import openconfig-sampling-sflow {
+     prefix oc-sflow;
+   }
+   import openconfig-extensions {
+     prefix oc-ext;
+   }
+   import openconfig-inet-types {
+     prefix oc-inet;
+   }
+  import openconfig-network-instance {
+    prefix oc-ni;
+   }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig sFlow augments in Arista EOS.
+
+     Copyright (c) 2021 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.0.0";
+
+  revision 2021-08-16 {
+    description
+      "Initial augments file.";
+    reference
+      "1.0.0";
+  }
+
+  grouping sflow-network-instance-config {
+    description
+      "Configuration data for sFlow in a network instance.";
+    leaf name {
+      type oc-ni:network-instance-ref;
+      description
+        "Reference to the name of the network instance.";
+    }
+    leaf source-address {
+      type oc-inet:ip-address;
+      description
+        "The source IP address for sFlow datagrams sent to
+         collectors in the network instance.";
+    }
+  }
+
+  grouping sflow-network-instances-top {
+    description
+      "Top-level grouping for sFlow data in non-default network
+       instances.";
+    container network-instances {
+      description
+        "Enclosing container for sFlow configuration in non-default
+         network instances.";
+      list network-instance {
+        key "name";
+        description
+          "Configuration and state data for sFlow in specific
+           non-default network instances.";
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description
+            "Reference to list key.";
+        }
+        container config {
+          description
+            "Configuration data for sFlow in a non-default network
+             instance.";
+          uses sflow-network-instance-config;
+        }
+        container state {
+          config false;
+          description
+            "Operational state data for sFlow in a non-default
+             network instance.";
+          uses sflow-network-instance-config;
+          // No distinct state data yet
+        }
+      }
+    }
+  }
+
+  augment "/oc-sflow:sampling/oc-sflow:sflow" {
+    uses sflow-network-instances-top;
+    description
+      "Adds sFlow data for non-default network instances.";
+  }
+}
