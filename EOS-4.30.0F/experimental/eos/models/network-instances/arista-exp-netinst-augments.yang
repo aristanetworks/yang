@@ -1,0 +1,64 @@
+module arista-exp-netinst-augments {
+   yang-version 1;
+   namespace "http://arista.com/yang/experimental/network-instances/augments";
+   prefix arista-network-instances-augments;
+
+   import openconfig-network-instance { prefix oc-netinst; }
+   import openconfig-extensions { prefix oc-ext; }
+   import openconfig-types { prefix oc-types; }
+   import openconfig-network-instance-types { prefix oc-ni-types; }
+
+   organization
+      "Arista Networks <http://arista.com/>";
+   contact
+      "Arista Networks, Inc.
+     Product Support";
+   description
+      "This module contains EXPERIMENTAL augmentations to the OpenConfig
+       network-instances model.
+
+   Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+
+   oc-ext:openconfig-version "1.0.0";
+
+   revision 2023-01-10 {
+      description
+         "Augment back in the removed enabled-address-families, for config.";
+      reference
+         "1.0.0";
+   }
+
+   grouping l3ni-instance-common-config {
+      description
+         "Configuration parameters that are common to L3 network
+         instances other than the default instance";
+
+      leaf-list enabled-address-families {
+         type identityref {
+            base oc-types:ADDRESS_FAMILY;
+         }
+         description
+            "The address families that are to be enabled for this
+            network instance.";
+         }
+   }
+
+   grouping network-instance-type-dependent-config {
+      description
+         "Type dependent network instance configuration";
+
+      uses l3ni-instance-common-config {
+         when "./type = 'oc-ni-types:L3VRF' or ./type = 'oc-ni-types:L2L3'" {
+            description
+               "Layer 3 VRF configuration parameters included when a
+               network instance is a L3VRF or combined L2L3 instance";
+         }
+      }
+   }
+
+   augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:config" {
+      description "Add enabled-address-families configuration";
+
+      uses network-instance-type-dependent-config;
+   }
+}
