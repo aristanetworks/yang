@@ -1,0 +1,140 @@
+module arista-netinst-augments {
+   namespace "http://arista.com/yang/openconfig/network-instances/augments";
+   prefix arista-network-instances-augments;
+
+   import openconfig-network-instance {
+      prefix oc-netinst;
+   }
+   import openconfig-extensions {
+      prefix oc-ext;
+   }
+   import openconfig-inet-types {
+      prefix oc-inet;
+   }
+
+   organization
+      "Arista Networks <http://arista.com/>";
+   contact
+      "Arista Networks, Inc.
+     Product Support";
+   description
+      "This module contains OpenConfig Network Instances deviations in Arista EOS.
+
+     Copyright (c) 2021 Arista Networks, Inc. All rights reserved.";
+   oc-ext:openconfig-version "1.2.0";
+
+   revision 2023-02-08 {
+      description
+         "Add augment for enabling ipv4 and ipv6 routing.";
+      reference
+         "1.2.0";
+   }
+   revision 2022-11-22 {
+      description
+         "Add the list of prefixes to import into the protocol from the RIB.";
+      reference
+         "1.1.0";
+   }
+   revision 2021-08-17 {
+      description
+         "Initial augment file.";
+      reference
+         "1.0.0";
+   }
+
+  grouping bgp-common-network-config {
+    description
+      "Configuration parameters for a prefix to import into BGP from the RIB";
+    leaf import-policy {
+      type string;
+      description
+        "Name of the route map used to filter the networks to advertise";
+    }
+  }
+
+   grouping common-network-config {
+      description
+         "Configuration parameters for prefixes to import into the protocol from the RIB";
+      leaf network {
+         type oc-inet:ip-prefix;
+         description
+            "The prefix to import into the protocol from the RIB.";
+      }
+      uses bgp-common-network-config {
+         when "../../../../../../../config/name='bgp'";
+      }
+   }
+
+   grouping common-network-list {
+      description
+         "The list of prefixes to import into the protocol from the RIB";
+      list network {
+         key "network";
+         description
+            "List of prefixes to import into the protocol from the RIB.";
+         leaf network {
+            type leafref {
+               path "../config/network";
+            }
+            description
+               "The prefix to import into the protocol from the RIB.";
+         }
+         container config {
+            description
+               "Configuration parameters for the prefix";
+            uses common-network-config;
+         }
+         container state {
+            config false;
+            description
+               "State information relating to the prefix configuration";
+            uses common-network-config;
+         }
+      }
+   }
+
+   grouping eos-rib-config {
+      description "Grouping of general RIB configuration parameters";
+      leaf default-prefix-auto-explicit-null {
+         type boolean;
+         default "false";
+         description
+            "Add MPLS Explicit NULL to FIB route for a prefix if nexthop resolves over
+  MPLS tunnel of different address-family";
+      }
+   }
+
+   augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:config" {
+      description "Add general IP routing configuration";
+      leaf ipv4-routing-enabled {
+         type boolean;
+         default "true";
+         description
+            "Enable IPV4 routing.";
+      }
+      leaf ipv6-routing-enabled {
+         type boolean;
+         default "true";
+         description
+            "Enable IPV6 routing.";
+      }
+   }
+
+   augment "/oc-netinst:network-instances/oc-netinst:network-instance" {
+      description "Add general RIB configuration";
+      container rib {
+         description "General RIB configuration";
+         container config {
+            description
+               "Configuration parameters for general RIB configuration on EOS";
+            uses eos-rib-config;
+         }
+         container state {
+            config false;
+            description
+               "Operational state parameters for general RIB configuration on EOS";
+            uses eos-rib-config;
+         }
+      }
+   }
+}

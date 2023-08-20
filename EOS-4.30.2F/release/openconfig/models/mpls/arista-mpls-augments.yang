@@ -1,0 +1,145 @@
+module arista-mpls-augments {
+  namespace "http://arista.com/yang/openconfig/mpls/augments";
+  prefix arista-mpls-augments;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+  import openconfig-inet-types {
+    prefix oc-inet;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig MPLS augments in Arista EOS.
+
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.2.0";
+  
+  revision 2022-11-28 {
+    description
+      "Added enabled under global config/state.";
+    reference
+      "1.2.0";
+  }
+  revision 2022-02-14 {
+    description
+      "Add color-dscp-mappings augmentation under te-global-attributes.";
+    reference
+      "1.1.0";
+  }
+  revision 2020-11-30 {
+    description
+      "Fix errors reported by pyang.";
+    reference
+      "1.0.1";
+  }
+  revision 2017-12-21 {
+    description
+      "Initial augment file.";
+    reference
+      "1.0.0";
+  }
+
+  grouping mpls-global-config {
+    description
+      "Global configuration options of MPLS";
+
+    leaf enabled {
+      type boolean;
+      default false;
+      description
+        "Enable MPLS routing.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:global/oc-netinst:config" {
+    description
+      "Augment the MPLS global model to include EOS specific configuration options";
+    uses mpls-global-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:global/oc-netinst:state" {
+    description
+      "Augment the MPLS global model to include EOS specific configuration options";
+    uses mpls-global-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:global/oc-netinst:reserved-label-blocks/oc-netinst:reserved-label-block/oc-netinst:config" {
+    leaf local-id {
+      type string;
+      description
+        "Local-id labels supported in EOS: dynamic, bgp-sr, isis-sr, l2evpn, srlb, static";
+    }
+    description
+      "Add local-id to MPLS configuration.";
+  }
+
+  grouping mpls-te-color-dscp-mappings {
+    description
+      "Configuration of attributes in Color/Dscp mappings";
+
+    leaf color {
+      type uint32;
+      description
+        "Color value";
+    }
+
+    leaf default-color {
+      type boolean;
+      default false;
+      description
+        "Associate specified color with unmapped DSCP values";
+    }
+
+    leaf-list dscps {
+      type oc-inet:dscp;
+      description
+        "List of DSCP values mapped to a color";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:te-global-attributes" {
+    description
+      "Augment to include color-dscp-mappings for Class Based Forwarding";
+
+    container color-dscp-mappings {
+      description
+        "Color/Dscp mappings for Class Based Forwarding";
+
+      list color-dscp-mapping {
+        key "color";
+        description
+          "List of colors in Color/DSCP mappings";
+
+        leaf color {
+          type leafref {
+            path "../config/color";
+          }
+          description
+            "Color value";
+        }
+
+        container config {
+          description
+            "Color/DSCP mappings configuration parameter";
+          uses mpls-te-color-dscp-mappings;
+        }
+
+        container state {
+          config false;
+          description
+            "Color/DSCP mappings operational state parameter";
+          uses mpls-te-color-dscp-mappings;
+        }
+      }
+    }
+  }
+}
