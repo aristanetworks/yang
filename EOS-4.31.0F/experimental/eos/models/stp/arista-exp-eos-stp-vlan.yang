@@ -1,0 +1,63 @@
+module arista-exp-eos-stp-vlan {
+  yang-version 1;
+  namespace "http://arista.com/yang/experimental/eos/arista-exp-eos-stp-vlan";
+  prefix "arista-exp-eos-stp-vlan";
+
+  import openconfig-extensions {
+    prefix "oc-ext";
+  }
+  import openconfig-spanning-tree {
+    prefix "openconfig-spanning-tree";
+  }
+  import openconfig-vlan-types {
+    prefix "openconfig-vlan-types";
+  }
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "TAC models for VLAN IDs disabled in STP";
+
+  oc-ext:openconfig-version "0.3.1";
+
+  revision "2019-11-28" {
+    description
+      "Version 0.3.1, generated on 2019-11-28";
+    reference "0.3.1";
+  }
+
+  typedef vlan-id-or-range {
+    type union {
+      type openconfig-vlan-types:vlan-id;
+      type openconfig-vlan-types:vlan-range;
+    }
+    description
+      "Single VLAN ID or a range of them.";
+  }
+  grouping ocglobal-vlan-config {
+    leaf-list disabled-vlan {
+      type vlan-id-or-range;
+      description
+        "VLAN IDs that are disabled in STP";
+    }
+    description
+      "Config container for VLAN IDs in STP";
+  }
+  grouping ocglobal-vlan-state {
+    uses ocglobal-vlan-config;
+    description
+      "State container for VLAN IDs in STP";
+  }
+  augment "/openconfig-spanning-tree:stp/openconfig-spanning-tree:global/openconfig-spanning-tree:config" {
+    uses ocglobal-vlan-config;
+    description
+      "/openconfig-spanning-tree:stp/openconfig-spanning-tree:global/openconfig-spanning-tree:config augment";
+  }
+  augment "/openconfig-spanning-tree:stp/openconfig-spanning-tree:global/openconfig-spanning-tree:state" {
+    uses ocglobal-vlan-state;
+    description
+      "/openconfig-spanning-tree:stp/openconfig-spanning-tree:global/openconfig-spanning-tree:state augment";
+	}
+}
