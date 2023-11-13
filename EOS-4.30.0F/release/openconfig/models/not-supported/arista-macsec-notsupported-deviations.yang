@@ -15,9 +15,15 @@ module arista-macsec-notsupported-deviations {
     "This module contains OpenConfig macsec deviations in Arista EOS.
      Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
 
-  revision 2022-12-19 {
+  revision 2023-04-05 {
     description
       "Auto-generated not-supported deviations for unsupported paths";
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:interfaces/oc-macsec:interface/oc-macsec:mka/oc-macsec:config/oc-macsec:key-chain" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
   }
 
   deviation "/oc-macsec:macsec/oc-macsec:interfaces/oc-macsec:interface/oc-macsec:scsa-rx/oc-macsec:scsa-rx/oc-macsec:state/oc-macsec:counters/oc-macsec:sa-invalid" {
