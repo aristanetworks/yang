@@ -27,7 +27,7 @@ module arista-network-instance-notsupported-deviations {
     "This module contains OpenConfig network-instance deviations in Arista EOS.
      Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
 
-  revision 2023-05-02 {
+  revision 2023-08-16 {
     description
       "Auto-generated not-supported deviations for unsupported paths";
   }
@@ -51,12 +51,6 @@ module arista-network-instance-notsupported-deviations {
   }
 
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:route-limits" {
-    description
-      "Not-supported deviation.";
-    deviate not-supported;
-  }
-
-  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-pgrmerrs:programming-errors" {
     description
       "Not-supported deviation.";
     deviate not-supported;
@@ -2289,6 +2283,24 @@ module arista-network-instance-notsupported-deviations {
   }
 
   deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:tables/oc-netinst:table/oc-netinst:state" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-pgrmerrs:programming-errors/oc-pgrmerrs:ip-routes/oc-pgrmerrs:drop-routes/oc-pgrmerrs:drop/oc-pgrmerrs:state/oc-pgrmerrs:dest-component" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-pgrmerrs:programming-errors/oc-pgrmerrs:ip-routes/oc-pgrmerrs:failed-routes/oc-pgrmerrs:failed/oc-pgrmerrs:state/oc-pgrmerrs:dest-component" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-pgrmerrs:programming-errors/oc-pgrmerrs:ip-routes/oc-pgrmerrs:stale-routes/oc-pgrmerrs:stale/oc-pgrmerrs:state/oc-pgrmerrs:dest-component" {
     description
       "Not-supported deviation.";
     deviate not-supported;

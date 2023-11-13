@@ -24,7 +24,7 @@ module arista-system-notsupported-deviations {
     "This module contains OpenConfig system deviations in Arista EOS.
      Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
 
-  revision 2023-04-18 {
+  revision 2023-08-16 {
     description
       "Auto-generated not-supported deviations for unsupported paths";
   }
@@ -59,13 +59,25 @@ module arista-system-notsupported-deviations {
     deviate not-supported;
   }
 
-  deviation "/oc-sys:system/oc-sys-copp:control-plane-traffic/oc-sys-copp:ingress/oc-sys-copp:qos" {
+  deviation "/oc-sys:system/oc-sys-copp:control-plane-traffic/oc-sys-copp:ingress/oc-sys-copp:acl/oc-sys-copp:acl-set/oc-sys-copp:acl-entries" {
     description
       "Not-supported deviation.";
     deviate not-supported;
   }
 
-  deviation "/oc-sys:system/oc-sys-copp:control-plane-traffic/oc-sys-copp:ingress/oc-sys-copp:acl/oc-sys-copp:acl-set/oc-sys-copp:acl-entries" {
+  deviation "/oc-sys:system/oc-sys-copp:control-plane-traffic/oc-sys-copp:ingress/oc-sys-copp:qos/oc-sys-copp:scheduler-policy/oc-sys-copp:scheduler-statistics/oc-sys-copp:scheduler/oc-sys-copp:state/oc-sys-copp:sequence" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-sys:system/oc-sys-copp:control-plane-traffic/oc-sys-copp:ingress/oc-sys-copp:qos/oc-sys-copp:scheduler-policy/oc-sys-copp:scheduler-statistics/oc-sys-copp:scheduler/oc-sys-copp:state/oc-sys-copp:violating-octets" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-sys:system/oc-sys-copp:control-plane-traffic/oc-sys-copp:ingress/oc-sys-copp:qos/oc-sys-copp:scheduler-policy/oc-sys-copp:scheduler-statistics/oc-sys-copp:scheduler/oc-sys-copp:state/oc-sys-copp:violating-pkts" {
     description
       "Not-supported deviation.";
     deviate not-supported;

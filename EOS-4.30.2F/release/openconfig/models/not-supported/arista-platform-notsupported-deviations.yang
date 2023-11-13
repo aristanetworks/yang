@@ -39,7 +39,7 @@ module arista-platform-notsupported-deviations {
     "This module contains OpenConfig platform deviations in Arista EOS.
      Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
 
-  revision 2023-04-10 {
+  revision 2023-08-16 {
     description
       "Auto-generated not-supported deviations for unsupported paths";
   }
@@ -591,18 +591,6 @@ module arista-platform-notsupported-deviations {
   }
 
   deviation "/oc-platform:components/oc-platform:component/oc-platform:integrated-circuit/oc-platform:utilization/oc-platform:resources/oc-platform:resource/oc-platform:config" {
-    description
-      "Not-supported deviation.";
-    deviate not-supported;
-  }
-
-  deviation "/oc-platform:components/oc-platform:component/oc-platform:integrated-circuit/oc-ppc:pipeline-counters/oc-ppc:control-plane-traffic/oc-ppc:vendor" {
-    description
-      "Not-supported deviation.";
-    deviate not-supported;
-  }
-
-  deviation "/oc-platform:components/oc-platform:component/oc-platform:integrated-circuit/oc-ppc:pipeline-counters/oc-ppc:drop/oc-ppc:vendor" {
     description
       "Not-supported deviation.";
     deviate not-supported;
