@@ -1,0 +1,138 @@
+module arista-ospf-deviations {
+  namespace "http://arista.com/yang/openconfig/ospf/deviations";
+  prefix arista-ospf-deviations;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-ospf-types {
+    prefix oc-ospf-types;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig OSPF deviations in Arista EOS.
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+  
+  oc-ext:openconfig-version "4.2.0";
+
+  revision 2023-11-16 {
+    description
+     "Update valid range for on-startup timeout for max-metric.
+      Update valid range for interface metric.";
+    reference
+      "1.0.2";
+  }
+
+  revision 2023-04-12 {
+    description
+     "Setting the range on-startup timeout for max-metric.
+      Setting the range of lsa generation timers.";
+    reference
+      "1.0.1";
+  }
+
+  revision 2023-03-31 {
+    description
+     "Setting the range of spf config timers";
+    reference
+      "1.0.0";
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:global/oc-netinst:timers/oc-netinst:spf/oc-netinst:config/oc-netinst:initial-delay" {
+    description
+      "Spf timer initial-delay range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..65535000";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:global/oc-netinst:timers/oc-netinst:spf/oc-netinst:config/oc-netinst:maximum-delay" {
+    description
+      "Spf timer maximum-delay range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..65535000";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:global/oc-netinst:timers/oc-netinst:max-metric/oc-netinst:config/oc-netinst:timeout" {
+    description
+      "Max metric timer on-startup timeout is restricted in EOS";
+    deviate replace {
+      type uint64 {
+        range "0 | 5..86400";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:global/oc-netinst:timers/oc-netinst:lsa-generation/oc-netinst:config/oc-netinst:initial-delay" {
+    description
+      "Lsa generation timer initial-delay range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..600000";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:global/oc-netinst:timers/oc-netinst:lsa-generation/oc-netinst:config/oc-netinst:maximum-delay" {
+    description
+      "Lsa generation timer maximum-delay range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..600000";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:areas/oc-netinst:area/oc-netinst:interfaces/oc-netinst:interface/oc-netinst:config/oc-netinst:metric" {
+    description
+      "Interface cost range is restricted in EOS";
+    deviate replace {
+      type uint16 {
+        range "0 | 1..65535";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:areas/oc-netinst:area/oc-netinst:interfaces/oc-netinst:interface/oc-netinst:timers/oc-netinst:config/oc-netinst:dead-interval" {
+    description
+      "Interface dead interval range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "1..8192";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:areas/oc-netinst:area/oc-netinst:interfaces/oc-netinst:interface/oc-netinst:timers/oc-netinst:config/oc-netinst:hello-interval" {
+    description
+      "Interface hello interval range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "1..8192";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:areas/oc-netinst:area/oc-netinst:interfaces/oc-netinst:interface/oc-netinst:timers/oc-netinst:config/oc-netinst:retransmission-interval" {
+    description
+      "Interface retransmission interval range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "1..8192";
+      }
+    }
+  }
+}

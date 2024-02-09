@@ -1,0 +1,232 @@
+module arista-exp-eos-bgp {
+  namespace "http://arista.com/yang/experimental/eos/bgp";
+  prefix bgp-exp;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+  import arista-bgp-augments {
+    prefix arista-bgp-augments;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig BGP models in Arista EOS.
+
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "1.0.0";
+
+  revision 2023-10-10 {
+    description
+      "Add support for next-hop-unchanged for BGP neighbors";
+    reference
+      "1.0.0";
+  }
+
+  grouping bgp-neighbor-multicast-common {
+    description
+      "BGP neighbors IPv4/6 multicast afi-safis configuration options";
+    container config {
+      description
+        "Common configuration parameters for neighbors' IPv4/6 multicast afi-safis";
+      uses bgp-next-hop-unchanged-config;
+    }
+    container state {
+        config false;
+        description
+          "Common state information for neighbors' IPv4/6 multicast afi-safis";
+        uses bgp-next-hop-unchanged-config;
+    }
+  }
+
+  grouping bgp-neighbor-evpn {
+    description
+      "BGP neighbors evpn afi-safi configuration options";
+    container config {
+      description
+        "Configuration parameters for neighbors' EVPN afi-safis";
+      uses bgp-next-hop-unchanged-config;
+    }
+    container state {
+        config false;
+        description
+          "State information for neighbors' EVPN afi-safis";
+        uses bgp-next-hop-unchanged-config;
+    }
+  }
+
+  grouping bgp-next-hop-unchanged-config {
+     description
+      "Next-hop-unchanged configuration.";
+    leaf next-hop-unchanged {
+      type boolean;
+      description
+        "Advertise routes to peers without changing the next hop.
+        Default is to not preserve the next hop.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"{
+    description
+      "Augment the BGP neighbors afi-safis model to include multicast configuration";
+    container ipv4-multicast {
+      when "../oc-netinst:afi-safi-name = 'arista-bgp-augments:IPV4_MULTICAST'" {
+        description
+          "Include this container for IPv4 Multicast specific
+          configuration";
+      }
+      description "IPv4 multicast configuration options";
+      uses bgp-neighbor-multicast-common;
+    }
+    container ipv6-multicast {
+      when "../oc-netinst:afi-safi-name = 'arista-bgp-augments:IPV6_MULTICAST'" {
+        description
+          "Include this container for IPv6 Multicast specific
+          configuration";
+      }
+      description "IPv6 multicast configuration options";
+      uses bgp-neighbor-multicast-common;
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"{
+    description
+      "Augment the BGP peer groups afi-safis model to include multicast configuration";
+    container ipv4-multicast {
+      when "../oc-netinst:afi-safi-name = 'arista-bgp-augments:IPV4_MULTICAST'" {
+        description
+          "Include this container for IPv4 Multicast specific
+          configuration";
+      }
+      description "IPv4 multicast configuration options";
+      uses bgp-neighbor-multicast-common;
+    }
+    container ipv6-multicast {
+      when "../oc-netinst:afi-safi-name = 'arista-bgp-augments:IPV6_MULTICAST'" {
+        description
+          "Include this container for IPv6 Multicast specific
+          configuration";
+      }
+      description "IPv6 multicast configuration options";
+      uses bgp-neighbor-multicast-common;
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"  
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:l2vpn-evpn"{
+    description
+      "Augment the BGP neighbors evpn afi-safi config model to include configuration options";
+    uses bgp-neighbor-evpn;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"  
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:l2vpn-evpn"{
+    description
+      "Augment the BGP peer groups evpn afi-safi config model to include configuration options";
+    uses bgp-neighbor-evpn;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:config"{
+    description
+      "Augment the BGP neighbors config model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:state"{
+    description
+      "Augment the BGP neighbors state model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:config"{
+    description
+      "Augment the BGP peer groups config model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:state"{
+    description
+      "Augment the BGP peer groups state model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP neighbors ipv4 unicast afi-safi config model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP neighbors ipv4 unicast afi-safi state model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP neighbors ipv6 unicast afi-safi config model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP neighbors ipv6 unicast afi-safi state model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP peer groups ipv4 unicast afi-safi config model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP peer groups ipv4 unicast afi-safi state model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP peer groups ipv6 unicast afi-safi config model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP peer groups ipv6 unicast afi-safi state model to include next-hop-unchanged configuration options";
+    uses bgp-next-hop-unchanged-config;
+  }
+}
