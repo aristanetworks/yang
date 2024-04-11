@@ -1,0 +1,100 @@
+module arista-system-session {
+  yang-version "1";
+
+  namespace "http://arista.com/yang/experimental/eos/arista-system-session";
+  prefix "oc-sys-sess";
+
+  import openconfig-extensions { prefix oc-ext; }
+  import openconfig-types { prefix "oc-types"; }
+  import openconfig-system { prefix oc-sys; }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+     
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+
+  description
+    "This module adds operational state for system-wide configuration diffs.
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "0.1.0";
+
+  revision 2023-12-19 {
+    description
+      "Augment of /system to add system-wide configuration diffs.";
+    reference
+      "1.0.0";
+  }
+
+  grouping system-session-history {
+    description
+      "Grouping of session operational state.";
+
+    container state {
+      description
+        "Enclosing container for operational state representing
+         configuration diffs.";
+
+      list diff {
+        key "timestamp";
+        description
+          "List of configuration diffs, keyed by timestamp.";
+
+        leaf timestamp {
+          type oc-types:timeticks64;
+          units "nanoseconds";
+          description
+            "UTC time when the configuration diff is stored.";
+        }
+
+        leaf username {
+          type string;
+          description
+            "The name of the user who made the configuration change.";
+        }
+
+        leaf session-id {
+          type string;
+          description
+            "The id (or name) of the configuration session.";
+        }
+
+        leaf size {
+          type uint32;
+          units "bytes";
+          description
+            "The total number of bytes of the configuration diff.
+             If the diff is trimmed, this represents the total number
+             of bytes of the diff before being trimmed.";
+        }
+
+        leaf changes {
+          type string;
+          description
+            "The changes made to the running-config of the device in a
+             unified diff format. Large diffs are trimmed to 8192 bytes.";
+        }
+      }
+    }
+  }
+
+  augment "/oc-sys:system" {
+    description
+      "Add session";
+
+    container session {
+      description
+        "Enclosing container for session";
+
+      container history {
+        config false;
+        description
+          "Enclosing container to store configuration diff history";
+
+        uses system-session-history;
+      }
+    }
+  }
+}

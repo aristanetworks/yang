@@ -1,0 +1,100 @@
+module arista-bgp-common-augments {
+  yang-version 1;
+  namespace "http://arista.com/yang/experimental/eos/arista-bgp-common-augments";
+  prefix "arista-bgp-common-augments";
+  import openconfig-extensions {
+    prefix "oc-ext";
+  }
+  import openconfig-network-instance {
+    prefix "oc-netinst";
+  }
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig BGP augments in Arista EOS.
+
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "1.0.0";
+  revision "2023-12-01" {
+    description
+      "Initial augment file";
+    reference "1.0.0";
+  }
+  typedef policy-type {
+    type enumeration {
+      enum "ROUTE_MAP" {
+        description
+          "Route map.";
+      }
+      enum "RCF" {
+        description
+          "RCF function.";
+      }
+    }
+    description
+      "Indicates the routing policy type.";
+  }
+  grouping policy-type-config {
+    description
+      "Configuration parameters specifying the type of routing policy applied.";
+    leaf import-policy-type {
+      type policy-type;
+      must "../../../oc-netinst:afi-safi-name = 'IPV4_UNICAST'"
+         + " or ../../../oc-netinst:afi-safi-name = 'IPV6_UNICAST'" {
+        error-message "Specifying the routing policy type is only supported on "
+                    + "IPV4_UNICAST and IPV6_UNICAST AFI-SAFI types.";
+      }
+      default "ROUTE_MAP";
+      description
+        "Specify the type of policy to be used when importing routes.";
+    }
+    leaf export-policy-type {
+      type policy-type;
+      must "../../../oc-netinst:afi-safi-name = 'IPV4_UNICAST'"
+         + " or ../../../oc-netinst:afi-safi-name = 'IPV6_UNICAST'" {
+        error-message "Specifying the routing policy type is only supported on "
+                    + "IPV4_UNICAST and IPV6_UNICAST AFI-SAFI types.";
+      }
+      default "ROUTE_MAP";
+      description
+        "Specify the type of policy to be used when exporting routes.";
+    }
+  }
+  // neighbor-afi-safi policy config
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor"
+        + "/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:apply-policy/oc-netinst:config" {
+    uses policy-type-config;
+    description
+      "Add routing policy type parameters for neighbors.";
+  }
+  // neighbor-afi-safi policy state
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor"
+        + "/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:apply-policy/oc-netinst:state" {
+    uses policy-type-config;
+    description
+      "Add routing policy type state for neighbors.";
+  }
+  // peer-group-afi-safi policy config
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group"
+        + "/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:apply-policy/oc-netinst:config" {
+    uses policy-type-config;
+    description
+      "Add routing policy type parameters for peer groups.";
+  }
+  // peer-group-afi-safi policy state
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group"
+        + "/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:apply-policy/oc-netinst:state" {
+    uses policy-type-config;
+    description
+      "Add routing policy type state for peer groups.";
+  }
+}
+
