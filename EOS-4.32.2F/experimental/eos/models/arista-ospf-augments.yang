@@ -1,0 +1,152 @@
+module arista-ospf-augments {
+  namespace "http://arista.com/yang/openconfig/ospf/augments";
+  prefix arista-ospf-augments;
+  
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-ospfv2 {
+    prefix oc-ospfv2;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+  
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig OSPFv2 augments in Arista EOS.
+  
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+  
+  oc-ext:openconfig-version "4.2.0";
+  
+  revision 2023-04-20 {
+    description
+      "Initial augment file for OSPF authentication.";
+    reference
+      "1.0.0";
+  }
+
+  identity AUTH_MODE {
+     description "Base identity to define OSPF authentication";
+  }
+    
+  identity AUTH_NONE {
+    base AUTH_MODE;
+    description
+      "Auth mode none.";
+  }
+
+  identity AUTH_SIMPLE {
+    base AUTH_MODE;
+    description
+      "Auth mode simple. See RFC2328";
+  }
+
+  identity AUTH_MESSAGE_DIGEST {
+    base AUTH_MODE;
+    description
+      "Auth mode message digest. See RFC5709";
+  }
+
+  typedef MESSAGE_DIGEST_ENCRYPTION {
+    type enumeration {
+      enum MDNONE {
+        description
+          "No encrytion type.";
+      }
+      enum MD5 {
+        description
+          "Use MD5 message digest encryption type.";
+      }
+      enum SHA1 {
+        description
+          "Use SHA1 message digest encryption type.";
+      }
+      enum SHA256 {
+        description
+          "Use SHA256 message digest encryption type.";
+      }
+      enum SHA384 {
+        description
+          "Use SHA384 message digest encryption type.";
+      }
+      enum SHA512 {
+        description
+          "Use SHA512 message digest encryption type.";
+      }
+    }
+    description
+      "Used to indicate which encryption should be used for OSPF message digest.";
+  }
+
+  grouping ospf-authentication {
+    description
+      "Grouping for OSPF authentication.";
+  
+    leaf auth-mode {
+      type identityref {
+        base AUTH_MODE;
+      }
+      description
+        "Authentication mode to be used for OSPF links.";
+    }
+    
+    leaf simple-password {
+      type string;
+      description
+        "Password for simple authentication mode to be specified for OSPF.";
+    }
+    
+    list message-digest {
+      key "md-key-id";
+      max-elements 2;
+      description
+        "List of OSPF message digest authentication.";
+      
+      leaf md-key-id {
+        type uint8 {
+          range "1..255";
+        }
+        description
+          "Auth keyid to be used for OSPF message digest auth.";
+      }
+      
+      leaf md-encryption {
+        type MESSAGE_DIGEST_ENCRYPTION;
+        description
+          "Encryption type to be used for OSPF message digest auth.";
+      }
+      
+      leaf md-password {
+        type string;
+        description
+          "Password for message digest mode to be specified for OSPF.";
+      }
+    }
+  }
+  
+  grouping arista-ospf-authentication {
+    description
+      "Grouping for OSPF authentication.";
+    container authentication {
+      description
+        "OSPF authentication.";
+      container config {
+        description
+          "Configuration parameters for OSPF authentication.";
+        uses ospf-authentication;
+      }
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:ospfv2/oc-netinst:areas/oc-netinst:area/oc-netinst:interfaces/oc-netinst:interface" {
+    uses arista-ospf-authentication;
+    description
+      "Add OSPF authentication parameters.";
+  }
+} 

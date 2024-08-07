@@ -1,0 +1,2 @@
+/arista/traffic-policy/policies/policy[name=*]/data-plane-egress-counters/counter[name=*]/state/policy-name
+/arista/traffic-policy/policies/policy[name=*]/data-plane-ingress-counters/counter[name=*]/state/policy-name
