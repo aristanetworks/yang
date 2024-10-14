@@ -1,0 +1,79 @@
+module arista-rpc-netconf {
+  namespace "http://arista.com/yang/rpc/netconf";
+  prefix arista-rpc-netconf;
+
+  import ietf-netconf {
+    prefix nc;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains NETCONF RPC extensions in Arista EOS.
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+
+  revision 2023-03-03 {
+    description
+      "Add time-modified extension.";
+  }
+
+  revision 2018-01-04 {
+    description
+      "Initial RPC extension definitions.";
+    reference
+      "RFC6241: Network Configuration Protocol (NETCONF)";
+  }
+
+  typedef eos-cli-config-command {
+    type string;
+    description
+      "An EOS CLI configuration command string.";
+  }
+
+  grouping apply-cli-parameters {
+    description
+      "CLI configuration input parameters.";
+    container commands {
+      description
+        "CLI configuration commands.";
+      leaf-list command {
+        type eos-cli-config-command;
+        ordered-by user;
+        description
+          "CLI configuration commands to apply with config data.";
+      }
+    }
+  }
+
+  augment "/nc:edit-config/nc:input" {
+    description
+      "Adds CLI parameters for mixed config/CLI command input.";
+    uses apply-cli-parameters;
+  }
+
+  extension time-modified {
+    description
+      "This extension defines an annotation of modification timestamps for
+      NETCONF RPC outputs.  When the extension is applied to an RPC's output
+      schema node, the data container in the output tree of that RPC is
+      annotated with the timestamp of the latest date and time when a value in
+      the output tree was modified.  The timestamp is encoded as an attribute
+      named 'time-modified' with a value in RFC 3339 format.
+
+      Example:
+
+        <rpc-reply xmlns='urn:ietf:params:xml:ns:netconf:base:1.0' message-id='101'>
+          <data xmlns:arnc='http://arista.com/yang/rpc/netconf'
+                arnc:time-modified='2006-01-02T15:04:05.999999999Z'>
+      ";
+  }
+
+  augment "/nc:get-config/nc:output" {
+    description
+      "Adds time-modified annotation to get-config data.";
+    arista-rpc-netconf:time-modified;
+  }
+}

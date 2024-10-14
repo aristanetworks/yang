@@ -1,0 +1,341 @@
+module arista-mpls-augments {
+  namespace "http://arista.com/yang/openconfig/mpls/augments";
+  prefix arista-mpls-augments;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+  import openconfig-inet-types {
+    prefix oc-inet;
+  }
+  import openconfig-interfaces {
+    prefix "oc-if";
+  }
+  import openconfig-mpls-types {
+    prefix oc-mpls-types;
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig MPLS augments in Arista EOS.
+
+     Copyright (c) 2017 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.4.1";
+
+  revision 2024-06-18 {
+    description
+      "Add autoDecide payload type. Remove next-hop group, bgp peer support.
+      Restrict access-list bypass, payload type for egress/next-hops node only.";
+    reference
+      "1.4.1";
+  }
+
+  revision 2024-05-28 {
+    description
+      "Augmented model to support ECMP of next-hops. Also, added access-list
+       bypass, nexthop-group, bgp peer attributes for static lsps.
+       Also, removed metric and interface attributes which are now merged
+       in standard model";
+    reference
+      "1.4.0";
+  }
+
+  revision 2024-03-26 {
+    description
+      "Added interface, payload-type, metric for transit static lsps.";
+    reference
+      "1.3.2";
+  }
+  revision 2024-03-12 {
+    description
+      "Updated the descriptions for newly augmented attributes
+       payload-type, metric";
+    reference
+      "1.3.1";
+  }
+  revision 2023-12-01 {
+    description
+      "Added interface, payload-type, metric for egress static lsps.";
+    reference
+      "1.3.0";
+  }
+  revision 2022-11-28 {
+    description
+      "Added enabled under global config/state.";
+    reference
+      "1.2.0";
+  }
+  revision 2022-02-14 {
+    description
+      "Add color-dscp-mappings augmentation under te-global-attributes.";
+    reference
+      "1.1.0";
+  }
+  revision 2020-11-30 {
+    description
+      "Fix errors reported by pyang.";
+    reference
+      "1.0.1";
+  }
+  revision 2017-12-21 {
+    description
+      "Initial augment file.";
+    reference
+      "1.0.0";
+  }
+
+  identity PAYLOAD_TYPE {
+    description
+      "base identity for supported MPLS 
+       payload types";
+  }
+
+  identity PAYLOAD_MPLS {
+    base "PAYLOAD_TYPE";
+    description
+      "Specifies underlying payload type as MPLS
+       label i.e, represents stacked MPLS labels";
+  }
+
+  identity PAYLOAD_IPV4 {
+    base "PAYLOAD_TYPE";
+    description
+      "Specifies underlying payload type as IPV4";
+  }
+
+  identity PAYLOAD_IPV6 {
+    base "PAYLOAD_TYPE";
+    description
+      "Specifies underlying payload type as IPV6";
+  }
+
+  identity PAYLOAD_AUTO {
+    base "PAYLOAD_TYPE";
+    description
+      "Specifies underlying payload type as AUTO. Represents
+      auto determination of payload type by underlying platform";
+  }
+
+  grouping mpls-static-lsp-egress-config {
+    description
+      "MPLS static LSP egress configuration";
+
+    leaf payload-type {
+      type identityref {
+        base PAYLOAD_TYPE;
+      }
+      description
+        "Underlying payload type of the MPLS packet";
+    }
+
+    leaf access-list-bypass {
+      type boolean;
+      description
+        "Skip access-list if set to true";
+    }
+  }
+
+  grouping mpls-static-lsp-nexthop-config-common {
+    description
+      "MPLS static LSP nexthop configuration";
+
+    leaf index {
+      type uint32;
+      description
+        "An user-specified identifier utilised to uniquely reference
+        the next-hop entry in the next-hop list. The value of this
+        index has no semantic meaning other than for referencing
+        the entry.";
+    }
+
+    leaf ip-address {
+      type oc-inet:ip-address;
+      description
+        "Next hop IP address for the LSP";
+    }
+
+    leaf push-label {
+      type oc-mpls-types:mpls-label;
+      description
+        "Label value to push at the current hop for the
+        LSP";
+    }
+
+    uses oc-if:interface-ref-common;
+  }
+
+  grouping mpls-static-lsp-nexthops {
+    description
+      "MPLS Static LSP configuration";
+
+    container next-hops {
+      description
+        "Configuration and state parameters relating to the
+        next-hops that are to be utilised for the MPLS static
+        route being specified";
+
+      list next-hop {
+        key "index";
+
+        description
+          "A list of next-hops to be utilised for the MPLS
+          static route being specified.";
+
+        leaf index {
+          type leafref {
+            path "../config/index";
+          }
+          description
+            "A reference to the index of the current next-hop.
+            The index is intended to be a user-specified value
+            which can be used to reference the next-hop in
+            question, without any other semantics being
+            assigned to it.";
+        }
+
+        container config {
+          description
+            "Configuration parameters relating to the next-hop
+            entry";
+
+          uses mpls-static-lsp-nexthop-config-common;
+        }
+
+        container state {
+          config false;
+          description
+            "Operational state parameters relating to the
+            next-hop entry";
+
+          uses mpls-static-lsp-nexthop-config-common;
+        }
+      }
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:lsps/oc-netinst:static-lsps/oc-netinst:static-lsp/oc-netinst:transit" {
+    description
+      "Augment the MPLS static LSPs transit configuration with list of next-hops";
+    uses mpls-static-lsp-nexthops;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:lsps/oc-netinst:static-lsps/oc-netinst:static-lsp/oc-netinst:egress" {
+    description
+      "Augment the MPLS static LSPs egress configuration with list of next-hops";
+    uses mpls-static-lsp-nexthops;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:lsps/oc-netinst:static-lsps/oc-netinst:static-lsp/oc-netinst:egress/arista-mpls-augments:next-hops/arista-mpls-augments:next-hop/arista-mpls-augments:config" {
+    description
+      "Augment the MPLS static LSPs egress next-hops configuration with payload-type, access list bypass.";
+    uses mpls-static-lsp-egress-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:lsps/oc-netinst:static-lsps/oc-netinst:static-lsp/oc-netinst:egress/arista-mpls-augments:next-hops/arista-mpls-augments:next-hop/arista-mpls-augments:state" {
+    description
+      "Augment the MPLS static LSPs egress next-hops state with payload-type, access list bypass.";
+    uses mpls-static-lsp-egress-config;
+  }
+
+  grouping mpls-global-config {
+    description
+      "Global configuration options of MPLS";
+
+    leaf enabled {
+      type boolean;
+      default false;
+      description
+        "Enable MPLS routing.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:global/oc-netinst:config" {
+    description
+      "Augment the MPLS global model to include EOS specific configuration options";
+    uses mpls-global-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:global/oc-netinst:state" {
+    description
+      "Augment the MPLS global model to include EOS specific configuration options";
+    uses mpls-global-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:global/oc-netinst:reserved-label-blocks/oc-netinst:reserved-label-block/oc-netinst:config" {
+    leaf local-id {
+      type string;
+      description
+        "Local-id labels supported in EOS: dynamic, bgp-sr, isis-sr, l2evpn, srlb, static";
+    }
+    description
+      "Add local-id to MPLS configuration.";
+  }
+
+  grouping mpls-te-color-dscp-mappings {
+    description
+      "Configuration of attributes in Color/Dscp mappings";
+
+    leaf color {
+      type uint32;
+      description
+        "Color value";
+    }
+
+    leaf default-color {
+      type boolean;
+      default false;
+      description
+        "Associate specified color with unmapped DSCP values";
+    }
+
+    leaf-list dscps {
+      type oc-inet:dscp;
+      description
+        "List of DSCP values mapped to a color";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:mpls/oc-netinst:te-global-attributes" {
+    description
+      "Augment to include color-dscp-mappings for Class Based Forwarding";
+
+    container color-dscp-mappings {
+      description
+        "Color/Dscp mappings for Class Based Forwarding";
+
+      list color-dscp-mapping {
+        key "color";
+        description
+          "List of colors in Color/DSCP mappings";
+
+        leaf color {
+          type leafref {
+            path "../config/color";
+          }
+          description
+            "Color value";
+        }
+
+        container config {
+          description
+            "Color/DSCP mappings configuration parameter";
+          uses mpls-te-color-dscp-mappings;
+        }
+
+        container state {
+          config false;
+          description
+            "Color/DSCP mappings operational state parameter";
+          uses mpls-te-color-dscp-mappings;
+        }
+      }
+    }
+  }
+}
