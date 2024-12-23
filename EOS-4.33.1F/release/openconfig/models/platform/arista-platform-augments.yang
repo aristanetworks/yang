@@ -1,0 +1,100 @@
+module arista-platform-augments {
+
+  yang-version "1";
+
+  namespace "http://arista.com/yang/openconfig/platform/augments";
+
+  prefix "arista-platform-augments";
+
+  import openconfig-extensions { prefix oc-ext; }
+  import openconfig-types { prefix oc-types; }
+  import openconfig-platform-pipeline-counters { prefix oc-ppc; }
+  import openconfig-platform { prefix oc-platform; }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+
+  description
+    "This module contains OpenConfig platform pipeline counter augments in Arista EOS.
+
+     Copyright (c) 2022 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "1.1.0";
+
+  revision 2024-07-19 {
+    description
+      "Augment operational state data for input and output B feed of power supply";
+    reference
+      "1.1.0";
+  }
+
+  revision 2022-11-10 {
+    description
+      "Augment pipeline vendor drop counters with Arista and Sand specific container";
+    reference
+      "1.0.0";
+  }
+
+  grouping psu-b-state {
+    description
+      "Operational state data for input and output B feed of power supply";
+
+    leaf input-b-current {
+      type oc-types:ieeefloat32;
+      units amps;
+      description
+        "Input B current to the power supply.";
+    }
+
+    leaf input-b-voltage {
+      type oc-types:ieeefloat32;
+      units volts;
+      description
+        "Input B voltage to the power supply.";
+    }
+
+    leaf output-b-current {
+      type oc-types:ieeefloat32;
+      units amps;
+      description
+        "Output B current from the power supply.";
+    }
+
+    leaf output-b-voltage {
+      type oc-types:ieeefloat32;
+      units volts;
+      description
+        "Output B voltage from the power supply.";
+    }
+  }
+
+  augment "/oc-platform:components/oc-platform:component/oc-platform:integrated-circuit/oc-ppc:pipeline-counters/oc-ppc:drop/oc-ppc:vendor" {
+	 description
+		"Augment for Arista-specific drop counters";
+
+    container arista {
+		description
+			"Container for Arista-specific drop counters";
+
+      container sand {
+		  description
+		    "Container for Sand specific drop counters";
+
+        uses oc-ppc:pipeline-vendor-drop-containers;
+      }
+    }
+  }
+
+  augment "/oc-platform:components/oc-platform:component/" +
+    "oc-platform:power-supply/oc-platform:state" {
+    description
+      "Augment for power supply power input and output B feed";
+
+    uses psu-b-state;
+  }
+}
+
