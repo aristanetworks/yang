@@ -1,0 +1,82 @@
+module arista-macsec-notsupported-deviations {
+  namespace "http://arista.com/yang/openconfig/macsec/notsupported-deviations";
+  prefix arista-macsec-notsupported-deviations;
+
+  import openconfig-macsec {
+    prefix oc-macsec;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig macsec deviations in Arista EOS.
+     Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
+
+  revision 2025-02-12 {
+    description
+      "Auto-generated not-supported deviations for unsupported paths";
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:interfaces/oc-macsec:interface/oc-macsec:mka/oc-macsec:config/oc-macsec:key-chain" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:interfaces/oc-macsec:interface/oc-macsec:scsa-rx/oc-macsec:scsa-rx/oc-macsec:state/oc-macsec:counters/oc-macsec:sa-invalid" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:interfaces/oc-macsec:interface/oc-macsec:scsa-rx/oc-macsec:scsa-rx/oc-macsec:state/oc-macsec:counters/oc-macsec:sa-valid" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:interfaces/oc-macsec:interface/oc-macsec:scsa-tx/oc-macsec:scsa-tx/oc-macsec:state/oc-macsec:counters/oc-macsec:sa-auth-only" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:interfaces/oc-macsec:interface/oc-macsec:scsa-tx/oc-macsec:scsa-tx/oc-macsec:state/oc-macsec:counters/oc-macsec:sa-encrypted" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:mka/oc-macsec:policies/oc-macsec:policy/oc-macsec:config/oc-macsec:confidentiality-offset" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:mka/oc-macsec:policies/oc-macsec:policy/oc-macsec:config/oc-macsec:delay-protection" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:mka/oc-macsec:policies/oc-macsec:policy/oc-macsec:config/oc-macsec:include-icv-indicator" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:mka/oc-macsec:policies/oc-macsec:policy/oc-macsec:config/oc-macsec:sak-rekey-on-live-peer-loss" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:mka/oc-macsec:policies/oc-macsec:policy/oc-macsec:config/oc-macsec:use-updated-eth-header" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+}
