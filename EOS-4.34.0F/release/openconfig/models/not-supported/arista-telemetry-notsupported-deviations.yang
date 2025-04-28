@@ -1,0 +1,64 @@
+module arista-telemetry-notsupported-deviations {
+  namespace "http://arista.com/yang/openconfig/telemetry/notsupported-deviations";
+  prefix arista-telemetry-notsupported-deviations;
+
+  import openconfig-telemetry {
+    prefix oc-telemetry;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig telemetry deviations in Arista EOS.
+     Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
+
+  revision 2025-04-20 {
+    description
+      "Auto-generated not-supported deviations for unsupported paths";
+  }
+
+  deviation "/oc-telemetry:telemetry-system/oc-telemetry:destination-groups" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-telemetry:telemetry-system/oc-telemetry:sensor-groups" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-telemetry:telemetry-system/oc-telemetry:subscriptions/oc-telemetry:persistent-subscriptions" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-telemetry:telemetry-system/oc-telemetry:subscriptions/oc-telemetry:dynamic-subscriptions/oc-telemetry:dynamic-subscription/oc-telemetry:sensor-paths/oc-telemetry:sensor-path/oc-telemetry:state/oc-telemetry:exclude-filter" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-telemetry:telemetry-system/oc-telemetry:subscriptions/oc-telemetry:dynamic-subscriptions/oc-telemetry:dynamic-subscription/oc-telemetry:state/oc-telemetry:heartbeat-interval" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-telemetry:telemetry-system/oc-telemetry:subscriptions/oc-telemetry:dynamic-subscriptions/oc-telemetry:dynamic-subscription/oc-telemetry:state/oc-telemetry:sample-interval" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-telemetry:telemetry-system/oc-telemetry:subscriptions/oc-telemetry:dynamic-subscriptions/oc-telemetry:dynamic-subscription/oc-telemetry:state/oc-telemetry:suppress-redundant" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+}

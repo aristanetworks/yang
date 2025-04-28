@@ -1,0 +1,28 @@
+module arista-keychain-notsupported-deviations {
+  namespace "http://arista.com/yang/openconfig/keychain/notsupported-deviations";
+  prefix arista-keychain-notsupported-deviations;
+
+  import openconfig-keychain {
+    prefix oc-keychain;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig keychain deviations in Arista EOS.
+     Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
+
+  revision 2025-04-20 {
+    description
+      "Auto-generated not-supported deviations for unsupported paths";
+  }
+
+  deviation "/oc-keychain:keychains" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+}
