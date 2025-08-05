@@ -1,0 +1,38 @@
+module arista-telemetry-augments {
+  namespace "http://arista.com/yang/openconfig/telemetry/augments";
+  prefix arista-telemetry-augments;
+
+  import openconfig-telemetry {
+    prefix oc-telemetry;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig system augments in Arista EOS.
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.0.0";
+
+  revision 2023-01-24 {
+    description
+      "Add sample-interval, heartbeat-interval and suppress-redundant
+       dynamic-subscription fields to per sensor-path.";
+    reference
+      "1.0.0";
+  }
+
+  augment "/oc-telemetry:telemetry-system/oc-telemetry:subscriptions/oc-telemetry:dynamic-subscriptions/oc-telemetry:dynamic-subscription/oc-telemetry:sensor-paths/oc-telemetry:sensor-path/oc-telemetry:state" {
+    description
+      "Add sample-interval, heartbeat-interval and suppress-redundant
+       dynamic-subscription fields to per sensor-path.";
+    uses oc-telemetry:telemetry-stream-frequency-config;
+    uses oc-telemetry:telemetry-heartbeat-config;
+    uses oc-telemetry:telemetry-suppress-redundant-config;
+  }
+}

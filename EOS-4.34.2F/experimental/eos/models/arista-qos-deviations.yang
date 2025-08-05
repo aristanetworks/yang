@@ -1,0 +1,160 @@
+module arista-qos-deviations {
+  namespace "http://arista.com/yang/openconfig/qos/deviations";
+  prefix arista-qos-deviations;
+
+  import openconfig-qos {
+    prefix oc-qos;
+  }
+
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig QoS augments in Arista EOS.
+
+     Copyright (c) 2024 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.0.0";
+
+  revision 2024-02-28 {
+    description
+      "Initial deviation file.";
+    reference
+      "1.0.0";
+  }
+
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:config/oc-qos:weight" {
+    description
+      "queue management profile wred weight range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..15";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:state/oc-qos:weight" {
+    description
+      "queue management profile wred weight range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..15";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:config/oc-qos:min-threshold" {
+    description
+      "queue management profile wred min-threshold range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..4294967294";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:config/oc-qos:max-threshold" {
+    description
+      "queue management profile wred max-threshold range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..4294967294";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:state/oc-qos:min-threshold" {
+    description
+      "queue management profile wred min-threshold range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..4294967294";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:state/oc-qos:max-threshold" {
+    description
+      "queue management profile wred max-threshold range is restricted in EOS";
+    deviate replace {
+      type uint32 {
+        range "0..4294967294";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:scheduler-policies/oc-qos:scheduler-policy/oc-qos:schedulers/oc-qos:scheduler/oc-qos:one-rate-two-color/oc-qos:state/oc-qos:bc" {
+    description
+      "increase policer bucket size, U32 into U64";
+    deviate replace {
+      type uint64 {
+        range "0..18446744073709551614";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:config/oc-qos:max-drop-probability-percent" {
+    description
+      "queue management profile max-drop-probability-percent range is restricted in EOS";
+    deviate replace {
+      type uint8 {
+        range "1..100";
+      }
+    }
+  }
+  
+  deviation "/oc-qos:qos/oc-qos:queue-management-profiles/oc-qos:queue-management-profile/oc-qos:wred/oc-qos:uniform/oc-qos:state/oc-qos:max-drop-probability-percent" {
+    description
+      "queue management profile max-drop-probability-percent range is restricted in EOS";
+    deviate replace {
+      type uint8 {
+        range "1..100";
+      }
+    }
+  }
+  
+  deviation "/oc-qos:qos/oc-qos:classifiers/oc-qos:classifier/oc-qos:terms/oc-qos:term/oc-qos:conditions/oc-qos:ipv4/oc-qos:config/oc-qos:dscp" {
+    description
+      "classifier dscp range is restricted in EOS";
+    deviate replace {
+      type uint8 {
+        range "0..63";
+      }
+    }
+  }
+  
+  deviation "/oc-qos:qos/oc-qos:classifiers/oc-qos:classifier/oc-qos:terms/oc-qos:term/oc-qos:conditions/oc-qos:ipv6/oc-qos:config/oc-qos:dscp" {
+    description
+      "classifier dscp range is restricted in EOS";
+    deviate replace {
+      type uint8 {
+        range "0..63";
+      }
+    }
+  }
+
+  deviation "/oc-qos:qos/oc-qos:classifiers/oc-qos:classifier/oc-qos:terms/oc-qos:term/oc-qos:conditions/oc-qos:ipv4/oc-qos:state/oc-qos:dscp" {
+    description
+      "classifier dscp range is restricted in EOS";
+    deviate replace {
+      type uint8 {
+        range "0..63";
+      }
+    }
+  }
+  
+  deviation "/oc-qos:qos/oc-qos:classifiers/oc-qos:classifier/oc-qos:terms/oc-qos:term/oc-qos:conditions/oc-qos:ipv6/oc-qos:state/oc-qos:dscp" {
+    description
+      "classifier dscp range is restricted in EOS";
+    deviate replace {
+      type uint8 {
+        range "0..63";
+      }
+    }
+  }
+}
