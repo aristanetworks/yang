@@ -1,0 +1,97 @@
+module arista-qos-voq-augments {
+  namespace "http://arista.com/yang/openconfig/qos/voq/augments";
+  prefix arista-qos-voq-augments;
+
+  import openconfig-qos {
+    prefix oc-qos;
+  }
+
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig QoS augments in Arista EOS.
+     Copyright (c) 2025 Arista Networks, Inc. All rights reserved.";
+  
+  oc-ext:openconfig-version "1.0.0";
+
+  revision 2025-01-13 {
+    description
+      "Initial augment file.";
+    reference
+      "1.0.0";
+  }
+
+  grouping voq-group-top {
+    container voq-groups {
+      description "Enclosing container for list of VOQ groups.";
+      
+      list voq-group {
+        key "name";
+        description "List of VOQ groups. VOQ group is an 
+          instantiation of set of VOQs 
+          (that could be shared by multiple input interfaces).";
+        
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description "Reference to the name of the VOQ group.";
+        }
+        
+        container config {
+          leaf name {
+            type string;
+            description "Name of the VOQ group.";
+          }
+        }
+        
+        container state {
+          config false;
+          leaf name {
+              type string;
+              description "Name of the VOQ group.";
+          }
+        }
+        uses oc-qos:qos-interface-voqs-top;	
+      }
+    }
+  }
+
+  augment "/oc-qos:qos" {
+    uses voq-group-top;
+    description
+      "Add virtual output queues group.";
+  }
+
+  augment "/oc-qos:qos/oc-qos:interfaces/oc-qos:interface/oc-qos:input" {
+    description "Add virtual output queues group reference
+      to interface input.";
+    container config {
+      leaf voq-group {
+        type leafref {
+          path "../../../../../voq-groups/voq-group/config/name";
+        }
+        description "Reference to the VOQ group associated
+          with this interface.";
+      }
+    }
+    container state {
+      config false;
+      leaf voq-group {
+        type leafref {
+          path "../../../../../voq-groups/voq-group/config/name";
+        }
+        description "Reference to the VOQ group associated
+          with this interface.";
+      }
+    }
+  }
+}
+  
