@@ -1,0 +1,184 @@
+module arista-spanning-tree-notsupported-deviations {
+  namespace "http://arista.com/yang/openconfig/spanning-tree/notsupported-deviations";
+  prefix arista-spanning-tree-notsupported-deviations;
+
+  import openconfig-spanning-tree {
+    prefix oc-stp;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig spanning-tree deviations in Arista EOS.
+     Copyright (c) 2020 Arista Networks, Inc. All rights reserved.";
+
+  revision 2025-10-02 {
+    description
+      "Auto-generated not-supported deviations for unsupported paths";
+  }
+
+  deviation "/oc-stp:stp/oc-stp:rapid-pvst" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:rstp" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:config/oc-stp:bpdu-filter" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:config/oc-stp:bpduguard-timeout-recovery" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:config/oc-stp:bridge-assurance" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:config/oc-stp:etherchannel-misconfig-guard" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:config/oc-stp:loop-guard" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:state/oc-stp:bpdu-filter" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:state/oc-stp:bpduguard-timeout-recovery" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:state/oc-stp:bridge-assurance" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:state/oc-stp:etherchannel-misconfig-guard" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:global/oc-stp:state/oc-stp:loop-guard" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:interfaces/oc-stp:interface/oc-stp:config/oc-stp:bpdu-filter" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:interfaces/oc-stp:interface/oc-stp:config/oc-stp:guard" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:interfaces/oc-stp:interface/oc-stp:state/oc-stp:bpdu-filter" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:interfaces/oc-stp:interface/oc-stp:state/oc-stp:guard" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:config" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:state" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:interfaces" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:bridge-address" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:designated-root-address" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:designated-root-priority" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:hold-time" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:last-topology-change" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:root-cost" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:root-port" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:topology-changes" {
+    description
+      "Not-supported deviation.";
+    deviate not-supported;
+  }
+}

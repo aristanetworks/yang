@@ -1,0 +1,1469 @@
+module arista-bgp-augments {
+  namespace "http://arista.com/yang/openconfig/bgp/augments";
+  prefix arista-bgp-augments;
+
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-routing-policy {
+    prefix oc-rpol;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+  import openconfig-inet-types {
+    prefix oc-inet;
+  }
+  import openconfig-bgp-types {
+    prefix oc-bgp-types;
+  }
+  import openconfig-types {
+    prefix oc-types;
+  }
+  import arista-netinst-augments {
+    prefix arista-network-instances-augments;
+  }
+  import openconfig-yang-types {
+    prefix oc-yang;
+  }
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig BGP deviations in Arista EOS.
+
+     Copyright (c) 2019 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "2.30.0";
+
+  revision 2025-07-22 {
+    description
+      "Add augments for specifying the policy types of import and export policies for route-target";
+    reference
+      "2.30.0";
+  }
+  revision 2025-06-16 {
+    description
+      "Add peer router-id to BGP neighbor state.";
+    reference
+      "2.29.0";
+  }
+
+  revision 2025-05-28 {
+    description
+      "Remove policy type default values (they may change).";
+    reference
+      "2.28.0";
+  }
+  revision 2025-04-29 {
+    description
+      "Add support for selecting RCF on global bgp configuration";
+    reference
+      "1.5.3";
+  }
+  revision 2024-06-08 {
+    description
+      "Added support for route-reflector-client-type";
+    reference
+      "2.27.0";
+  }
+
+  revision 2024-05-22 {
+    description
+      "Fix union type for route-target.";
+    reference
+      "2.26.0";
+  }
+  revision 2024-03-22 {
+    description
+      "Remove default value for default-route advertisement configuration.";
+    reference
+      "2.25.0";
+  }
+  revision 2023-08-22 {
+    description
+      "Added support for RT-membership AF for BGP neighbors.";
+    reference
+      "2.24.0";
+  }
+  revision 2023-03-16 {
+    description
+      "Added support for BGP neighbors next-hop-self.";
+    reference
+      "2.23.0";
+  }
+  revision 2023-01-30 {
+    description
+      "Added allocate VPN label support for received paths to IPv4 and IPv6 Unicast L3VPN AFI-SAFI.";
+    reference
+      "2.22.0";
+  }
+  revision 2022-11-15 {
+    description
+      "Added support for network routing configuration.";
+    reference
+      "2.21.0";
+  }
+  revision 2022-11-14 {
+    description
+      "Added support for dynamic-neighbor-prefixes.";
+    reference
+      "2.20.0";
+  }
+  revision 2022-11-03 {
+    description
+      "Added support to nexthop-unchanged in BGP global AFI-SAFI.";
+    reference
+      "2.19.0";
+  }
+  revision 2022-10-11 {
+    description
+      "Restricted the add-path install to IPv4 and IPv6 AF.";
+    reference
+      "2.18.0";
+  }
+  revision 2022-10-03 {
+    description
+      "Added support for update-generation.";
+    reference
+      "2.17.0";
+  }    
+  revision 2022-09-23 {
+    description
+      "Added unknown code and subcode for bgp last notification error.";
+    reference
+      "2.16.0";
+  }
+  revision 2022-09-20 {
+    description
+      "Added support of Cease error subcode 10 (BFD DOWN).";
+    reference
+      "2.15.0";
+  }
+  revision 2022-08-28 {
+    description
+      "Changed enable-bfd container for neighbors and peer groups.";
+    reference
+      "2.14.0";
+  }
+  revision 2022-08-23 {
+    description
+      "Changed prefix-limit container for neighbors and peer groups.";
+    reference
+      "2.13.0";
+  }
+  revision 2022-07-05 {
+    description
+      "Added support to install backup path for ECMP and non-ECMP.";
+    reference
+      "2.12.0";
+  }
+  revision 2022-07-02 {
+    description
+      "Remove augmentations for BGP AFI/SAFI prefix-limit.";
+    reference
+      "2.11.0";
+  }
+  revision 2022-06-03 {
+    description
+      "Added support for minimum-advertisement-interval-policy.";
+    reference
+      "2.10.0";
+  }
+
+  revision 2021-10-04 {
+    description
+      "Added aggregates-addresses list support for multicast.";
+    reference
+      "2.9.0";
+  }
+  revision 2021-09-29 {
+    description
+      "Added aggregates-addresses list.";
+    reference
+      "2.8.0";
+  }
+  revision 2021-09-27 {
+    description
+      "pyang auto format";
+    reference
+      "2.7.1";
+  }
+  revision 2021-09-01 {
+    description
+      "Changed prefix-limit container for neighbors, peer groups and AFI/SAFI.";
+    reference
+      "2.7.0";
+  }
+  revision 2021-05-05 {
+    description
+      "Added RPKI validation EBGP/IBGP send container.";
+    reference
+      "2.6.0";
+  }
+  revision 2021-04-23 {
+    description
+      "Added local-route-distance leaf.";
+    reference
+      "2.5.0";
+  }
+  revision 2021-04-19 {
+    description
+      "Added convergence container.";
+    reference
+      "2.4.0";
+  }
+  revision 2021-03-31 {
+    description
+      "Added configuration options for sending default routes.";
+    reference
+      "2.3.0";
+  }
+  revision 2021-02-16 {
+    description
+      "Added logging-options container.";
+    reference
+      "2.1.0";
+  }
+  revision 2020-11-30 {
+    description
+      "Fix errors reported by pyang.";
+    reference
+      "2.0.1";
+  }
+  revision 2020-05-27 {
+    description
+      "Changed the route-target import/export policies to be single leafrefs.";
+    reference
+      "2.0.0";
+  }
+  revision 2020-05-20 {
+    description
+      "Included export-imported-route for each VPN type.";
+    reference
+      "1.2.1";
+  }
+  revision 2020-03-03 {
+    description
+      "Added route-target information.";
+    reference
+      "1.1.1";
+  }
+  revision 2019-11-12 {
+    description
+      "Removed unneeded EVPN reference.";
+    reference
+      "1.0.1";
+  }
+  revision 2019-03-15 {
+    description
+      "Initial Augments file.";
+    reference
+      "1.0.0";
+  }
+
+  identity RT_MEMBERSHIP {
+    base oc-bgp-types:AFI_SAFI_TYPE;
+    description
+      "Route Target Membership (AFI,SAFI = 1,132)";
+    reference "RFC4684";
+  }
+
+  identity UNKNOWN_ERROR_CODE {
+	  base oc-bgp-types:BGP_ERROR_CODE;
+    description
+      "Unknown last notification error code";
+  }
+
+  identity UNKNOWN_ERROR_SUBCODE {
+	  base oc-bgp-types:BGP_ERROR_SUBCODE;
+    description
+      "Unknown last notification error subcode";
+  }
+
+  identity IPV4_MULTICAST {
+    base oc-bgp-types:AFI_SAFI_TYPE;
+    description
+      "IPv4 multicast (AFI,SAFI = 1,2)";
+    reference "RFC4760";
+  }
+
+  identity IPV6_MULTICAST {
+    base oc-bgp-types:AFI_SAFI_TYPE;
+    description
+      "IPv6 multicast (AFI,SAFI = 2,2)";
+    reference "RFC4760";
+  }
+
+  identity BFD_DOWN {
+    base oc-bgp-types:CEASE_SUBCODE;
+    description
+      "BFD down (Cease Subcode = 10)";
+    reference "RFC4273";
+  }
+
+  typedef route-target-type {
+    type union {
+      type string {
+        pattern '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'
+              + '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9]):'
+              + '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}'
+              + '|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+              + '429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|[1-3][0-9]{9}|'
+              + '[1-9][0-9]{1,8}|[0-9])';
+      }
+      type string {
+        pattern '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|'
+              + '25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|'
+              + '2[0-4][0-9]|25[0-5]):'
+              + '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'
+              + '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+      }
+      type string {
+        pattern '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}'
+              + '|429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+              + '429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|[1-3][0-9]{9}|'
+              + '[1-9][0-9]{1,8}|[0-9]):'
+              + '(6553[0-5]|655[0-2][0-9]|654[0-9]{2}|65[0-4][0-9]{2}'
+              + '|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+      }
+    }
+    description
+      "This is a subset of oc-bgp-types:bgp-ext-community-type for
+       route-targets:
+        - <2b AS>:<4b value> per RFC4360 section 4
+        - <4b IPv4>:<2b value> per RFC4360 section 4
+        - <4b AS>:<2b value> per RFC5668 section 4";
+  }
+
+    grouping policy-type-config {
+    description
+      "Configuration parameters specifying the type of routing policy applied.";
+    leaf import-policy-type {
+      type arista-network-instances-augments:policy-type;
+      description
+        "Specify the type of policy to be used when importing routes.";
+    }
+    leaf export-policy-type {
+      type arista-network-instances-augments:policy-type;
+      description
+        "Specify the type of policy to be used when exporting routes.";
+    }
+  }
+
+  grouping bgp-next-hop-self-config {
+     description
+      "Next-hop-self configuration.";
+    leaf next-hop-self {
+      type boolean;
+      description
+        "Defines the router as the next-hop for the neighbor";
+    }
+  }
+
+  grouping allocate-vpn-label-received-paths-config {
+    description
+      "This grouping defines the allocation of local VPN label for received VPN paths";
+    leaf allocate-vpn-label-received-paths {
+      type boolean;
+      description
+        "Allocate locally computed VPN label for received  VPN paths";
+    }
+  }
+
+  grouping bgp-common-global-aggregate-address-config {
+    description
+      "Configuration parameters for BGP unicast and multicast aggregation";
+
+    leaf aggregate-address {
+      type oc-inet:ip-prefix;
+      description
+        "The network of the aggregate route";
+    }
+    leaf summary-only {
+      type boolean;
+      default "false";
+      description
+        "Only advertise the aggregate route to peers.
+        Default is to advertise the aggregates and the contributing routes.";
+    }
+    leaf as-set {
+      type boolean;
+      default "false";
+      description
+        "Configure the generation of autonomous system set path information.
+        Default is to disable the generation.";
+    }
+    leaf match-map {
+      type string;
+      description
+        "Name of the route map used to filter the contributors of the aggregate route.";
+    }
+    leaf attribute-map {
+      type string;
+      description
+        "Name of the route map used to set the attributes of the aggregate route.";
+    }
+    leaf advertise-only {
+      type boolean;
+      default "false";
+      description
+        "Advertise without installing the generated blackhole route in FIB.
+        Default is to install the generated blackhole route in FIB.";
+    }
+  }
+
+  grouping bgp-global-aggregate-address-list {
+    description
+      "The list of BGP aggregates";
+
+    list aggregate-address {
+      key "aggregate-address";
+      description
+        "List of BGP aggregates";
+
+      leaf aggregate-address {
+        type leafref {
+            path "../config/aggregate-address";
+        }
+        description
+          "The network of the aggregate route";
+      }
+
+      container config {
+        description
+          "Configuration parameters enabling and modifying the BGP aggregation";
+        uses bgp-common-global-aggregate-address-config;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to the BGP aggregation";
+        uses bgp-common-global-aggregate-address-config;
+      }
+    }
+  }
+
+  grouping route-target-config {
+    description
+      "Route-target configuration.";
+    leaf-list import-target {
+      type route-target-type;
+      description
+        "Import route-targets.";
+    }
+    leaf-list export-target {
+      type route-target-type;
+      description
+        "Export route-targets.";
+    }
+    leaf import-policy {
+      type leafref {
+        path "/oc-rpol:routing-policy/oc-rpol:policy-definitions/"
+           + "oc-rpol:policy-definition/oc-rpol:name";
+      }
+      description
+        "Import routing policy.";
+    }
+    leaf import-policy-type {
+      type arista-network-instances-augments:policy-type;
+      description
+        "Specify the type of import-policy.";
+    }
+    leaf export-policy {
+      type leafref {
+        path "/oc-rpol:routing-policy/oc-rpol:policy-definitions/"
+           + "oc-rpol:policy-definition/oc-rpol:name";
+      }
+      description
+        "Export routing policy.";
+    }
+    leaf export-policy-type {
+      type arista-network-instances-augments:policy-type;
+      description
+        "Specify the type of export-policy.";
+    }
+    leaf export-imported-route {
+      type boolean;
+      description
+        "Export imported routes.";
+    }
+  }
+
+  grouping best-paths-counters {
+    description
+      "Peer/afi-safi best path counters.";
+    leaf best-paths {
+      type uint32;
+      description
+        "The number of best-paths advertised by the neighbor";
+    }
+    leaf best-ecmp-paths {
+      type uint32;
+      description
+        "The number of best-ecmp-paths advertised by the neighbor";
+    }
+  }
+
+  grouping bgp-common-global-logging-options-config {
+    description
+      "Configuration parameters specifying the logging behaviour for
+       all BGP sessions";
+    leaf log-neighbor-state-changes {
+      type boolean;
+      default "true";
+      description
+        "Configure logging of peer state changes.  Default is
+         to enable logging of peer state changes.";
+    }
+  }
+
+  grouping bgp-global-logging-options {
+    description
+      "Structural grouping used to include error handling configuration and
+       state for the BGP instance";
+    container logging-options {
+      description
+        "Logging options for events related to the BGP instance";
+      container config {
+        description
+          "Configuration parameters enabling or modifying logging
+           for events relating to the BGP neighbor or peer group";
+        uses bgp-common-global-logging-options-config;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to logging for the BGP neighbor
+           or peer group";
+        uses bgp-common-global-logging-options-config;
+      }
+    }
+  }
+
+  grouping send-default-route-config {
+    description
+      "Configuration for default-route advertisement";
+    leaf always {
+      type boolean;
+      description
+        "Always artificially generate a default route for advertisement to neighbor.";
+    }
+    leaf policy {
+      type string;
+      description
+        "Name of policy to be applied on the default route.";
+    }
+  }
+
+  grouping bgp-common-global-afi-safi-convergence-config {
+    description
+      "Common configuration for bgp convergence at the global and
+       afi-safi level.";
+    leaf wait-for-convergence {
+      type boolean;
+      description
+        "Disable FIB updates and route advertisement until the BGP
+         convergence state is reached";
+    }
+  }
+
+  grouping bgp-common-global-convergence-config {
+    description
+      "Configuration parameters enabling  and specifying timeout
+       values relating to bgp convergence.";
+    uses bgp-common-global-afi-safi-convergence-config;
+    leaf convergence-time {
+      type uint16 {
+        range "0..3600";
+      }
+      description
+        "Configure the upper bound timeout value for convergence.";
+    }
+    leaf slow-peer-time {
+      type uint16 {
+        range "0..3600";
+      }
+      description
+        "Configure the idle peer timeout value.";
+    }
+  }
+
+  grouping bgp-convergence-config {
+    description
+      "Structural grouping used to include bgp convergence configuration
+       and state for the BGP instance";
+    container convergence {
+      description
+        "Convergence related options for the BGP instance";
+      container config {
+        description
+          "Configuration parameters enabling and modifying the
+           convergence related timers";
+        uses bgp-common-global-convergence-config;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to the convergence
+           related timers";
+        uses bgp-common-global-convergence-config;
+      }
+    }
+  }
+
+  grouping bgp-global-rpki-send-config {
+    description
+      "Configuration parameter to attach Origin Validation State community to
+       advertised routes torward BGP peers";
+    leaf ebgp-send {
+      type boolean;
+      default "false";
+      description
+        "Configure sending Origin Validation State community to EBGP peers. Default
+         is to not send the community.";
+    }
+    leaf ibgp-send {
+      type boolean;
+      default "false";
+      description
+        "Configure sending Origin Validation State community to IBGP peers. Default
+         is to not send the community.";
+    }
+  }
+
+  grouping bgp-global-rpki-send-top {
+    description
+      "Contain RPKI configuration to attach Origin Validation State community to
+       advertised routes torward BGP peers";
+    container rpki-send-options {
+      must "current()/../../../../../oc-netinst:config"
+         + "[oc-netinst:type = 'DEFAULT_INSTANCE' and oc-netinst:name = 'default']" {
+        description
+          "Include only in the default network instance.";
+      }
+      description
+        "RPKI options to send Origin Validation State community to BGP peers";
+      container config {
+        description
+          "Configuration parameters to send Origin Validation State community to
+           BGP peers";
+        uses bgp-global-rpki-send-config;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to sending Origin Validation State community to
+           BGP peers";
+        uses bgp-global-rpki-send-config;
+      }
+    }
+  }
+
+  grouping prefix-limit-neighbor-or-peer-group {
+    description
+      "Grouping for configuration of prefix-limit for neighbors and peer-groups";
+    container prefix-limit {
+      description
+        "Configure the maximum number of prefixes that will be
+         received by a peer.";
+      container config {
+        description
+          "Configuration parameters relating to the prefix limit for the peer or peer group.
+           If no leafs are present, the EOS defaults are implicitly used.";
+        uses prefix-limit-config-neighbor-or-peer-group;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to the prefix-limit for the peer or peer group";
+        uses prefix-limit-config-neighbor-or-peer-group;
+      }
+    }
+  }
+
+  typedef max-prefixes-type {
+    type uint32 {
+      range "0..4294967294";
+    }
+    description
+      "Used to defined the maximum number of prefixes that will be received
+       from the neighbour.";
+  }
+
+  typedef threshold-type-type {
+    type enumeration {
+      enum ABSOLUTE {
+        description
+          "Use warning-threshold leaf to determine the prefix-limit
+           warning threshold.";
+      }
+      enum PERCENTAGE {
+        description
+          "Use warning-threshold-pct leaf to determine the prefix-limit
+           warning threshold.";
+      }
+    }
+    description
+      "Used to indicate which leaf should be used to determine
+       the prefix-limit warning threshold.";
+  }
+
+  grouping prefix-limit-config-neighbor-or-peer-group {
+    description
+      "Configuration parameters for prefix-limit for a neighbor or peer-group.";
+    leaf max-prefixes {
+      type max-prefixes-type;
+      description
+        "Maximum number of prefixes that will be received
+         from the neighbour. A value of 0 disables the limit.
+         If the leaf is not present, but at least another leaf
+         is present in the container, it is assumed to be 256000.";
+    }
+    leaf prevent-teardown {
+      type boolean;
+      description
+        "Do not tear down the BGP session when the maximum
+         prefix limit is exceeded, but rather only log a
+         warning. If the leaf is not present, but at least another leaf
+         is present in the container, it is implicitly assumed to be 'false'";
+    }
+    leaf warning-threshold-type {
+      type threshold-type-type;
+      description
+        "Specifies if the warning threshold is indicated by an
+         absolute value or by a percentage of 'max-prefixes'.
+         If the leaf is not present but at least another leaf
+         is present in the container, 'warning-threshold-type'
+         is assumed to be 'PERCENTAGE'";
+    }
+    leaf warning-threshold {
+      when "../warning-threshold-type = 'ABSOLUTE'" {
+        description
+          "The warning threshold is specified as an absolute number.";
+      }
+      type max-prefixes-type;
+      description
+        "Threshold on number of prefixes that can be received
+         from a neighbor before generation of warning messages
+         or log entries. Expressed as a number of prefixes.
+         If set to 0, no warnings are generated. If the leaf is not present
+         and 'warning-threshold-type' is set to 'ABSOLUTE',
+         the leaf is assumed to be 0. If 'warning-threshold-type'
+         is not present or set to 'PERCENTAGE', the leaf is not used.";
+    }
+    leaf warning-threshold-pct {
+      when "../warning-threshold-type = 'PERCENTAGE'" {
+        description
+          "The warning threshold is specified as a percentage.";
+      }
+      type oc-types:percentage;
+      description
+        "Threshold on number of prefixes that can be received
+         from a neighbor before generation of warning messages
+         or log entries. Expressed as a percentage of 'max-prefixes'.
+         If set to 0, no warnings are generated. If the leaf is not present and
+         'warning-threshold-type' is set to 'PERCENTAGE', the leaf is assumed to be 0.
+         If the leaf is not present and 'warning-threshold-type'
+         is not set to 'PERCENTAGE', the leaf is not used. If the leaf is not present and
+         'warning-threshold-type' is not present but at least another leaf is present
+         in the container, 'warning-threshold-pct' is assumed to be 0.";
+    }
+  }
+
+  typedef minimum-advertisement-interval-policy-type {
+    type enumeration  {
+      enum INITIAL {
+        description
+          "'minimum-advertisement-interval' only applies to newly learned routes.";
+      }
+      enum CHANGES {
+        description
+          "'minimum-advertisement-interval' applies to newly learned routes as well
+            as to route changes.";
+      }
+      enum CHANGES_WITHDRAWALS {
+        description
+          "'minimum-advertisement-interval' applies to newly learned routes as well
+            as to route changes and withdrawals.";
+      }
+    }
+    description
+      "Used to indicate how is 'minimum-advertisement-interval' applied.";
+  }
+
+  grouping minimum-advertisement-interval-policy-group {
+    description
+      "Configuration policy for minimum-advertisement-interval for a neighbor or peer-group.";
+    leaf minimum-advertisement-interval-policy {
+      type minimum-advertisement-interval-policy-type;
+      description
+        "Policy regarding the type of routes updates on which
+         'minimum-advertisement-interval' is applied on.";
+    }
+  }
+
+  grouping peer-bfd-config {
+    description
+    "Configuration parameters for BFD for a neighbor or peer-group.";
+    leaf remote-control-plane-independent {
+      type boolean;
+      default "false";
+      description
+        "This leaf is set to true when the remote system has specified
+        that the hardware implementing this BFD session is independent
+        of the control plane's liveliness.";
+    }
+    leaf damping-time {
+      type uint16 {
+        range "10..3600";
+      }
+      units seconds;
+      description
+        "This is the time for which we will initially wait for the BFD
+        session to remain up before bringing up the BGP session. On
+        subsequent interval flaps, this interval will be doubled until
+        it goes beyond the max interval value.";
+    }
+    leaf damping-multiplier {
+      type uint8 {
+        range "1..60";
+      }
+      description
+        "Specifies the maximum damping time as a multiple of the initial
+        damping time. Once the damping time goes beyond the maximum damping
+        time, it will remain clamped there.";
+    }
+    leaf desired-minimum-tx-interval {
+      type uint32 {
+        range "50..60000";
+      }
+      units milliseconds;
+      description
+        "Similar to desired-minimum-tx-interval under bfd-interface-config but in ms.";
+    }
+    leaf required-minimum-receive {
+      type uint32 {
+        range "50..60000";
+      }
+      units milliseconds;
+      description
+        "Similar to required-minimum-receive under bfd-interface-config but in ms.";
+    }
+    leaf detection-multiplier {
+      type uint8 {
+        range "3..50";
+      }
+      description
+        "Similar to detection-multiplier under bfd-interface-config";
+    }
+  }
+
+  grouping bgp-global-dynamic-neighbor-config-options {
+    description
+    "Configuration parameters relating to an individual prefix from
+    which dynamic neighbors are accepted.";
+    leaf include-router-id {
+      type boolean;
+      description
+        "Include router ID in conjunction with VRF and peer address to identify unique BGP peers.";
+    }
+    leaf peer-filter {
+      type string;
+      description
+        "Named filter to match Autonomous System number ranges.";
+    }
+    leaf remote-as {
+      type oc-inet:as-number;
+      description
+        "Neighbor's Autonomous System number.";
+    }
+  }
+
+  // neighbor policy config
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor"
+        + "/oc-netinst:apply-policy/oc-netinst:config" {
+    uses policy-type-config;
+    description
+      "Add routing policy type parameters for neighbors.";
+  }
+  // neighbor policy state
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor"
+        + "/oc-netinst:apply-policy/oc-netinst:state" {
+    uses policy-type-config;
+    description
+      "Add routing policy type state for neighbors.";
+  }
+  // peer-group policy config
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group"
+        + "/oc-netinst:apply-policy/oc-netinst:config" {
+    uses policy-type-config;
+    description
+      "Add routing policy type parameters for peer groups.";
+  }
+  // peer-group policy state
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols"
+        + "/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group"
+        + "/oc-netinst:apply-policy/oc-netinst:state" {
+    uses policy-type-config;
+    description
+      "Add routing policy type state for peer groups.";
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:l3vpn-ipv4-unicast" {
+    description
+      "Augment the BGP neighbor IPv4 Unicast L3VPN AFI-SAFI to include configuration parameters";
+      container config {
+        description
+          "Configuration parameters for IPv4 Unicast L3VPN AFI-SAFI";
+        uses allocate-vpn-label-received-paths-config;
+      }
+      container state {
+        config false;
+        description
+          "State information for IPv4 Unicast L3VPN parameters";
+        uses allocate-vpn-label-received-paths-config;
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:l3vpn-ipv6-unicast" {
+    description
+      "Augment the BGP neighbor IPv6 Unicast L3VPN AFI-SAFI to include configuration parameters";
+    container config {
+      description
+        "Configuration parameters for IPv6 Unicast L3VPN AFI-SAFI";
+      uses allocate-vpn-label-received-paths-config;
+    }
+    container state {
+      config false;
+      description
+        "State information for IPv6 Unicast L3VPN parameters";
+      uses allocate-vpn-label-received-paths-config;
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP neighbors ipv4 unicast afi-safi config model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP neighbors ipv4 unicast afi-safi state model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP neighbors ipv6 unicast afi-safi config model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP neighbors ipv6 unicast afi-safi state model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP peer-group ipv4 unicast afi-safi config model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP peer-group ipv4 unicast afi-safi state model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:config"{
+    description
+      "Augment the BGP peer-group ipv6 unicast afi-safi config model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:state"{
+    description
+      "Augment the BGP peer-group ipv6 unicast afi-safi state model to include next-hop-self configuration options";
+    uses bgp-next-hop-self-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:dynamic-neighbor-prefixes"
+        + "/oc-netinst:dynamic-neighbor-prefix/oc-netinst:config" {
+    description
+      "Augment the BGP dynmaic-neighbor-prefixes model to include EOS specific configuration options";
+    uses bgp-global-dynamic-neighbor-config-options;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:dynamic-neighbor-prefixes"
+        + "/oc-netinst:dynamic-neighbor-prefix/oc-netinst:state" {
+    description
+      "Augment the BGP dynmaic-neighbor-prefixes model to include EOS specific configuration options";
+    uses bgp-global-dynamic-neighbor-config-options;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global" {
+    description
+      "Augment the BGP global node to include the list of prefixes to import into BGP from the RIB";
+    container networks {
+      description
+        "Prefixes to import into BGP from the RIB";
+      uses arista-network-instances-augments:common-network-list;
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:enable-bfd/oc-netinst:config" {
+    description
+      "Augment the BGP peer-groups model to include EOS specific BFD session configuration options";
+    uses peer-bfd-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:enable-bfd/oc-netinst:config" {
+    description
+      "Augment the BGP neighbor model to include EOS specific BFD session configuration options";
+    uses peer-bfd-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:enable-bfd/oc-netinst:state" {
+    description
+      "Augment the BGP peer-groups model to include EOS specific BFD session configuration options";
+    uses peer-bfd-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:enable-bfd/oc-netinst:state" {
+    description
+      "Augment the BGP neighbor model to include EOS specific BFD session configuration options";
+    uses peer-bfd-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi" {
+    description
+      "Augment the BGP global address families config to include aggregated addresses";
+      container aggregate-addresses {
+        description
+          "Configuration for BGP aggregated addresses";
+        uses bgp-global-aggregate-address-list;
+      }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global" {
+    description
+      "Augment the BGP global config to include route-target information";
+    container evpn {
+      description
+        "EVPN route target configuration.";
+      uses route-target-config;
+    }
+    container vpn-ipv4 {
+      description
+        "VPN IPv4 route target configuration.";
+      uses route-target-config;
+    }
+    container vpn-ipv6 {
+      description
+        "VPN IPv6 route target configuration.";
+      uses route-target-config;
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:state/oc-netinst:prefixes" {
+    description
+      "Augment BGP neighbor model to support per peer/afi-safi best path counters";
+    uses best-paths-counters;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global" {
+    description
+      "Augment the BGP global config to include peer stage logging";
+    uses bgp-global-logging-options;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:config" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:config" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:state" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:state" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:config" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:config" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv4-unicast/oc-netinst:state" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:afi-safis/oc-netinst:afi-safi"
+        + "/oc-netinst:ipv6-unicast/oc-netinst:state" {
+    description
+      "Augment BGP neighbor model to support per neighbor/afi-safi default-route advertisement configuration";
+    uses send-default-route-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global" {
+    description
+      "Augment the BGP global config to include bgp convergence time";
+    uses bgp-convergence-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi" {
+    description
+      "Augment the BGP global config to include bgp convergence time";
+    container convergence {
+      must "../oc-netinst:afi-safi-name = 'IPV4_UNICAST' or ../oc-netinst:afi-safi-name = 'IPV6_UNICAST'" {
+        error-message "IPV4_UNICAST and IPV6_UNICAST are the only AFI-SAFI types that support BGP convergence in EOS";
+      }
+      description
+        "BGP convergence related options for the address-family";
+      container config {
+        description
+          "Configuration parameters enabling and modifying the
+           convergence related timers";
+        uses bgp-common-global-afi-safi-convergence-config;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to the convergence
+           related timers";
+        uses bgp-common-global-afi-safi-convergence-config;
+      }
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:default-route-distance/oc-netinst:config" {
+    leaf local-route-distance {
+      type uint8 {
+        range "1..255";
+      }
+      default "200";
+      description
+        "Administrative distance for routes listed with with a network configuration
+          command or for routes that are redistributed from another process";
+    }
+    description
+      "Augment the BGP default-route-distance config to include local-route-distance information";
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:default-route-distance/oc-netinst:state" {
+    leaf local-route-distance {
+      type uint8 {
+        range "1..255";
+      }
+      default "200";
+      description
+        "Administrative distance for routes listed with with a network configuration
+          command or for routes that are redistributed from another process";
+    }
+    description
+      "Augment the BGP default-route-distance state to include local-route-distance information";
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global" {
+    description
+      "Augment the BGP global config to include RPKI send configs";
+    uses bgp-global-rpki-send-top;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor" {
+    description
+      "Configuring threshold on number of prefixes that can be received from a neighbor is configurable at peer level in EOS";
+    uses prefix-limit-neighbor-or-peer-group;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group" {
+    description
+      "Configuring threshold on number of prefixes that can be received from a neighbor is configurable at peer group level in EOS";
+    uses prefix-limit-neighbor-or-peer-group;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:timers/oc-netinst:config" {
+    description
+      "The policy for applying minimum-advertisement-interval";
+    uses minimum-advertisement-interval-policy-group;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:timers/oc-netinst:state" {
+    description
+      "The policy for applying minimum-advertisement-interval";
+    uses minimum-advertisement-interval-policy-group;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:timers/oc-netinst:config" {
+    description
+      "The policy for applying minimum-advertisement-interval";
+    uses minimum-advertisement-interval-policy-group;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:timers/oc-netinst:state" {
+    description
+      "The policy for applying minimum-advertisement-interval";
+    uses minimum-advertisement-interval-policy-group;
+  }
+
+  grouping install-backup-path {
+    description
+      "Configuration to install backup path.";
+    leaf install {
+      type enumeration {
+        enum "DISABLED" {
+          description
+            "Backup path installation is disabled.";
+        }
+        enum "ENABLED" {
+          description
+            "Install a backup path when the BGP best path is ECMP and non-ECMP.";
+        }
+        enum "ENABLED_NON_ECMP" {
+          description
+            "Install a backup path when BGP best paths is non-ECMP";
+        }
+      }
+      must "../../../oc-netinst:afi-safi-name = 'IPV4_UNICAST' or ../../../oc-netinst:afi-safi-name = 'IPV6_UNICAST'" {
+        error-message "IPV4_UNICAST and IPV6_UNICAST are the only AFI-SAFI types that support install backup path in EOS";
+      }
+      default "DISABLED";
+      description
+        "Configuration to install backup path for ECMP and non-ECMP.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:add-paths/oc-netinst:config" {
+    description
+      "The backup path is installed in config. Backup path redundancy can be provided for only non-ECMP paths or for both non-ECMP and ECMP paths.";
+    uses install-backup-path;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi/oc-netinst:add-paths/oc-netinst:state" {
+    description
+      "The backup path is installed in state. Backup path redundancy can be provided for only non-ECMP paths or for both non-ECMP and ECMP paths.";
+    uses install-backup-path;
+  }
+
+  grouping update-generation-config {
+    description
+      "Configure update generation parameters relating to BGP.";
+    leaf wait-fib-install {
+      type boolean;
+      default "false";
+      description
+        "Postpone update generation until the route is programmed in the FIB.";
+    }
+    leaf wait-fib-install-batch-size {
+      type uint32 {
+        range "1..10000";
+      }
+      default "1000";
+      description
+        "Configure the number of routes for which acknowledgement is requested on FIB sync.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global" {
+    description
+     "Augment the BGP global config to include update generation configuration.";
+    container update-generation {
+      description
+        "Update message generation related options for the BGP instance.";
+      container config {
+        description
+          "Configuration parameters relating to update message generation.";
+        uses update-generation-config;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to update message generation.";
+        uses update-generation-config;
+      }
+    }
+  }
+
+  grouping bgp-global-afi-safi-next-hop-config {
+    description
+      "Common configuration for bgp next-hop at the afi-safi level.";
+    leaf preserve-next-hop {
+      type boolean;
+      description
+        "Preserve received next-hop when advertising path to eBGP peers.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:global/oc-netinst:afi-safis/oc-netinst:afi-safi" {
+    description
+      "Augment the BGP global address families config to include next-hop";
+    container next-hop {
+      description
+        "BGP next-hop related options for the address-family";
+      container config {
+        description
+          "Configuration parameters enabling and modifying the
+           next-hop options";
+        uses bgp-global-afi-safi-next-hop-config;
+      }
+      container state {
+        config false;
+        description
+          "State information relating to the next-hop options";
+        uses bgp-global-afi-safi-next-hop-config;
+      }
+    }
+  }
+
+  grouping rr-client-type-config {
+    leaf route-reflector-client-type {
+      type enumeration {
+        enum REFLECTOR {
+          description
+            "A single route reflector configuration where one router centrally manages and redistributes routes among clients.";
+        }
+        enum REFLECTOR_MESHED {
+          description
+            "A configuration of multiple route reflectors that are interconnected, allowing them to collaborate in managing and redistributing routes.";
+
+        }
+      }
+      default "REFLECTOR";
+      description
+        "The type of route-reflector-client.";
+    }
+    description
+      "Grouping that includes a leaf for a route-reflector-client type.";
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:route-reflector/oc-netinst:config" {
+    description
+      "Add route-reflector-client-type to route-reflector config.";
+    uses rr-client-type-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:route-reflector/oc-netinst:state" {
+    description
+      "Add route-reflector-client-type to route-reflector state.";
+    uses rr-client-type-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:route-reflector/oc-netinst:config" {
+    description
+      "Add route-reflector-client-type to route-reflector config.";
+    uses rr-client-type-config;
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+        + "/oc-netinst:bgp/oc-netinst:peer-groups/oc-netinst:peer-group/oc-netinst:route-reflector/oc-netinst:state" {
+
+    description
+      "Add route-reflector-client-type to route-reflector state.";
+    uses rr-client-type-config;
+  }
+
+  grouping bgp-neighbor-router-id-state {
+    description
+      "Common state data for BGP neighbor router ID.";
+    leaf neighbor-router-id {
+      type oc-yang:dotted-quad;
+      description
+        "BGP router ID of the peer.";
+    }
+  }
+
+  augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-netinst:protocols/oc-netinst:protocol"
+      + "/oc-netinst:bgp/oc-netinst:neighbors/oc-netinst:neighbor/oc-netinst:state" {
+    description
+      "Augment the BGP neighbor state to include peer router-id.";
+    uses bgp-neighbor-router-id-state;
+  }
+}

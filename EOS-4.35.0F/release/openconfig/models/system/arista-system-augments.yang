@@ -1,0 +1,691 @@
+module arista-system-augments {
+  namespace "http://arista.com/yang/openconfig/system/augments";
+  prefix arista-system-augments;
+
+  import openconfig-system {
+    prefix oc-sys;
+  }
+  import openconfig-types {
+    prefix oc-types;
+  }
+  import openconfig-inet-types {
+    prefix oc-inet;
+  }
+  import openconfig-yang-types {
+    prefix oc-yang;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+  import openconfig-system-grpc {
+    prefix oc-sys-grpc;
+  }
+  import openconfig-aaa {
+    prefix oc-aaa;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig system augments in Arista EOS.
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.8.0";
+
+  revision 2025-07-10 {
+    description
+      "add accounting-method under /system/aaa/accounting/events/event/(config|state) and
+      authorization-method under /system/aaa/authorization/events/event/(config|state)";
+    reference
+      "1.8.0";
+  }
+  revision 2025-03-14 {
+    description
+      "deprecate arista-ports in favour of remote-port";
+    reference
+      "1.7.1";
+  }
+  revision 2024-12-09 {
+    description
+      "deprecate certificate-username-authentication in favour of authentication username priority";
+    reference
+      "1.7.0";
+  }
+  revision 2024-07-15 {
+    description
+      "Add password-mode-type under /system/aaa/authentication";
+    reference
+      "1.6.1";
+  }
+  revision 2024-03-27 {
+    description
+      "Add system-mac under /system/mac-address/state";
+    reference
+      "1.6.0";
+  }
+  revision 2021-09-27 {
+    description
+      "Add kernel specific memory data under /system/memory/kernel/state";
+    reference
+      "1.5.0";
+  }
+  revision 2021-09-27 {
+    description
+      "pyang auto format";
+    reference
+      "1.4.1";
+  }
+  revision 2021-09-03 {
+    description
+      "Add certificate-username-authentication leaf under system/grpc-servers.";
+    reference
+      "1.4.0";
+  }
+  revision 2021-07-06 {
+    description
+      "Add use-notif-send-time leaf under grpc-servers.";
+    reference
+      "1.3.0";
+  }
+  revision 2021-06-24 {
+    description
+      "change paths to use openconfig-system-grpc model";
+    reference
+      "1.2.2";
+  }
+  revision 2021-03-03 {
+    description
+      "Add dscp and access-control-list leafs under grpc-server and grpc-servers.";
+    reference
+      "1.2.1";
+  }
+  revision 2021-01-07 {
+    description
+      "add grpc-servers list node. Add network-instance and name leafs in config and state container";
+    reference
+      "1.1.3";
+  }
+  revision 2021-01-06 {
+    description
+      "Add default value of 'default' to /system/dns/state/network-instance.";
+    reference
+      "1.1.2";
+  }
+  revision 2020-11-30 {
+    description
+      "Fix errors reported by pyang.";
+    reference
+      "1.1.1";
+  }
+  revision 2020-03-09 {
+    description
+      "Add remote-server/(config|state)/arista-ports augmentation";
+    reference
+      "1.1.0";
+  }
+  revision 2018-06-03 {
+    description
+      "Initial augment file.";
+    reference
+      "1.0.0";
+  }
+
+  augment "/oc-sys:system/oc-sys:memory" {
+    description "Enable reporting of kernel specific memory stats";
+    container kernel {
+      description
+        "Kernel specific data for system memory. The data is obtained from the
+         /proc/meminfo file. Further documention can be found in the 'proc(5)'
+         man page for Linux, under the description of /proc/meminfo.";
+      reference "https://man7.org/linux/man-pages/man5/proc.5.html";
+      container state {
+        config false;
+        description
+          "Operational state data for kernel system memory";
+        leaf buffers {
+          type uint64;
+          units "bytes";
+          description
+            "Relatively temporary storage for raw disk blocks that shouldn't get
+             tremendously large (20 MB or so).";
+        }
+        leaf cached {
+          type uint64;
+          units "bytes";
+          description
+            "In-memory cache for files read from the disk (the page cache).
+             Doesn't include swap-cached.";
+        }
+        leaf swap-cached {
+          type uint64;
+          units "bytes";
+          description
+            "Memory that once was swapped out, is swapped back in but still also
+             is in the swap file.  (If memory pressure is high, these pages don't
+             need to be swapped out again because they are already in the swap
+             file.  This saves I/O.)";
+        }
+        leaf active {
+          type uint64;
+          units "bytes";
+          description
+            "Memory that has been used more recently and usually not reclaimed
+             unless absolutely necessary.";
+        }
+        leaf inactive {
+          type uint64;
+          units "bytes";
+          description
+            "Memory which has been less recently used.  It is more
+             eligible to be reclaimed for other purposes.";
+        }
+        leaf swap-total {
+          type uint64;
+          units "bytes";
+          description
+            "Total amount of swap space available.";
+        }
+        leaf swap-free {
+          type uint64;
+          units "bytes";
+          description
+            "Amount of swap space that is currently unused.";
+        }
+        leaf dirty {
+          type uint64;
+          units "bytes";
+          description
+            "Memory which is waiting to get written back to the disk.";
+        }
+        leaf writeback {
+          type uint64;
+          units "bytes";
+          description
+            "Memory which is actively being written back to the disk.";
+        }
+        leaf anon-pages {
+          type uint64;
+          units "bytes";
+          description
+            "Non-file backed pages mapped into user-space page tables.";
+        }
+        leaf mapped {
+          type uint64;
+          units "bytes";
+          description
+            "Files which have been mapped into memory (with mmap),
+             such as libraries.";
+        }
+        leaf shmem {
+          type uint64;
+          units "bytes";
+          description
+            "Amount of memory consumed in tmpfs filesystems.";
+        }
+        leaf slab {
+          type uint64;
+          units "bytes";
+          description
+            "In-kernel data structures cache (see slabinfo linux man page).";
+        }
+        leaf slab-reclaimable {
+          type uint64;
+          units "bytes";
+          description
+            "Part of slab, that might be reclaimed, such as caches.";
+        }
+        leaf slab-unreclaim {
+          type uint64;
+          units "bytes";
+          description
+            "Part of slab, that cannot be reclaimed on memory pressure.";
+        }
+        leaf kernel-stack {
+          type uint64;
+          units "bytes";
+          description
+            "Amount of memory allocated to kernel stacks.";
+        }
+        leaf page-tables {
+          type uint64;
+          units "bytes";
+          description
+            "Amount of memory dedicated to the lowest level of page
+             tables.";
+        }
+        leaf bounce-buffers {
+          type uint64;
+          units "bytes";
+          description
+            "Memory used for block device 'bounce buffers'.";
+        }
+        leaf writeback-tmp {
+          type uint64;
+          units "bytes";
+          description
+            "Memory used by FUSE for temporary writeback buffers.";
+        }
+        leaf commit-limit {
+          type uint64;
+          units "bytes";
+          description
+            "This is the total amount of memory currently available to be
+             allocated on the system, expressed in kilobytes. This limit is adhered
+             to only if strict overcommit accounting is enabled";
+        }
+        leaf committed-as {
+          type uint64;
+          units "bytes";
+          description
+            "The amount of memory presently allocated on the system. The
+             committed memory is a sum of all of the memory which has been allocated
+             by processes, even if it has not been 'used' by them as of yet.";
+        }
+        leaf vmalloc-total {
+          type uint64;
+          units "bytes";
+          description
+            "Total size of vmalloc memory area.";
+        }
+        leaf direct-map-4k {
+          type uint64;
+          units "bytes";
+          description
+            "Number of bytes of RAM linearly mapped by kernel in 4 kB pages.";
+        }
+        leaf direct-map-2m {
+          type uint64;
+          units "bytes";
+          description
+            "Number of bytes of RAM linearly mapped by kernel in 2 MB pages.";
+        }
+        leaf direct-map-1g {
+          type uint64;
+          units "bytes";
+          description
+            "Number of bytes of RAM linearly mapped by kernel in 1 GB pages.";
+        }
+      }
+    }
+  }
+
+  augment "/oc-sys:system/oc-sys:dns/oc-sys:config" {
+    leaf network-instance {
+      type string;
+      default "default";
+      description
+        "The network instance where the DNS servers are configured.";
+    }
+    description
+      "Add network-instance to each DNS server configuration.";
+  }
+
+  augment "/oc-sys:system/oc-sys:dns/oc-sys:state" {
+    leaf network-instance {
+      type string;
+      default "default";
+      description
+        "The network instance where the DNS servers are configured.";
+    }
+    description
+      "Add network-instance to each DNS server state.";
+  }
+
+  grouping aaa-radius-server-global-config {
+    description
+      "Grouping of AAA RADIUS server global configuration parameters.";
+    leaf retransmit-attempts {
+      type uint8 {
+        range "0..100";
+      }
+      description
+        "Number of times the device may resend a request to the
+         RADIUS server when it is unresponsive";
+    }
+    leaf secret-key {
+      type oc-types:routing-password;
+      description
+        "The unencrypted shared key used between the authentication
+         server and the device.";
+    }
+    leaf timeout {
+      type uint16 {
+        range "1..1000";
+      }
+      units "seconds";
+      description
+        "Set the timeout in seconds on responses from the RADIUS
+         server";
+    }
+  }
+
+  grouping aaa-radius-server-common-top {
+    description
+      "Top level grouping of AAA RADIUS server parameters.";
+    container radius {
+      description
+        "Top level container for RADIUS, including configuration
+         and state data.";
+      container config {
+        description
+          "Configuration data for RADIUS server";
+        uses aaa-radius-server-global-config;
+      }
+      container state {
+        config false;
+        description
+          "Operational state data for RADIUS servers";
+        uses aaa-radius-server-global-config;
+      }
+    }
+  }
+
+  grouping aaa-tacacs-server-global-config {
+    description
+      "Grouping of AAA TACACS server global configuration parameters.";
+    leaf secret-key {
+      type oc-types:routing-password;
+      description
+        "The unencrypted shared key used between the authentication
+         server and the device.";
+    }
+    leaf timeout {
+      type uint16 {
+        range "1..1000";
+      }
+      units "seconds";
+      description
+        "Set the timeout in seconds on responses from the TACACS+
+         server";
+    }
+  }
+
+  grouping aaa-tacacs-server-common-top {
+    description
+      "Top level grouping of AAA TACACS+ server parameters.";
+    container tacacs {
+      description
+        "Top level container for TACACS+, including configuration
+         and state data.";
+      container config {
+        description
+          "Configuration data for TACACS+ server";
+        uses aaa-tacacs-server-global-config;
+      }
+      container state {
+        config false;
+        description
+          "Operational state data for TACACS+ server";
+        uses aaa-tacacs-server-global-config;
+      }
+    }
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa" {
+    container global {
+      description
+        "Top-level container for RADIUS/TACACS+ server global configuration";
+      uses aaa-radius-server-common-top;
+      uses aaa-tacacs-server-common-top;
+    }
+    description
+      "Add RADIUS and TACACS+ configuration to AAA.";
+  }
+
+  typedef accept-mode-enum {
+    type enumeration {
+      enum DISABLED {
+        description
+          "Packets destined for virtual address are not accepted,
+           this is the default behavior";
+      }
+      enum ENABLED {
+        description
+          "Packets destined for virtual address are accepted";
+      }
+    }
+    description
+      "Configure whether packets destined for
+       virtual addresses are accepted even when the virtual
+       address is not owned by the router interface";
+  }
+
+  augment "/oc-sys:system" {
+    container fhrp {
+      description
+        "EOS First Hop Redundancy Protocol (FHRP)";
+      container config {
+        description
+          "Configuration for EOS FHRP";
+        leaf accept-mode {
+          type accept-mode-enum;
+          default "DISABLED";
+          description
+            "Accept mode for FHRP";
+        }
+      }
+    }
+    description
+      "Add FHRP configuratin to system module.";
+  }
+
+  augment "/oc-sys:system/oc-sys-grpc:grpc-servers/oc-sys-grpc:grpc-server/oc-sys-grpc:config" {
+    description
+      "Set the idle timeout in minutes on terminal connections to the system for the protocol with result being displayed in seconds.";
+    leaf dscp {
+      type oc-inet:dscp;
+      description
+        "The Differentiated Services Code Point
+         (DSCP) field of the header.";
+    }
+    leaf access-control-list {
+      type string;
+      description
+        "The name of the Access Control List (ACL) set.";
+    }
+    leaf use-notif-send-time {
+      type boolean;
+      default "false";
+      description
+        "When enabled gNMI notifications timestamp will be set to the time at which the Subscribe Response was sent";
+    }
+    leaf certificate-username-authentication {
+      type boolean;
+      default "false";
+      status deprecated;
+      description
+        "When enabled the certificate's common name (or SPIFFE-ID if present) will be authenticated by the AAA agent.";
+    }
+  }
+
+  augment "/oc-sys:system/oc-sys-grpc:grpc-servers/oc-sys-grpc:grpc-server/oc-sys-grpc:state" {
+    description
+      "Set the idle timeout in minutes on terminal connections to the system for the protocol with result being displayed in seconds.";
+    leaf dscp {
+      type oc-inet:dscp;
+      description
+        "The Differentiated Services Code Point
+         (DSCP) field of the header.";
+    }
+    leaf access-control-list {
+      type string;
+      description
+        "The name of the Access Control List (ACL) set.";
+    }
+    leaf use-notif-send-time {
+      type boolean;
+      default "false";
+      description
+        "When enabled gNMI notifications timestamp will be set to the time at which the Subscribe Response was sent";
+    }
+    leaf certificate-username-authentication {
+      type boolean;
+      default "false";
+      status deprecated;
+      description
+        "When enabled the certificate's common name (or SPIFFE-ID if present) will be authenticated by the AAA agent.";
+    }
+  }
+
+  augment "/oc-sys:system/oc-sys:ssh-server/oc-sys:config/oc-sys:timeout" {
+    description
+      "Set the idle timeout in minutes on terminal connections to the system for the protocol with result being displayed in seconds.";
+  }
+
+  augment "/oc-sys:system/oc-sys:logging/oc-sys:remote-servers/oc-sys:remote-server/oc-sys:config" {
+    leaf-list arista-ports {
+      type oc-inet:port-number;
+      description
+        "Sets the destination port numbers for syslog UDP messages to the server.  The default for syslog is 514.";
+    }
+    status deprecated;
+    description
+      "Add port numbers to logging remote-server configuration.";
+  }
+
+  augment "/oc-sys:system/oc-sys:logging/oc-sys:remote-servers/oc-sys:remote-server/oc-sys:state" {
+    leaf-list arista-ports {
+      type oc-inet:port-number;
+      description
+        "Sets the destination port numbers for syslog UDP messages to the server.  The default for syslog is 514.";
+    }
+    description
+      "Add port numbers to logging remote-server state.";
+  }
+
+  augment "/oc-sys:system/oc-sys:mac-address/oc-sys:state" {
+    leaf system-mac {
+      type oc-yang:mac-address;
+      description
+        "The system MAC is a hardware-component-agnostic configurable MAC address.
+        Absent special configuration, the system MAC address is commonly the
+        manufacturer-assigned MAC address or derived from it. A change in the
+        system MAC address affects both link-local and routed traffic-forwarding
+        aspects. Implementations may use the system MAC address as a system
+        identifier in control and management protocols.";
+    }
+    description
+      "Add system mac-address to mac-address state.";
+  }
+  
+  typedef password-mode-type {
+    type enumeration {
+      enum PASSWORD_DISABLED {
+        description
+          "The user cannot use password to log in.";
+      }
+      enum PASSWORD_NOT_REQUIRED {
+        description
+          "The user can log in without entering a password.";
+      }
+      enum PASSWORD_REQUIRED {
+        description
+          "The user is required to log in with a password, and
+          the password is hashed and stored in the system. If
+          choosing this mode, the operator should also supply
+          the user password, as a hashed value or cleartext.";
+      }
+    }
+    description
+      "Configure the mode of the password for user.";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:authentication/oc-sys:admin-user/oc-sys:config" {
+    leaf password-mode {
+      type password-mode-type;
+      description
+        "The mode of the user password.
+
+        The possible values would be:
+        PASSWORD_DISABLED     <- cannot use password to log in
+        PASSWORD_NOT_REQUIRED <- can log in without a password
+        PASSWORD_REQUIRED     <- other cases
+
+        If PASSWORD_REQUIRED is configured, the operator should
+        also supply the password, as a hashed value or cleartext.";
+    }
+    description
+      "Augment password-mode for admin user.";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:authentication/oc-sys:admin-user/oc-sys:state" {
+    leaf password-mode {
+      type password-mode-type;
+      description
+        "The mode of the user password.
+
+        The possible values would be:
+        PASSWORD_DISABLED     <- cannot use password to log in
+        PASSWORD_NOT_REQUIRED <- can log in without a password
+        PASSWORD_REQUIRED     <- other cases
+
+        If PASSWORD_REQUIRED is configured, the operator should
+        also supply the password, as a hashed value or cleartext.";
+    }
+    description
+      "Augment password-mode for admin user.";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:authentication/oc-sys:users/oc-sys:user/oc-sys:config" {
+    leaf password-mode {
+      type password-mode-type;
+      description
+        "The mode of the user password.
+
+        The possible values would be:
+        PASSWORD_DISABLED     <- cannot use password to log in
+        PASSWORD_NOT_REQUIRED <- can log in without a password
+        PASSWORD_REQUIRED     <- other cases
+
+        If PASSWORD_REQUIRED is configured, the operator should
+        also supply the password, as a hashed value or cleartext.";
+    }
+    description
+      "Augment password-mode for non-admin user.";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:authentication/oc-sys:users/oc-sys:user/oc-sys:state" {
+    leaf password-mode {
+      type password-mode-type;
+      description
+        "The mode of the user password.
+
+        The possible values would be:
+        PASSWORD_DISABLED     <- cannot use password to log in
+        PASSWORD_NOT_REQUIRED <- can log in without a password
+        PASSWORD_REQUIRED     <- other cases
+
+        If PASSWORD_REQUIRED is configured, the operator should
+        also supply the password, as a hashed value or cleartext.";
+    }
+    description
+      "Augment password-mode for non-admin user.";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:accounting/oc-sys:events/oc-sys:event/oc-sys:config" {
+    uses oc-aaa:aaa-accounting-methods-common;
+    description
+      "Add accounting-method under config per .../accounting/events/event list item";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:accounting/oc-sys:events/oc-sys:event/oc-sys:state" {
+    uses oc-aaa:aaa-accounting-methods-common;
+    description
+      "Add accounting-method under state per .../accounting/events/event list item";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:authorization/oc-sys:events/oc-sys:event/oc-sys:config" {
+    uses oc-aaa:aaa-authorization-methods-config;
+    description
+      "Add authorization-method under config per .../authorization/events/event list item";
+  }
+
+  augment "/oc-sys:system/oc-sys:aaa/oc-sys:authorization/oc-sys:events/oc-sys:event/oc-sys:state" {
+    uses oc-aaa:aaa-authorization-methods-config;
+    description
+      "Add authorization-method under state per .../authorization/events/event list item";
+  }
+}
+
