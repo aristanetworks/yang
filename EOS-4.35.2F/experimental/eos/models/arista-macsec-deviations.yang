@@ -1,0 +1,54 @@
+module arista-macsec-deviations {
+  namespace "http://arista.com/yang/openconfig/macsec/deviations";
+  prefix arista-macsec-deviations;
+
+  import openconfig-macsec {
+    prefix oc-macsec;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig MACsec deviations in Arista EOS.
+
+     Copyright (c) 2025 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.0.1";
+
+  revision 2025-10-10 {
+    description
+      "sak-rekey-interval max supported value updated.";
+    reference
+      "1.0.1";
+  }
+
+  revision 2023-01-05 {
+    description
+      "Initial deviation file.";
+    reference
+      "1.0.0";
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:mka/oc-macsec:policies/oc-macsec:policy/oc-macsec:config/oc-macsec:macsec-cipher-suite" {
+    description
+      "Only one macsec-cipher-suite is supported";
+    deviate add {
+      max-elements 1;
+    }
+  }
+
+  deviation "/oc-macsec:macsec/oc-macsec:mka/oc-macsec:policies/oc-macsec:policy/oc-macsec:config/oc-macsec:sak-rekey-interval" {
+    description
+      "sak-rekey-interval range is 0 | 30..100000";
+    deviate replace {
+      type uint32 {
+        range "0 | 30..100000";
+      }
+    }
+  }
+}

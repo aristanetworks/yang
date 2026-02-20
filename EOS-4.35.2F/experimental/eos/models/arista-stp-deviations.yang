@@ -1,0 +1,51 @@
+module arista-stp-deviations {
+  namespace "http://arista.com/yang/openconfig/stp/deviations";
+  prefix arista-stp-deviations;
+
+  import openconfig-spanning-tree {
+    prefix oc-stp;
+  }
+
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig STP deviations in Arista EOS.
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "1.0.0";
+
+  revision 2024-01-11 {
+    description
+      "Initial deviation file.";
+    reference
+      "1.0.0";
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:config/oc-stp:mst-id" {
+    description
+      "In EOS, an MSTID can have a value between 0 and 4094";
+    deviate replace {
+      type uint16 {
+        range "0..4094";
+      }
+    }
+  }
+
+  deviation "/oc-stp:stp/oc-stp:mstp/oc-stp:mst-instances/oc-stp:mst-instance/oc-stp:state/oc-stp:mst-id" {
+    description
+      "In EOS, an MSTID can have a value between 0 and 4094";
+    deviate replace {
+      type uint16 {
+        range "0..4094";
+      }
+    }
+  }
+}
+
