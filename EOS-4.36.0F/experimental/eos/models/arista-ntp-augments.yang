@@ -1,0 +1,54 @@
+module arista-ntp-augments {
+  namespace "http://arista.com/yang/openconfig/ntp/augments";
+  prefix arista-ntp-augments;
+
+  import openconfig-system {
+    prefix oc-sys;
+  }
+
+  import openconfig-extensions {
+     prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig NTP augments in Arista EOS.
+     Copyright (c) 2024 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "2.0.0";
+
+  revision 2024-09-16 {
+    description
+      "Remove NTP_AUTH_SHA1 definition, as it is now included in
+       the standard model.";
+    reference
+      "2.0.0";
+  }
+
+  revision 2024-04-03 {
+    description
+      "Initial augmentation file.";
+    reference
+      "1.0.0";
+  }
+
+  augment "/oc-sys:system/oc-sys:ntp/oc-sys:state" {
+    leaf system-peer {
+      type leafref {
+        path "/oc-sys:system/oc-sys:ntp/oc-sys:servers/oc-sys:server/oc-sys:address";
+      }
+      description
+        "The address or hostname of the current system peer.
+         If there is no current system peer, this leaf will not be present.";
+      reference
+         "RFC 5905, section 11.2";
+    }
+    description
+      "Add system-peer to NTP state.";
+  }
+}
+
