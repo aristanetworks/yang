@@ -1,0 +1,103 @@
+module arista-interfaces-rates {
+  yang-version "1";
+
+  namespace "http://arista.com/yang/experimental/eos/arista-interfaces-rates";
+  prefix "arista-if-rates";
+  
+  import openconfig-extensions { prefix oc-ext; }
+  import arista-exp-eos { prefix "arista-exp-eos"; }
+  import openconfig-types { prefix "oc-types"; }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+
+  description
+    "This module contains OpenConfig interface rates.
+     Copyright (c) 2023 Arista Networks, Inc. All rights reserved.";
+
+  oc-ext:openconfig-version "0.1.0";
+
+  revision 2024-04-15 {
+    description
+      "Moving augment from /interfaces/interface to
+       /arista/interfaces/interface.";
+    reference
+      "1.0.0";
+  }
+
+  revision 2023-09-15 {
+    description
+      "Augment of /interfaces/interface to include interface rates.";
+    reference
+      "1.0.0";
+  }
+
+  grouping interface-rates-state {
+     leaf out-bits-rate {
+      type oc-types:ieeefloat32;
+      units "bps";
+      description
+        "The calculated transmitted rate of the interface, measured in bits
+        per second.";
+    }
+
+    leaf in-bits-rate {
+      type oc-types:ieeefloat32;
+      units "bps";
+      description
+        "The calculate received rate of the interface, measured in bits
+        per second.";
+    }
+
+    leaf out-pkts-rate {
+      type oc-types:ieeefloat32;
+      units "bps";
+      description
+        "The calculated transmitted rate of the interface, measured in packets
+        per second.";
+    }
+
+    leaf in-pkts-rate {
+      type oc-types:ieeefloat32;
+      units "bps";
+      description
+        "The calculate received rate of the interface, measured in packets
+        per second.";
+    }
+  }
+
+  augment "/arista-exp-eos:arista" {
+    container interfaces {
+      description
+        "Container for interfaces.";
+      list interface {
+        key "name";
+        description
+          "The list of the named interfaces on the device.";
+
+        leaf name {
+          type string;
+          description
+            "The name of the interface.";
+        }
+
+        container rates {
+          description
+            "Interfaces rates.";
+
+          container state {
+            config false;
+            description
+              "Operational state representing interface rates";
+            
+            uses interface-rates-state;
+          }
+        }
+      }
+    }
+  }
+}

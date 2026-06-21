@@ -1,0 +1,280 @@
+module arista-openconfig-ptp-types-aug {
+  namespace "http://arista.com/yang/ptp-types-aug";
+  prefix arista-ptp-augments;
+
+  import openconfig-ptp-types { prefix oc-ptp-types; }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains OpenConfig interface augments in Arista EOS.
+
+     Copyright (c) 2025 Arista Networks, Inc. All rights reserved.";
+  revision 2025-01-16 {
+    description
+      "Initial revision. Adding identities from 
+      https://github.com/YangModels/yang/blob/287f9e307c3b04282c6de1e75ab8afea6225f11a/standard/ieee/draft/1588/ieee1588-ptp-ms.yang";
+    reference
+      "1.0.0";
+  }
+  oc-ext:openconfig-version "1.0.0";
+
+  identity CC-PRIMARY-SYNC {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "A PTP Instance that is synchronized to a primary
+      reference time source. The timescale distributed shall be PTP.
+      Numeric value is 6 decimal.";
+  }
+  identity CC-PRIMARY-SYNC-LOST {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "A PTP Instance that has previously been designated
+      as clockClass 6, but that has lost the ability to
+      synchronize to a primary reference time source and is in
+      holdover mode and within holdover specifications. Or a PTP
+      Instance designated with clockClass 7 based on the Holdover
+      Upgrade option. The timescale distributed shall be PTP.
+      Numeric value is 7 decimal.";
+  }
+  identity CC-APPLICATION-SPECIFIC-SYNC {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "A PTP Instance that is synchronized to an
+      application-specific source of time. The timescale
+      distributed shall be ARB.
+      Numeric value is 13 decimal.";
+  }
+  identity CC-APPLICATION-SPECIFIC-SYNC-LOST {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "A PTP Instance that has previously been designated as
+      clockClass 13, but that has lost the ability to synchronize
+      to an application-specific source of time and is in
+      holdover mode and within holdover specifications. Or a PTP
+      Instance designated with clockClass 14 based on the Holdover
+      Upgrade option. The timescale distributed shall be ARB.
+      Numeric value is 14 decimal.";
+  }
+  identity CC-PRIMARY-SYNC-ALTERNATIVE-A {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "Degradation alternative A for a PTP Instance of
+      clockClass 7 that is not within holdover specification
+      or that is based on the specifications of the Holdover
+      Upgrade option.
+      Numeric value is 52 decimal.";
+  }
+  identity CC-APPLICATION-SPECIFIC-ALTERNATIVE-A {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "Degradation alternative A for a PTP Instance of
+      clockClass 14 that is not within holdover specification or
+      that is based on the specifications of the Holdover Upgrade
+      option.
+      Numeric value is 58 decimal.";
+  }
+  identity CC-PRIMARY-SYNC-ALTERNATIVE-B {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "Degradation alternative B for a PTP Instance of
+      clockClass 7 that is not within holdover specification
+      or that is based on the specifications of the Holdover
+      Upgrade option.
+      Numeric value is 187 decimal.";
+  }
+  identity CC-APPLICATION-SPECIFIC-ALTERNATIVE-B {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "Degradation alternative B for a PTP Instance of
+      clockClass 14 that is not within holdover specification or
+      that is based on the specifications of the Holdover Upgrade
+      option.
+      Numeric value is 193 decimal.";
+  }
+  identity CC-DEFAULT {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "Default clockClass, used if none of the other
+      clockClass definitions apply.
+      Numeric value is 248 decimal.";
+  }
+  identity CC-SLAVE-ONLY {
+    base oc-ptp-types:CLOCK_CLASS;
+    description
+      "A PTP Instance that is slave-only.
+      Numeric value is 255 decimal.";
+  }
+
+  identity CA-TIME-ACCURATE-TO-1000-FS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 1 ps (1000 fs).
+      Numeric value is 17 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-2500-FS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 2.5 ps (2500 fs).
+      Numeric value is 18 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-10-PS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 10 ps.
+      Numeric value is 19 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-25-PS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 25 ps.
+      Numeric value is 1A hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-100-PS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 100 ps.
+      Numeric value is 1B hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-250-PS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 250 ps.
+      Numeric value is 1C hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-1000-PS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 1ns (1000 ps).
+      Numeric value is 1D hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-2500-PS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 2.5 ns (2500 ps).
+      Numeric value is 1E hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-10-NS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 10 ns.
+      Numeric value is 1F hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-25-NS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 25 ns.
+      Numeric value is 20 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-100-NS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 100 ns.
+      Numeric value is 21 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-250-NS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 250 ns.
+      Numeric value is 22 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-1000-NS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 1 us (1000 ns).
+      Numeric value is 23 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-2500-NS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 2.5 us (2500 ns).
+      Numeric value is 24 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-10-US {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 10 us.
+      Numeric value is 25 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-25-US {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 25 us.
+      Numeric value is 26 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-100-US {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 100 us.
+      Numeric value is 27 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-250-US {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 250 us.
+      Numeric value is 28 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-1000-US {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 1 ms (1000 us).
+      Numeric value is 29 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-2500-US {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 2.5 ms (2500 us).
+      Numeric value is 2A hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-10-MS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 10 ms.
+      Numeric value is 2B hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-25-MS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 25 ms.
+      Numeric value is 2Chex.";
+  }
+  identity CA-TIME-ACCURATE-TO-100-MS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 100 ms.
+      Numeric value is 2D hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-250-MS {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 250 ms.
+      Numeric value is 2E hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-1-S {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 1 s.
+      Numeric value is 2F hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-10-S {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time is accurate to within 10 s.
+      Numeric value is 30 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-GT-10-S {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time accuracy exceeds 10 s.
+      Numeric value is 31 hex.";
+  }
+  identity CA-TIME-ACCURATE-TO-UNKNOWN {
+    base oc-ptp-types:CLOCK_ACCURACY;
+    description
+      "The time accuracy is unknown.
+      Numeric value is FE hex.";
+  }
+}
