@@ -1,0 +1,1226 @@
+module arista-wifi-augments {
+  yang-version "1";
+  namespace "http://arista.com/yang/openconfig/wifi/augments";
+  prefix "arista-wifi-augments";
+
+  // imports
+  import openconfig-inet-types { prefix oc-inet; }
+  import openconfig-access-points { prefix oc-access-points; }
+  import openconfig-yang-types { prefix oc-yang; }
+  import openconfig-messages { prefix oc-messages; }
+  import openconfig-vlan-types { prefix oc-vlan-types; }
+
+  // meta
+  organization
+    "Arista Networks, Inc.";
+
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+
+  description
+    "This module contains OpenConfig augments for Arista WiFi Access Point.
+
+     Copyright (c) 2026 Arista Networks, Inc. All rights reserved.";
+
+  revision 2025-11-05 {
+    description
+      "Augment SSID with nas-identifier and called-station-id leaves to allow
+      configuring RADIUS NAS-Identifier and Called-Station-Id, including
+      support for dynamic tokens (%m, %s, %n, %l).";
+    reference "0.5.0";
+  }
+
+  revision 2025-10-14 {
+    description
+      "Add YANG models for SSID-level secondary MAC authentication
+      (Google integration / RADIUS MAC), UPSK and UPSK isolation,
+      RADIUS credentials, SSID role-configs (VSA-based role assignment),
+      and access-point level role profiles with VLAN, redirection, and
+      allowed-websites configuration.";
+    reference "0.4.0";
+  }
+
+  revision 2025-10-10 {
+    description
+      "Augment system config and state with mtu-size leaf to configure the
+      Maximum Transmission Unit for the AP system.";
+    reference "0.3.6";
+  }
+
+  revision 2025-09-09 {
+    description
+      "Augment system config and state with location leaf to record the
+      configured/reported physical or logical location of the AP.";
+    reference "0.3.5";
+  }
+
+  revision 2024-02-08 {
+    description
+      "Augment BSSID state counters with tx-beacon counter for transmitted
+      IEEE 802.11 beacon frames.";
+    reference "0.3.4";
+  }
+
+  revision 2023-09-21 {
+    description
+      "Augment radio config and state with spatial-reuse and
+      spatial-reuse-pd-threshold leaves, and add radio state counters
+      (spatial-reuse-tx-frames, spatial-reuse-opportunities) for spatial
+      reuse and BSS color support.";
+    reference "0.3.3";
+  }
+
+  revision 2022-08-17 {
+    description
+      "Augment SSID config and state with enable-rtt leaf to enable/disable
+      IEEE 802.11mc RTT via OpenConfig.";
+    reference "0.3.2";
+  }
+
+  revision 2020-08-26 {
+    description
+      "Augment radio config and state with leaves to enable/disable Downlink
+      and Uplink MU-MIMO (dl-mu-mimo-enabled, ul-mu-mimo-enabled) and
+      Downlink and Uplink OFDMA (dl-ofdma-enabled, ul-ofdma-enabled).";
+    reference "0.3.1";
+  }
+
+  revision 2020-05-04 {
+    description
+      "Augment access-points wifi model to include tunnel configuration and state leafs";
+    reference "0.3.0";
+  }
+
+  revision 2019-11-25 {
+    description
+      "Augment system messages model to include Arista debug service for hostapd, sensord, and wl_evt_handler.";
+    reference "0.2.1";
+  }
+
+  revision 2019-06-28 {
+    description
+      "Augment wifi model to include Arista AP configuration.";
+    reference "0.1.1";
+  }
+
+  grouping arista-ssid-augments {
+    description "Common SSID configuration and state parameters for Arista WiFi";
+
+    leaf remote-bridging {
+      type boolean;
+      default false;
+      description "Whether remote bridging is enabled or disabled, default is disabled";
+    }
+
+    leaf tunnel-id {
+      type uint8;
+      description "ID of the tunnel profile mapped to this SSID";
+    }
+
+    leaf enable-rtt {
+      type boolean;
+      default false;
+      description "Whether 11mc RTT is enabled or disabled, default is disabled";
+    }
+
+    leaf vlan-name {
+      description "Name of VLAN";
+      type string;
+    }
+
+    leaf fallback-vlan-id {
+      description "VLAN to fallback to when the primary VLAN mapping cannot be identified or fails";
+      type uint32;
+    }
+
+    leaf arista-op-mode {
+      description "Arista specific operation mode";
+      type enumeration {
+        enum WPA2_UPSK {
+          description "WPA2 security with unique password per user";
+        }
+        enum WPA3_UPSK {
+          description "WPA3 security with unique password per user";
+        }
+        enum WPA3_TRANSITION_UPSK {
+          description "Mixed WPA2/WPA3 security with unique password per user";
+        }
+      }
+    }
+
+    leaf nas-identifier {
+      type string;
+      description
+        "RADIUS NAS-Identifier associated with this SSID.
+        Supports dynamic tokens:
+          %m - Access Point Ethernet MAC
+          %s - SSID
+          %n - Device Name
+          %l - Location Tag.";
+    }
+
+    leaf called-station-id {
+      type string;
+      description
+        "RADIUS Called-Station-Id associated with this SSID.
+        Supports dynamic tokens:
+          %m - Access Point Ethernet MAC
+          %s - SSID
+          %n - Device Name
+          %l - Location Tag.";
+    }
+
+    leaf mac-caching {
+      description "Enable mac caching. Default is true for secondary MAC authentication and UPSK security modes.";
+      type boolean;
+      default true;
+    }
+  }
+
+  grouping arista-secondary-mac-auth-config {
+    description "Common leaves for secondary MAC authentication";
+
+    leaf stay-connected-on-auth-failure-enabled {
+      type boolean;
+      default false;
+      description "Indicates whether stay connected feature is enabled for this SSID.";
+    }
+
+    leaf failure-role {
+      type string;
+      description "Default role needs to be configured when secondary auth fails.";
+    }
+
+    leaf method {
+      description "RADIUS MAC Authentication is the only currently supported method";
+      type enumeration {
+        enum GOOGLE_INTEGRATION {
+          description "Use Google integration for secondary authentication";
+        }
+        enum RADIUS_MAC_AUTHENTICATION {
+          description "Use Radius server for secondary authentication";
+        }
+      }
+    }
+  }
+
+  grouping arista-ssid-secondary-mac-auth {
+    description "Secondary MAC authentication container for SSID";
+
+    container "secondary-mac-auth" {
+      description "Contains all the fields required to configure secondary mac authentication";
+
+      container config {
+        description "Configuration for secondary MAC authentication";
+        uses arista-secondary-mac-auth-config;
+      }
+
+      container state {
+        config false;
+        description "State for secondary MAC authentication";
+        uses arista-secondary-mac-auth-config;
+      }
+    }
+  }
+
+  grouping arista-ssid-radius-credential {
+    description "RADIUS credentials container for SSID";
+
+    container "radius-credential" {
+      description "Contains user credentials to be used on RADIUS auth server.";
+
+      container config {
+        description "Configuration for RADIUS credentials";
+        uses arista-radius-credential-config;
+      }
+
+      container state {
+        config false;
+        description "State for RADIUS credentials";
+        uses arista-radius-credential-config;
+      }
+    }
+  }
+
+  grouping arista-radius-credential-config {
+    description "Common leaves for RADIUS credentials";
+
+    leaf user-name {
+      description "Radius user name";
+      type enumeration {
+        enum MAC_ADDRESS_WITHOUT_DELIMITER {
+          description "Use MAC address without any delimiters (e.g., 001122334455)";
+        }
+        enum MAC_ADDRESS_WITH_HYPHEN {
+          description "Use MAC address with hyphen delimiters (e.g., 00-11-22-33-44-55)";
+        }
+        enum MAC_ADDRESS_WITH_COLON {
+          description "Use MAC address with colon delimiters (e.g., 00:11:22:33:44:55)";
+        }
+        enum MAC_ADDRESS_WITH_SINGLE_HYPHEN {
+          description "Use MAC address with single hyphen delimiter (e.g., 001122-334455)";
+        }
+      }
+    }
+
+    leaf password {
+      description "Radius password - can be a MAC address format or a custom string";
+      type union {
+        type enumeration {
+          enum MAC_ADDRESS_WITHOUT_DELIMITER {
+            description "Use MAC address without any delimiters";
+          }
+          enum MAC_ADDRESS_WITH_HYPHEN {
+            description "Use MAC address with hyphen delimiters";
+          }
+          enum MAC_ADDRESS_WITH_COLON {
+            description "Use MAC address with colon delimiters";
+          }
+          enum MAC_ADDRESS_WITH_SINGLE_HYPHEN {
+            description "Use MAC address with single hyphen delimiter";
+          }
+        }
+        type string {
+          length "1..250";
+        }
+      }
+    }
+  }
+
+  grouping arista-upsk-config {
+    description "Common leaves for UPSK";
+
+    leaf user-private-network {
+      type boolean;
+      default false;
+      description "Enable UPSK isolation to generate unique PSKs for each user's devices and implement the isolation according to PSK";
+    }
+
+    leaf identity-lookup {
+      type boolean;
+      default false;
+      description "Enable this setting to auto register a new client using the generated UPSK password";
+    }
+  }
+
+  grouping arista-ssid-upsk {
+    description "UPSK container for SSID";
+
+    container "upsk" {
+      description "Contains UPSK and UPSK isolation feature attributes";
+
+      container config {
+        description "Configuration for UPSK";
+        uses arista-upsk-config;
+      }
+
+      container state {
+        config false;
+        description "State for UPSK";
+        uses arista-upsk-config;
+      }
+    }
+  }
+
+  grouping arista-ssid-role-config {
+    description "Role configuration";
+
+    leaf id {
+      type uint32;
+      description "Unique ID used as reference for the role profile configuration";
+    }
+
+    leaf rule-type {
+      description "Type of the rule.";
+      type enumeration {
+        enum IEEE802_1x_Default_VSA {
+          description "Use default IEEE 802.1X Vendor Specific Attribute for role assignment";
+        }
+        enum IEEE802_1x_Custom_VSA {
+          description "Use custom IEEE 802.1X Vendor Specific Attribute for role assignment";
+        }
+      }
+    }
+
+    leaf vendor-id {
+      type uint32;
+      description "Vendor ID for custom VSA (required when rule-type is IEEE802_1x_Custom_VSA)";
+      default 16901;
+    }
+
+    leaf attribute-id {
+      type uint32;
+      description "Attribute ID for custom VSA (required when rule-type is IEEE802_1x_Custom_VSA)";
+      default 7;
+    }
+
+    leaf operand {
+      description "Operand to apply for evaluation.";
+      type enumeration {
+        enum MATCH {
+          description "Pattern or regex match comparison";
+        }
+        enum CONTAINS {
+          description "Substring match comparison";
+        }
+        enum EQUALS {
+          description "Exact match comparison";
+        }
+      }
+    }
+
+    leaf value {
+      description "Value to be checked. Can represent string, number, or other based on rule type.";
+      type string;
+    }
+
+    leaf role-name {
+      type string {
+        length "1..64";
+      }
+      description "Name of the role associated with this rule.";
+    }
+  }
+
+  grouping arista-ssid-role-configs {
+    description "Role configurations container for SSID";
+
+    container role-configs {
+      description "Top level container for role configurations";
+
+      list role-config {
+        description "List of role configurations";
+        key "id";
+
+        leaf id {
+          type leafref {
+            path "../config/id";
+          }
+          description
+            "Each role config is key'd by a unique ID.";
+        }
+
+        container config {
+          description "Config container for role configuration";
+
+          uses arista-ssid-role-config;
+        }
+
+        container state {
+          config false;
+          description "State container for role configuration";
+
+          uses arista-ssid-role-config;
+        }
+      }
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid/oc-access-points:config" {
+    description "Adds SSID config augments to the WiFi mac model";
+
+    uses arista-ssid-augments;
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid/oc-access-points:state" {
+    description "Adds SSID state augments to the WiFi mac model";
+
+    uses arista-ssid-augments;
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid" {
+    description "Adds secondary-mac-auth container to SSID level";
+
+    uses arista-ssid-secondary-mac-auth;
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid" {
+    description "Adds radius-credential container to SSID level";
+
+    uses arista-ssid-radius-credential;
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid" {
+    description "Adds upsk container to SSID level";
+
+    uses arista-ssid-upsk;
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid" {
+    description "Adds role-configs container to SSID level";
+
+    uses arista-ssid-role-configs;
+  }
+
+  identity HOSTAPD {
+    base oc-messages:DEBUG_SERVICE;
+    description
+      "Hostapd debug service.";
+  }
+
+  identity SENSORD {
+    base oc-messages:DEBUG_SERVICE;
+    description
+      "Sensord debug service.";
+  }
+
+  identity WLEVTHANDLER {
+    base oc-messages:DEBUG_SERVICE;
+    description
+      "Wl_evt_handler debug service.";
+  }
+
+  identity ipsec_proto {
+    description "Base type for ESP or AH protocol";
+  }
+
+  identity IPSEC_PROTO_ESP {
+    base ipsec_proto;
+    description "ESP proto";
+  }
+
+  identity IPSEC_PROTO_AH {
+    base ipsec_proto;
+    description "AH proto";
+  }
+
+  identity tunnel_status {
+    description "Base type for tunnel status";
+  }
+
+  identity TUNNEL_STATUS_UNINITIALIZED {
+    base tunnel_status;
+    description "Tunnel is not yet uninitialized";
+  }
+
+  identity TUNNEL_STATUS_MISCONFIGURED {
+    base tunnel_status;
+    description "Tunnel is misconfigured";
+  }
+
+  identity TUNNEL_STATUS_NOT_ACTIVE {
+    base tunnel_status;
+    description "This tunnel endpoint (either primary or secondary) is not the active one";
+  }
+
+  identity TUNNEL_STATUS_DOWN {
+    base tunnel_status;
+    description "The active endpoint is currently down";
+  }
+
+  identity TUNNEL_STATUS_UP {
+    base tunnel_status;
+    description "The tunnel is current up";
+  }
+
+  identity ipsec_mode {
+    description
+      "Base type for ipsec tunnel/transport mode values";
+  }
+
+  identity IPSEC_MODE_TUNNEL {
+    base ipsec_mode;
+    description "IPSec tunnel mode";
+  }
+
+  identity IPSEC_MODE_TRANSPORT {
+    base ipsec_mode;
+    description "IPSec transport mode";
+  }
+
+  identity tunnel_type {
+    description "Whether tunnel is EoGRE, VxLAN or EoGRE over IPSec";
+  }
+
+  identity TUNNEL_TYPE_EOGRE {
+    base tunnel_type;
+    description "Plain EoGRE type";
+  }
+
+  identity TUNNEL_TYPE_VXLAN {
+    base tunnel_type;
+    description "VxLAN tunnel";
+  }
+
+  identity TUNNEL_TYPE_EOGRE_IPSEC {
+    base tunnel_type;
+    description "EoGRE over IPSec";
+  }
+
+  grouping arista-ap-system-config {
+    description
+      "Configuration for Arista AP System specific parameters";
+
+    leaf mac {
+      type oc-yang:mac-address;
+      description
+        "MAC address of the AP primary Ethernet interface. If AP
+        has multiple Ethernet interfaces, this would be the MAC printed
+        on the unit label and referenced within the management system.
+        Vendors MUST reject attempts to configure this leaf.";
+    }
+
+    leaf spectratalk-pmk {
+      type string;
+      default "";
+      description
+        "PMK used for AP and cloud server communication in Spectratalk protocol";
+    }
+  }
+
+  grouping arista-ap-tunnel-endpoint {
+    description
+      "Tunnel endpoint configuration";
+    leaf address {
+      type string;
+      description
+        "Hostname/IP address of the tunnel endpoint";
+    }
+
+    leaf local-vlan {
+      type oc-vlan-types:vlan-id;
+      description
+        "Local vlan used to route tunnel traffic. Default is 0 (untagged)";
+    }
+
+    leaf gre-key {
+      type uint32;
+      description "GRE Key";
+    }
+
+    leaf mss-clamping {
+      type boolean;
+      description "Enable/Disable MSS clamping";
+    }
+
+    leaf pmtu {
+      type uint16;
+      description "PMTU value. AP tries to discover the value automatically if set to 0";
+    }
+
+    container ipsec-config {
+      description "IPSec configuration";
+
+      uses arista-ap-ipsec-config;
+    }
+  }
+
+  grouping arista-ap-ipsec-config {
+    description
+      "IPSec configuration";
+    leaf mode {
+      type identityref {
+        base ipsec_mode;
+      }
+      description "IPSec mode tunnel or transport";
+    }
+
+    leaf tunnel-remote-endpoint {
+      type string;
+      description "IPSec remote endpoint address for tunnel mode";
+    }
+
+    leaf enable-virtual-ip {
+      type boolean;
+      description "Support for receiving the (EoGRE) local endpoint IP from the IPSec negotiation";
+    }
+
+    leaf ike-keepalive {
+      type uint32;
+      units hours;
+      description "Lifetime / IKE keepalive";
+    }
+
+    leaf ike-version {
+      type uint16;
+      description "IKE version v1 / v2";
+    }
+
+    leaf ikev1-aggressive-neg-mode {
+      type boolean;
+      description "IKEv1 aggressive negotiation mode enable / disable";
+    }
+
+    leaf ap-identifier {
+      type string;
+      description "AP (left) Identifier";
+    }
+
+    leaf ap-psk {
+      type string;
+      description "AP (left) PSK";
+    }
+
+    leaf remote-identifier {
+      type string;
+      description "Remote (right) Identifier";
+    }
+
+    leaf remote-psk {
+      type string;
+      description "Remote (right) PSK";
+    }
+
+    leaf-list phase1-ciphers {
+      type string;
+      description "Phase-1 cipher, hash and DH group. Format: enc-len-hash_len-dhgroup (E.g. aes-256-sha2_512-modp8192)";
+    }
+
+    leaf phase2-keepalive {
+      type uint32;
+      units hours;
+      description "IPSec phase-2 lifetime / keepalive timeout";
+    }
+
+    leaf protocol {
+      type identityref {
+        base ipsec_proto;
+      }
+      description "Specify ESP or AH protocol to use";
+    }
+
+    leaf-list phase2-ciphers {
+      type string;
+      description "Phase-2 cipher, hash and DH group. Format: enc-len-hash_len-dhgroup (E.g. aes-256-sha2_512-modp8192)";
+    }
+  }
+
+  grouping arista-ap-tunnel-config {
+    description "Tunnel configuration";
+
+    leaf id {
+      type uint8;
+      description "Unique ID used as reference for the tunnel config";
+    }
+
+    leaf tunnel-type {
+      type identityref {
+        base tunnel_type;
+      }
+      description "Whether the tunnel is a EoGRE, EoGRE over IPSec or VxLAN tunnel";
+    }
+
+    container primary-endpoint {
+      description "Primary tunnel endpoint address";
+
+      uses arista-ap-tunnel-endpoint;
+    }
+
+    container secondary-endpoint {
+      description "Secondary tunnel endpoint address";
+
+      uses arista-ap-tunnel-endpoint;
+    }
+
+    leaf prefer-primary {
+      type boolean;
+      description "Swtich to primary as soon as it is available";
+    }
+
+    leaf probe-interval {
+      type uint32;
+      units seconds;
+      description "Frequency of probe packets";
+    }
+
+    leaf probe-retries {
+      type uint16;
+      description "Number of retries for each probe";
+    }
+
+    leaf probe-timeout {
+      type uint32;
+      units seconds;
+      description "Probe timeout";
+    }
+
+    leaf kick-clients-on-failover {
+      type boolean;
+      description "Kick wireless clients when there is a failover from primary to secondary or vice-versa";
+    }
+  }
+
+  grouping tunnel-endpoint-status {
+    description
+      "Tunnel state leafs.";
+    leaf status {
+      type identityref {
+        base tunnel_status;
+      }
+      description "Status of the primary/secondary endpoint. Whether active, misconfigured, up or down";
+    }
+
+    leaf remote-ipaddr {
+      type oc-inet:ip-address;
+      description "IP (v4/v6) address of the remote endpoint";
+    }
+
+    leaf rx-packets{
+      type uint64;
+      description "Count of rx packets";
+    }
+
+    leaf rx-dropped {
+      type uint64;
+      description "Count of dropped rx packets";
+    }
+
+    leaf tx-packets {
+      type uint64;
+      description "Count of tx packets";
+    }
+
+    leaf tx-dropped {
+      type uint64;
+      description "Count of tx dropped packets";
+    }
+  }
+
+  grouping arista-ap-tunnel-top {
+    description "Arista AP tunnel configuration and state";
+    container tunnels {
+      description "Tunnel profiles";
+      list tunnel {
+        key "id";
+        description
+          "List of tunnels, key'd by ID";
+
+        leaf id {
+          type leafref {
+            path "../config/id";
+          }
+        description
+          "Each tunnel is key'd by a unique ID.";
+        }
+
+        container config {
+          description "Tunnel configuration";
+
+          uses arista-ap-tunnel-config;
+        }
+
+        container state {
+          config false;
+          description "Tunnel state";
+
+          container primary-status {
+            description "Primary endpoint status";
+            uses tunnel-endpoint-status;
+          }
+
+          container secondary-status {
+            description "Secondary endpoint status";
+            uses tunnel-endpoint-status;
+          }
+
+          leaf ipsec-status {
+            type string;
+            description "IPSec tunnel status information";
+          }
+
+          uses arista-ap-tunnel-config;
+        }
+      }
+    }
+  }
+
+  grouping arista-ap-role-allowed-websites-config {
+    description
+      "Allowed websites URL";
+
+    leaf url {
+      description "URL to allow";
+      type string;
+    }
+  }
+
+  grouping arista-ap-role-profile-config {
+    description "Role profile configuration parameters";
+
+    leaf name {
+      description "Name of role profile";
+      type string {
+        length "1..64";
+      }
+    }
+
+    leaf use-ssid-settings {
+      description "Use SSID settings in absence of role specific settings";
+      type boolean;
+      default false;
+    }
+  }
+
+  grouping arista-ap-role-vlan-config {
+    description "VLAN configuration for role profile";
+
+    leaf vlan-id {
+      description "VLAN ID";
+      type uint32;
+    }
+    leaf vlan-name {
+      description "VLAN Name to be configured for role";
+      type string;
+    }
+    leaf fallback-vlan-id {
+      description "VLAN to fallback to when the primary VLAN mapping cannot be identified or fails";
+      type uint32;
+    }
+  }
+
+  grouping arista-ap-role-redirection-config {
+    description "Redirection configuration for role profile";
+
+    leaf redirection-type {
+      description "Type of redirection";
+      type enumeration {
+        enum STATIC {
+          description "Redirect to a fixed URL";
+        }
+        enum DYNAMIC {
+          description "Redirect based on URL received from the RADIUS server";
+        }
+      }
+    }
+
+    leaf static-redirection-url {
+      description "Static redirection URL";
+      type string;
+    }
+  }
+
+  grouping arista-ap-role-https-redirection-config {
+    description "HTTPS redirection configuration for role profile";
+
+    leaf common-name {
+      description "CN of certificate";
+      type string;
+      default "www.arista.com";
+    }
+
+    leaf organization {
+      description "Organization of certificate";
+      type string;
+      default "Arista Networks";
+    }
+
+    leaf organization-unit {
+      description "Organization unit of certificate";
+      type string;
+      default "Arista Networks";
+    }
+  }
+
+  grouping arista-ap-role-profile-top {
+    description "Role profile configuration and state";
+
+    container role-profiles {
+      description "Top level container for role profiles";
+
+      list role-profile {
+        description "Role profiles applied to access point";
+        key "name";
+
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description
+            "Each role profile is key'd by a unique name.";
+        }
+
+        container config {
+          description "Role profile configuration";
+
+          uses arista-ap-role-profile-config;
+        }
+
+        container state {
+          config false;
+          description "Role profile state";
+
+          uses arista-ap-role-profile-config;
+        }
+
+        container vlan {
+          description "VLAN to be configured for role";
+
+          container config {
+            description "VLAN configuration";
+            uses arista-ap-role-vlan-config;
+          }
+
+          container state {
+            config false;
+            description "VLAN state";
+            uses arista-ap-role-vlan-config;
+          }
+        }
+
+        container redirection {
+          description "Redirection related configuration";
+
+          container config {
+            description "Redirection configuration";
+            uses arista-ap-role-redirection-config;
+          }
+
+          container state {
+            config false;
+            description "Redirection state";
+            uses arista-ap-role-redirection-config;
+          }
+
+          container https-redirection {
+            description "HTTPS redirection";
+
+            container config {
+              description "HTTPS redirection configuration";
+              uses arista-ap-role-https-redirection-config;
+            }
+
+            container state {
+              config false;
+              description "HTTPS redirection state";
+              uses arista-ap-role-https-redirection-config;
+            }
+          }
+
+          container allowed-websites {
+            description "Container for allowed websites";
+
+            list allowed-website {
+              description "List of all allowed websites";
+              key "url";
+
+              leaf url {
+                type leafref {
+                  path "../config/url";
+                }
+                description
+                  "Each allowed website is key'd by a unique url.";
+              }
+
+              container config {
+                description "URL to allow";
+
+                uses arista-ap-role-allowed-websites-config;
+              }
+
+              container state {
+                config false;
+                description "URL to allow";
+
+                uses arista-ap-role-allowed-websites-config;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point" {
+    description "AP specific tunnel profiles";
+
+    uses arista-ap-tunnel-top;
+    uses arista-ap-role-profile-top;
+  }
+
+  grouping arista-aps-top {
+    description
+      "Top-level grouping for configuring Arista specific parameters on AP";
+
+    container arista-aps {
+      description
+        "Top most container for configuring Arista specific parameters on AP";
+
+      list arista-ap {
+        key "mac";
+        description
+          "List of MAC addresses that will have Arista specific parameters configured.";
+
+        leaf mac {
+          type leafref {
+            path "../system/config/mac";
+          }
+          description
+            "Reference to the MAC address list key. This leaf is a reference
+            only and not to be configured.";
+        }
+
+        container system {
+          description
+            "Container for Arista system specific parameters";
+
+          container config {
+            description
+              "Config container for configuring Arista system specific parameters on APs.";
+
+            uses arista-ap-system-config;
+          }
+
+          container state {
+            config false;
+            description
+              "State container for configuring Arista system specific parameters on APs.";
+
+            uses arista-ap-system-config;
+          }
+        }
+      }
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:radios/oc-access-points:radio/oc-access-points:config" {
+    description "Add radio config parameters to AP";
+    leaf dl-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Downlink MU MIMO is enabled or disabled, default is disabled";
+    }
+
+    leaf ul-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Uplink MU MIMO is enabled or disabled, default is disabled";
+    }
+
+    leaf dl-ofdma-enabled {
+     type boolean;
+     default false;
+     description "Whether DL OFDMA is enabled or disabled, default is disabled";    }
+
+    leaf ul-ofdma-enabled {
+     type boolean;
+     default false;
+     description "Whether UL OFDMA is enabled or disabled, default is disabled";    }
+
+    leaf spatial-reuse {
+      type boolean;
+      default false;
+      description "Whether spatial reuse is enabled or disabled, default is disabled";
+    }
+
+    leaf spatial-reuse-pd-threshold {
+      type int8 {
+        range "-81..-62";
+        }
+      units dBm;
+      default -77;
+      description "PD threshold for spatial reuse, default is -77 dBm";
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:radios/oc-access-points:radio/oc-access-points:state" {
+    description "Add radio state parameters to AP";
+
+    leaf dl-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Downlink MU MIMO is enabled or disabled, default is disabled";
+    }
+
+    leaf ul-mu-mimo-enabled {
+     type boolean;
+     default false;
+     description "Whether Uplink MU MIMO isenabled or disabled, default is disabled";
+    }
+
+    leaf dl-ofdma-enabled {
+     type boolean;
+     default false;
+     description "Whether DL OFDMA is enabled or disabled, default is disabled";     }
+
+   leaf ul-ofdma-enabled {
+    type boolean;
+    default false;
+    description "Whether UL OFDMA is enabled or disabled, default is disabled";
+   }
+
+   leaf spatial-reuse {
+      type boolean;
+      description "Whether spatial reuse is enabled or disabled, default is disabled";
+    }
+
+    leaf spatial-reuse-pd-threshold {
+      type int8;
+      description "PD threshold for spatial reuse, default is -77 dBm";
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point"
+        + "/oc-access-points:system/oc-access-points:config" {
+    description
+      "Add MTU size configuration to system config";
+    leaf mtu-size {
+      type uint16 {
+        range "1500..9000";
+        }
+      description
+        "Maximum Transmission Unit (MTU) size for the system";
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point"
+      + "/oc-access-points:system/oc-access-points:state" {
+    description
+      "Add MTU size state to system state";
+    leaf mtu-size {
+      config false;
+      type uint16;
+      description
+        "Maximum Transmission Unit (MTU) size for the system";
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:radios/oc-access-points:radio/oc-access-points:state/oc-access-points:counters" {
+    description "Adds radio state counters augments to the WiFi phy model";
+
+    leaf spatial-reuse-tx-frames {
+      type oc-yang:counter64;
+      description "Frames transmitted during spatial reuse opportunities.";
+    }
+
+    leaf spatial-reuse-opportunities {
+      type oc-yang:counter64;
+      description "Number of spatial reuse opportunities after aborting reception of OBSS frames.";
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:ssids/oc-access-points:ssid/oc-access-points:bssids/oc-access-points:bssid/oc-access-points:state/oc-access-points:counters" {
+    description "Adds bssid state counter augment for transmitted beacons to the WiFi mac model";
+
+
+    leaf tx-beacon {
+
+      type oc-yang:counter64;
+      description "Transmitted IEEE 802.11 beacon frames.";
+    }
+
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:system/oc-access-points:config" {
+    description "Add location config inside system";
+
+    leaf location {
+      type string;
+      default "";
+      description "Configured physical or logical location of the AP (e.g., Building/Floor/Room). Default: empty string.";
+    }
+  }
+
+  augment "/oc-access-points:access-points/oc-access-points:access-point/oc-access-points:system/oc-access-points:state" {
+    description "Add location state inside system";
+
+    leaf location {
+      type string;
+      default "";
+      config false;
+      description "Reported physical or logical location of the AP. Default: empty string.";
+    }
+  }
+
+  uses arista-aps-top;
+}
