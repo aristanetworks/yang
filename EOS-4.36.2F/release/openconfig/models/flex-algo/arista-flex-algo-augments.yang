@@ -1,0 +1,50 @@
+module arista-flex-algo-augments {
+    namespace "http://arista.com/yang/openconfig/flex-algo/augments";
+    prefix arista-flex-algo-augments;
+
+    import openconfig-flexalgo {
+        prefix oc-flexalgo;
+    }
+    import openconfig-network-instance {
+        prefix oc-netinst;
+    }
+    import openconfig-extensions {
+        prefix oc-ext;
+    }
+
+    organization
+        "Arista Networks, Inc.";
+    contact
+        "Arista Networks, Inc. Product Support";
+    description
+        "This module contains OpenConfig flex-algo augments in Arista EOS.
+        Copyright (c) 2024 Arista Networks, Inc. All rights reserved.";
+
+    oc-ext:openconfig-version "1.0.0";
+
+    revision 2024-03-01 {
+        description
+            "Initial augment file to introduce color in flex-algo";
+        reference
+            "1.0.0";
+    }
+
+    augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:config" {
+        description
+            "Add color to the flex-algorithm definition configuration";
+        leaf color {
+            type uint32;
+            description
+                "Index into the Colored Tunnel RIB for results";
+        }
+    }
+    augment "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:state" {
+        description
+            "Add color to the flex-algorithm definition state";
+        leaf color {
+            type uint32;
+            description
+                "Index into the Colored Tunnel RIB for results";
+        }
+    }
+}

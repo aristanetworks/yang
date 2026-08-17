@@ -1,0 +1,119 @@
+module arista-flex-algo-deviations {
+  namespace "http://arista.com/yang/openconfig/flex-algo/deviations";
+  prefix arista-flex-algo-deviations;
+
+  import openconfig-flexalgo {
+    prefix oc-flexalgo;
+  }
+  import openconfig-network-instance {
+    prefix oc-netinst;
+  }
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  organization
+    "Arista Networks, Inc.";
+  contact
+    "Arista Networks, Inc. Product Support";
+  description
+    "This module contains OpenConfig flex-algo deviations in Arista EOS.
+    Copyright (c) 2024 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "1.0.0";
+
+  revision 2024-03-01 {
+    description
+      "Change the leaf-ref path from flex-algo-global-attributes to
+      te-global-attributes because EOS doesn't support configuration
+      of srlgs and administrative-group mapping under flex-algo but
+      instead a global configuration under traffic-engineering";
+    reference
+      "1.0.0";
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:config/oc-flexalgo:srlg-exclude" {
+    description
+      "EOS support SRLG name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:srlgs/oc-netinst:srlg/oc-netinst:name";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:state/oc-flexalgo:srlg-exclude" {
+    description
+      "EOS support SRLG name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:srlgs/oc-netinst:srlg/oc-netinst:name";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:config/oc-flexalgo:exclude" {
+    description
+      "EOS support administrative-group name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:mpls-admin-groups/" +
+          "oc-netinst:admin-group/oc-netinst:admin-group-name";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:state/oc-flexalgo:exclude" {
+    description
+      "EOS support administrative-group name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:mpls-admin-groups/" +
+          "oc-netinst:admin-group/oc-netinst:admin-group-name";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:config/oc-flexalgo:include-all" {
+    description
+      "EOS support administrative-group name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:mpls-admin-groups/" +
+          "oc-netinst:admin-group/oc-netinst:admin-group-name";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:state/oc-flexalgo:include-all" {
+    description
+      "EOS support administrative-group name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:mpls-admin-groups/" +
+          "oc-netinst:admin-group/oc-netinst:admin-group-name";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:config/oc-flexalgo:include-any" {
+    description
+      "EOS support administrative-group name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:mpls-admin-groups/" +
+          "oc-netinst:admin-group/oc-netinst:admin-group-name";
+      }
+    }
+  }
+
+  deviation "/oc-netinst:network-instances/oc-netinst:network-instance/oc-flexalgo:flex-algorithm/oc-flexalgo:flex-algorithm-definition/oc-flexalgo:algorithm/oc-flexalgo:state/oc-flexalgo:include-any" {
+    description
+      "EOS support administrative-group name to ID mapping under traffic-engineering only which is mapped to mpls/te-global-attributes";
+    deviate replace {
+      type leafref {
+        path "../../../../../oc-netinst:mpls/oc-netinst:te-global-attributes/oc-netinst:mpls-admin-groups/" +
+          "oc-netinst:admin-group/oc-netinst:admin-group-name";
+      }
+    }
+  }
+}

@@ -1,0 +1,516 @@
+module arista-exp-eos-vxlan-config {
+  yang-version 1;
+  namespace "http://arista.com/yang/experimental/eos/vxlan/config";
+  prefix vxlan-config-exp;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import arista-eos-types {
+    prefix eos-types;
+  }
+
+  import openconfig-extensions {
+    prefix oc-ext;
+  }
+
+  import openconfig-vlan-types {
+    prefix "oc-vlan";
+  }
+
+  import openconfig-evpn-types {
+    prefix "oc-evpn-types";
+  }
+
+  organization
+    "Arista Networks <http://arista.com/>";
+  contact
+    "Arista Networks, Inc.
+     Product Support";
+  description
+    "This module contains VXLAN configuration models in Arista EOS.
+
+     Copyright (c) 2018 Arista Networks, Inc. All rights reserved.";
+  oc-ext:openconfig-version "0.2.1";
+
+  revision 2023-11-01 {
+    description
+      "Move all the lists outside of vxlan-config and vti-config";
+    reference
+      "1.0.0";
+  }
+  revision 2021-09-27 {
+    description
+      "pyang auto format";
+    reference
+      "0.2.1";
+  }
+  revision 2021-04-26 {
+    description
+      "Obsolete flood-mcast-grp leaf in vti-config";
+    reference
+      "0.2.0";
+  }
+  revision 2018-08-01 {
+    description
+      "Initial revision";
+    reference
+      "0.1.0";
+  }
+
+  typedef mac-learn-mode {
+    type enumeration {
+      enum LEARN_FROM_DEFAULT {
+        description
+          "Default MAC learning mode (currently LEARN_FROM_ANY)";
+      }
+      enum LEARN_FROM_ANY {
+        description
+          "Learn MAC addresses from any VTEP";
+      }
+      enum LEARN_FROM_FLOOD_LIST {
+        description
+          "Learn MAC addresses only from VTEP IP addresses in the flood list.";
+      }
+      enum LEARN_FROM_LIST {
+        description
+          "Learn MAC addresses only from VTEP IP addresses in the 'learn-prefix' list";
+      }
+    }
+    description
+      "Data plane learning modes for remote MAC addresses";
+  }
+
+  grouping mac-learn-mode-group {
+    description
+      "Data plane MAC learning restriction configuration model";
+    container learn-prefixes {
+      when "../config/mac-learn-mode = 'LEARN_FROM_LIST'";
+      description
+        "Container for list of VTEP IP prefixes from which remote MAC addresses will be learned";
+      list learn-prefix {
+        key "prefix";
+        description
+          "List of VTEP IP prefixes from which remote MAC addresses will be learned";
+        leaf prefix {
+	  type leafref {
+	    path "../config/prefix";
+	  }
+          description
+            "VTEP IP prefix from which remote MAC address will be learned";
+        }
+	container config {
+	  description
+	    "VTEP IP prefix configuration";
+	  leaf prefix {
+	    type inet:ip-prefix;
+	    description
+	      "VTEP IP prefix";
+	  }
+	}
+	container state {
+	  description
+	    "VTEP IP prefix state";
+	  leaf prefix {
+	    type inet:ip-prefix;
+	    description
+	      "VTEP IP prefix";
+	  }
+	}
+      }
+    }
+  }
+
+  typedef mlag-shared-router-mac-config-mode {
+    type enumeration {
+      enum AUTO_GENERATED {
+        description
+          "MLAG system ID";
+      }
+      enum DISABLED {
+        description
+          "Disabled";
+      }
+      enum EXPLICIT_CONFIG {
+        description
+          "User provided MAC address";
+      }
+    }
+    description
+      "MLAG domain routing configuration mode";
+  }
+
+  grouping vti-config {
+    description
+      "VXLAN Tunnel Interface (VTI) Configuration";
+    leaf arp-local-address {
+      type boolean;
+      description
+        "Rewrite the source IP of the ARP request";
+    }
+    leaf arp-reply-relay {
+      type boolean;
+      description
+        "Arp reply relay feature";
+    }
+    leaf controller-client-mode {
+      type boolean;
+      description
+        "VXLAN controller client mode";
+    }
+    leaf flood-mcast-grp {
+      type inet:ipv4-address;
+      status obsolete;
+      description
+        "IP multicast group for BUM traffic";
+    }
+    leaf mlag-shared-router-mac-addr {
+      when "../mlag-shared-router-mac-config = 'EXPLICIT_CONFIG'";
+      type yang:mac-address;
+      description
+        "MLAG shared router mac used when 'mlag-shared-router-mac-config' set to EXPLICIT_CONFIG";
+    }
+    leaf mlag-shared-router-mac-config {
+      type mlag-shared-router-mac-config-mode;
+      description
+        "MLAG shared router mac mode";
+    }
+    leaf src-ip-intf {
+      type eos-types:Arnet-IntfId;
+      description
+        "Source IP interface";
+    }
+    leaf udp-port {
+      type uint16;
+      description
+        "UDP port";
+    }
+    leaf vtep-addr-mask {
+      type inet:ipv4-address;
+      description
+        "VTEP IPv4 address mask";
+    }
+    leaf mlag-src-ip-intf {
+      type eos-types:Arnet-IntfId;
+      description
+        "MLAG VTEP IP source interface";
+    }
+  }
+
+  grouping flood-vtep-group {
+    description
+       "VTEP flood list configuration model";
+    container flood-vteps {
+      description
+        "Container for VTEP flood lists";
+      list flood-vtep {
+        key "vtep-ip";
+        description
+	  "List of VTEP IP addresses to receive flood traffic";
+        leaf vtep-ip {
+          type leafref {
+            path "../config/vtep-ip";
+          }
+          description
+            "Destination VTEP IP address";
+        }
+        container config {
+          description
+            "Flood VTEP configuration";
+          leaf vtep-ip {
+            type inet:ip-address;
+            description
+              "Destination VTEP IP address";
+          }
+        }
+        container state {
+          config false;
+          description
+            "Operational flood VTEP state";
+          leaf vtep-ip {
+            type inet:ip-address;
+            description
+              "Destination VTEP IP address";
+          }
+        }
+      }
+    }
+  }
+
+  grouping vlan-mac-learn-mode-group{
+    description
+      "MAC learning configuration by VLAN";
+    container vlan-mac-learn-modes {
+      description
+        "Container for MAC learning configuration by VLAN";
+      list vlan-mac-learn-mode {
+        key "vlan-id";
+	description
+	  "MAC learning configuration by VLAN";
+	  leaf vlan-id {
+            type leafref {
+	      path "../config/vlan-id";
+	    }
+	    description
+	      "VLAN for which MAC learning configuration applies";
+	  }
+	  container config {
+	    description
+	      "MAC learning configuration for the VLAN";
+	    leaf vlan-id {
+	      type oc-vlan:vlan-id;
+	      description
+	        "VLAN identifier";
+	    }
+	    leaf mac-learn-mode {
+	      type mac-learn-mode;
+	      description
+	      "MAC learning mode";
+	    }
+	  }
+	  container state {
+	    config false;
+	    description
+	      "Operational MAC learning state for the VLAN";
+	    leaf vlan-id {
+	      type oc-vlan:vlan-id;
+	      description
+	        "VLAN identifier";
+	    }
+	    leaf mac-learn-mode {
+	      type mac-learn-mode;
+	      description
+	        "MAC learning mode";
+	    }
+	  }
+	  uses mac-learn-mode-group;
+      }
+    }
+  }
+
+  grouping remote-vtep-group {
+    description
+       "Remote VTEP list configuration model";
+    container remote-vteps {
+      description
+        "Container for remote VTEP list configuration by VLAN";
+      list remote-vtep {
+        key "vtep-ip";
+        description
+          "List of remote VTEP IP addresses";
+        leaf vtep-ip {
+          type leafref {
+            path "../config/vtep-ip";
+          }
+          description
+            "Remote VTEP IP address";
+        }
+        container config {
+          description
+            "Remote VTEP configuration";
+          leaf vtep-ip {
+            type inet:ip-address;
+            description
+              "Remote VTEP IP address";
+          }
+        }
+        container state {
+          config false;
+          description
+            "Operational remote VTEP state";
+          leaf vtep-ip {
+            type inet:ip-address;
+            description
+              "Remote VTEP IP address";
+          }
+        }
+      }
+    }
+  }
+
+  grouping vlan-flood-vtep-group{
+    description
+      "VXLAN flood list configuration by VLAN";
+    container vlan-flood-vteps {
+      description
+        "Container for flood list configuration by VLAN";
+      list vlan-flood-vtep {
+        key "vlan-id";
+        description
+          "Flood list configuration by VLAN";
+        leaf vlan-id {
+          type leafref {
+            path "../config/vlan-id";
+          }
+          description
+            "VLAN identifier";
+        }
+        container config {
+          description
+            "Flood VTEP configuration for the VLAN";
+          leaf vlan-id {
+             type oc-vlan:vlan-id;
+             description
+               "VLAN identifier";
+          }
+        }
+        container state {
+          config false;
+          description
+            "Operational flood VTEP state";
+          leaf vlan-id {
+            type oc-vlan:vlan-id;
+	    description
+              "VLAN identifier";
+          }
+        }
+        uses remote-vtep-group;
+      }
+    }
+  }
+
+  grouping vti-mcast-group {
+    description
+      "Configuration of multicast groups for decapsulation";
+    container mcast-grp-decaps {
+      description
+        "Container for multicast groups for decapsulation";
+      list mcast-grp-decap {
+        key "mcast-grp";
+        description
+          "List of multicast groups for decapsulation";
+        leaf mcast-grp {
+          type leafref {
+            path "../config/mcast-grp";
+          }
+          description
+            "IP multicast group address";
+        }
+        container config {
+          description
+            "Multicast groups decapsulation configuration";
+          leaf mcast-grp {
+            type inet:ip-address;
+            description
+              "IP multicast group address";
+          }
+        }
+        container state {
+          config false;
+	  description
+            "Operational multicast group decapsulation state";
+          leaf mcast-grp {
+            type inet:ip-address;
+            description
+              "IP multicast group address";
+          }
+        }
+      }
+    }
+  }
+
+  grouping vti-vlan-to-vnis {
+    description
+      "VLAN to VNI mappings";
+    container vlan-to-vnis {
+      description
+       "Container for VLAN to VNI mappings";
+      list vlan-to-vni {
+        key "vlan";
+        description
+          "VLAN to VNI mappings";
+        leaf vlan {
+          type leafref {
+            path "../config/vlan";
+          }
+          description
+            "VLAN identifier";
+        }
+        container config {
+          description
+            "VLAN to VNI configuration";
+          leaf vlan {
+            type oc-vlan:vlan-id;
+            description
+              "VLAN identifier";
+          }
+	  leaf vni {
+	    type oc-evpn-types:vni-id;
+	    description
+	      "Virtual Network Identifier";
+	  }
+        }
+        container state {
+	  config false;
+          description
+            "Operational VLAN to VNI state";
+          leaf vlan {
+            type oc-vlan:vlan-id;
+            description
+              "VLAN identifier";
+          }
+	  leaf vni {
+	    type oc-evpn-types:vni-id;
+	    description
+	      "Virtual Network Identifier";
+	  }
+        }
+      }
+    }
+  }
+
+  grouping vti-vrf-to-vnis {
+    description
+      "VRF to VNI mappings";
+    container vrf-to-vnis {
+      description
+        "Container for VRF to VNI mappings";
+      list vrf-to-vni {
+        key "vrf";
+        description
+          "VRF to VNI mappings";
+        leaf vrf {
+          type leafref {
+            path "../config/vrf";
+          }
+          description
+            "Virtual Routing and Forwarding identifier";
+        }
+        container config {
+          description
+            "VRF to VNI configuration";
+          leaf vrf {
+            type string;
+            description
+              "Virtual Routing and Forwarding identifier";
+          }
+	  leaf vni {
+	    type oc-evpn-types:vni-id;
+	    description
+	      "Virtual Network Identifier";
+	  }
+        }
+        container state {
+	  config false;
+          description
+            "Operational VRF to VNI state";
+          leaf vrf {
+            type string;
+            description
+              "Virtual Routing and Forwarding identifier";
+          }
+	  leaf vni {
+	    type oc-evpn-types:vni-id;
+	    description
+	      "Virtual Network Identifier";
+	  }
+        }
+      }
+    }
+  }
+}
